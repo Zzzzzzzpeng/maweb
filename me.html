@@ -1,0 +1,1094 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#141b1e">
+  <meta name="description" content="ARPAN :: personal operating environment">
+  <title>ARPAN :: PERSONAL.OS</title>
+  <style>
+    /*
+      ================================================================
+      COMMAND MAP
+      ----------------------------------------------------------------
+      01 :: /boot/welcome
+      02 :: /home/arpan/profile
+      03 :: /lab
+      04 :: /research
+      05 :: /network
+      06 :: /support
+
+      MANUAL CONTENT ZONES
+      ----------------------------------------------------------------
+      DATA.labs        -> edit/add lab items
+      DATA.papers      -> edit/add research items
+      DATA.social      -> edit account URLs
+      DATA.payments    -> edit payment URLs
+
+      The UI also supports + / - controls for labs and papers.
+      Everything is saved locally in the browser via localStorage.
+      ================================================================
+    */
+
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
+
+    :root {
+      /* Everblush base + restrained warm accent. */
+      --bg: #141b1e;
+      --bg-2: #101618;
+      --surface: #1a2226;
+      --surface-2: #232a2d;
+      --line: #394245;
+      --line-soft: #2a3336;
+      --text: #dadada;
+      --muted: #9aa3a5;
+      --dim: #687174;
+      --green: #8ccf7e;
+      --red: #e57474;
+      --yellow: #e5c76b;
+      --blue: #67b0e8;
+      --cyan: #6cbfbf;
+      --purple: #c47fd5;
+      --orange: #d99b69;
+      --pixel: 'Press Start 2P', monospace;
+      --term: 'VT323', ui-monospace, SFMono-Regular, Menlo, monospace;
+      --ease: cubic-bezier(.2,.75,.2,1);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { width:100%; height:100%; margin:0; }
+    body {
+      overflow:hidden;
+      background:var(--bg);
+      color:var(--text);
+      font-family:var(--term);
+      font-size:18px;
+      letter-spacing:.02em;
+    }
+    a { color:inherit; text-decoration:none; }
+    button, input, textarea, select { font:inherit; color:inherit; }
+    button { border:0; background:none; cursor:pointer; }
+    ::selection { background:var(--yellow); color:var(--bg); }
+
+    body::before {
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:90;
+      opacity:.028;
+      background:repeating-linear-gradient(to bottom, rgba(255,255,255,.18) 0 1px, transparent 1px 4px);
+    }
+    body::after {
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:89;
+      box-shadow:inset 0 0 110px rgba(0,0,0,.45);
+    }
+
+    /* ============================ BOOT ============================ */
+    #boot {
+      position:fixed;
+      inset:0;
+      z-index:200;
+      display:grid;
+      place-items:center;
+      background:var(--bg-2);
+      transition:opacity .42s ease, visibility .42s ease;
+    }
+    #boot.off { opacity:0; visibility:hidden; pointer-events:none; }
+    .boot-screen {
+      width:min(760px,calc(100vw - 34px));
+      min-height:min(630px,calc(100vh - 34px));
+      padding:24px;
+      border:1px solid var(--line);
+      position:relative;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.012), transparent 35%),
+        var(--bg);
+      box-shadow:0 22px 80px rgba(0,0,0,.28);
+    }
+    .boot-screen::before,
+    .boot-screen::after {
+      content:"";
+      position:absolute;
+      width:18px;
+      height:18px;
+      border-color:var(--line);
+    }
+    .boot-screen::before { top:-1px; left:-1px; border-top:2px solid var(--orange); border-left:2px solid var(--orange); }
+    .boot-screen::after { right:-1px; bottom:-1px; border-right:2px solid var(--green); border-bottom:2px solid var(--green); }
+    .boot-head { display:flex; justify-content:space-between; gap:18px; align-items:flex-start; }
+    .boot-brand { color:var(--green); font-family:var(--pixel); font-size:11px; line-height:1.55; }
+    .boot-code { color:var(--dim); font-size:16px; }
+    .boot-centre { display:grid; place-items:center; gap:18px; text-align:center; }
+    .boot-spinner { width:34px; height:34px; border:2px solid var(--line); border-top-color:var(--green); border-right-color:var(--orange); border-radius:50%; animation:spin .62s linear infinite; opacity:0; transform:scale(.8); transition:opacity .2s ease, transform .2s ease; }
+    .boot-spinner.show { opacity:1; transform:none; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .boot-word {
+      font-family:var(--pixel);
+      font-size:clamp(26px,6vw,54px);
+      line-height:1.1;
+      letter-spacing:-.03em;
+      color:var(--text);
+      text-shadow:0 0 24px rgba(140,207,126,.08);
+    }
+    .boot-word span { color:var(--green); }
+    .pending { color:var(--muted); font-size:18px; }
+    .pending::after { content:""; display:inline-block; width:1ch; animation:dots 1.25s steps(4,end) infinite; }
+    @keyframes dots { 0%{content:""} 25%{content:"."} 50%{content:".."} 75%{content:"..."} 100%{content:""} }
+    .power {
+      width:88px;
+      height:88px;
+      border-radius:50%;
+      border:1px solid rgba(229,116,116,.45);
+      color:var(--red);
+      display:grid;
+      place-items:center;
+      margin-top:6px;
+      box-shadow:0 0 0 0 rgba(229,116,116,0);
+      transition:transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+    }
+    .power:hover { transform:scale(1.035); border-color:var(--red); box-shadow:0 0 0 7px rgba(229,116,116,.05), 0 0 36px rgba(229,116,116,.08); }
+    .power:active { transform:scale(.97); }
+    .power svg { width:30px; height:30px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; }
+    .boot-terminal {
+      min-height:160px;
+      padding:15px 0;
+      border-top:1px solid var(--line-soft);
+      border-bottom:1px solid var(--line-soft);
+      color:var(--muted);
+      font-size:16px;
+      line-height:1.45;
+      overflow:hidden;
+    }
+    .boot-line { opacity:0; transform:translateY(4px); }
+    .boot-line.show { opacity:1; transform:none; transition:opacity .16s ease, transform .16s ease; }
+    .ok { color:var(--green); }
+    .info { color:var(--cyan); }
+    .warn { color:var(--yellow); }
+    .boot-foot { display:flex; justify-content:space-between; gap:14px; color:var(--dim); font-size:14px; }
+    .boot-gate { display:none; margin-top:8px; gap:9px; align-items:center; }
+    .boot-gate.show { display:flex; }
+    .boot-gate label { color:var(--green); }
+    .boot-input {
+      min-width:0;
+      flex:1;
+      background:transparent;
+      border:0;
+      border-bottom:1px solid var(--line);
+      padding:7px 0;
+      outline:none;
+      font-size:22px;
+    }
+    .boot-input:focus { border-color:var(--green); }
+    .boot-submit { color:var(--green); padding:7px 9px; border:1px solid var(--line); }
+    .boot-submit:hover { border-color:var(--green); }
+    .gate-error { color:var(--red); font-size:15px; min-height:20px; }
+
+    /* ============================ APP ============================= */
+    #app { width:100%; height:100%; opacity:0; transition:opacity .45s ease; }
+    #app.ready { opacity:1; }
+    .shell { width:100%; height:100%; position:relative; }
+    .topbar,
+    .bottombar {
+      position:fixed;
+      left:0; right:0;
+      z-index:60;
+      background:rgba(16,22,24,.9);
+      backdrop-filter:blur(7px);
+    }
+    .topbar { top:0; min-height:38px; border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; padding:0 14px; font-size:14px; }
+    .top-left { display:flex; gap:11px; align-items:center; min-width:0; }
+    .sysdot { width:7px; height:7px; background:var(--green); box-shadow:0 0 0 3px rgba(140,207,126,.06); animation:blink 1.7s steps(1,end) infinite; }
+    @keyframes blink { 0%,72%,100%{opacity:1} 78%{opacity:.28} }
+    .brand { color:var(--text); white-space:nowrap; }
+    .brand b { color:var(--green); font-weight:400; }
+    .top-right { display:flex; gap:16px; color:var(--dim); font-size:14px; }
+
+    #stage {
+      position:absolute;
+      inset:0;
+      display:grid;
+      grid-template-columns:repeat(3,100vw);
+      grid-template-rows:repeat(3,100vh);
+      overflow:auto;
+      scrollbar-width:none;
+      scroll-behavior:smooth;
+      scroll-snap-type:both mandatory;
+      overscroll-behavior:none;
+      background:
+        linear-gradient(rgba(108,191,191,.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(108,191,191,.02) 1px, transparent 1px),
+        var(--bg);
+      background-size:42px 42px,42px 42px,auto;
+      outline:none;
+    }
+    #stage::-webkit-scrollbar { display:none; }
+    #stage.dragging { scroll-behavior:auto; }
+    .void { pointer-events:none; }
+
+    .page {
+      min-width:100vw;
+      min-height:100vh;
+      scroll-snap-align:start;
+      padding:58px 32px 46px;
+      position:relative;
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+    }
+    .page::before {
+      content:"";
+      position:absolute;
+      inset:48px 20px 41px;
+      border:1px solid rgba(57,66,69,.68);
+      pointer-events:none;
+    }
+    .page::after {
+      content:attr(data-number);
+      position:absolute;
+      right:32px;
+      bottom:40px;
+      font-family:var(--pixel);
+      font-size:clamp(36px,5vw,76px);
+      color:rgba(218,218,218,.023);
+      pointer-events:none;
+    }
+
+    .page-head { display:grid; grid-template-columns:auto 1fr auto; gap:12px; align-items:center; position:relative; z-index:2; }
+    .page-no { min-width:34px; height:26px; display:grid; place-items:center; border:1px solid var(--line); color:var(--yellow); font-size:14px; }
+    .cmd { color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-size:15px; }
+    .cmd b { color:var(--green); font-weight:400; }
+    .state { color:var(--dim); font-size:13px; }
+    .state::before { content:"● "; color:var(--green); animation:blink 1.7s steps(1,end) infinite; }
+    .page-body { position:relative; z-index:2; flex:1; min-height:0; }
+    .eyebrow { color:var(--green); font-size:13px; letter-spacing:.12em; text-transform:uppercase; }
+    .title { font-family:var(--pixel); font-size:clamp(30px,5vw,64px); line-height:1.1; margin:11px 0 15px; letter-spacing:-.035em; }
+    .cursor::after { content:"▋"; color:var(--green); animation:cursor .74s steps(1,end) infinite; }
+    @keyframes cursor { 0%,48%{opacity:1} 49%,100%{opacity:0} }
+    .muted { color:var(--muted); }
+    .dim { color:var(--dim); }
+    .line { height:1px; background:var(--line); margin:16px 0; }
+
+    /* ============================ 01 ============================= */
+    .welcome { display:grid; grid-template-columns:1.25fr .75fr; align-items:center; gap:7vw; height:100%; }
+    .welcome-word { font-family:var(--pixel); font-size:clamp(42px,9vw,118px); line-height:1; letter-spacing:-.05em; min-height:1.05em; }
+    .welcome-word span { color:var(--green); }
+    .welcome-sub { margin-top:20px; color:var(--muted); font-size:21px; line-height:1.35; max-width:720px; }
+    .welcome-prompt { margin-top:24px; font-size:17px; color:var(--muted); }
+    .prompt-user { color:var(--green); }
+    .prompt-path { color:var(--blue); }
+    .boot-mark { width:min(230px,50vw); aspect-ratio:1; position:relative; margin:auto; }
+    .boot-mark::before,
+    .boot-mark::after { content:""; position:absolute; inset:16%; border:1px solid var(--line); transform:rotate(45deg); }
+    .boot-mark::before { border-color:var(--orange); animation:markPulse 1.9s ease-in-out infinite; }
+    .boot-mark::after { inset:28%; border-color:var(--green); }
+    .boot-mark span { position:absolute; inset:35%; display:grid; place-items:center; font-family:var(--pixel); font-size:24px; color:var(--text); }
+    @keyframes markPulse { 50% { transform:rotate(45deg) scale(1.08); opacity:.45; } }
+    .welcome-side { padding-left:24px; border-left:1px solid var(--line); font-size:16px; line-height:1.8; }
+    .welcome-side b { color:var(--text); font-weight:400; }
+
+    /* ============================ 02 ============================= */
+    .profile { display:grid; grid-template-columns:.4fr 1.6fr; gap:6vw; height:100%; align-items:center; }
+    .identity { border-left:2px solid var(--green); padding-left:18px; }
+    .name { font-family:var(--pixel); font-size:clamp(28px,5vw,58px); margin:8px 0 16px; }
+    .facts { margin:0; padding:0; list-style:none; color:var(--muted); font-size:17px; line-height:1.8; }
+    .facts li::before { content:"./"; color:var(--yellow); margin-right:7px; }
+    .profile-copy { max-width:960px; }
+    .profile-copy p { margin:0 0 17px; color:var(--muted); font-size:22px; line-height:1.45; }
+    .profile-copy strong { color:var(--text); font-weight:400; }
+    .interest-line { display:flex; flex-wrap:wrap; gap:8px 14px; margin-top:20px; }
+    .interest { color:var(--cyan); font-size:15px; }
+    .interest::before { content:"["; color:var(--dim); }
+    .interest::after { content:"]"; color:var(--dim); }
+
+    /* ============================ 03 ============================= */
+    .lab { display:grid; grid-template-columns:1.35fr .65fr; gap:5vw; height:100%; }
+    .lab-intro { color:var(--muted); font-size:20px; line-height:1.45; max-width:920px; margin-bottom:18px; }
+    .section-tools { display:flex; align-items:center; gap:8px; margin:12px 0; }
+    .toolbtn { min-width:31px; height:28px; display:grid; place-items:center; border:1px solid var(--line); color:var(--green); font-size:18px; }
+    .toolbtn:hover { border-color:var(--green); background:rgba(35,42,45,.42); }
+    .toolhint { color:var(--dim); font-size:13px; }
+    .list { border-top:1px solid var(--line); overflow:auto; height:calc(100% - 175px); scrollbar-width:thin; scrollbar-color:var(--surface-2) transparent; }
+    .list::-webkit-scrollbar { width:6px; }
+    .list::-webkit-scrollbar-thumb { background:var(--surface-2); }
+    .row { display:grid; grid-template-columns:42px 1fr auto; gap:14px; align-items:start; padding:12px 0; border-bottom:1px dashed var(--line-soft); }
+    .row-index { color:var(--yellow); font-size:15px; }
+    .row-main strong { display:block; color:var(--text); font-size:20px; font-weight:400; }
+    .row-main small { display:block; color:var(--muted); font-size:15px; margin-top:3px; line-height:1.35; }
+    .row-meta { color:var(--green); font-size:14px; white-space:nowrap; }
+    .row-actions { display:flex; gap:6px; }
+    .mini-btn { width:24px; height:24px; border:1px solid var(--line); color:var(--dim); font-size:14px; }
+    .mini-btn:hover { color:var(--red); border-color:var(--red); }
+    .lab-side { border-left:1px solid var(--line); padding-left:24px; display:flex; flex-direction:column; justify-content:center; }
+    .lab-tree { color:var(--muted); font-size:18px; line-height:1.7; }
+    .lab-tree .hot { color:var(--green); }
+    .lab-tree .warm { color:var(--orange); }
+    .lab-note { margin-top:20px; color:var(--dim); font-size:14px; line-height:1.55; }
+
+    /* ============================ 04 ============================= */
+    .research { display:grid; grid-template-columns:1.28fr .72fr; gap:5vw; height:100%; }
+    .research-lead { color:var(--muted); font-size:20px; line-height:1.45; max-width:880px; }
+    .research-output { margin-top:16px; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+    .research-output div { padding:12px 10px; border-right:1px solid var(--line); }
+    .research-output div:last-child { border-right:0; }
+    .research-output b { display:block; color:var(--yellow); font-size:13px; margin-bottom:5px; }
+    .research-output span { color:var(--muted); font-size:14px; line-height:1.35; }
+    .paper-list { margin-top:16px; border-top:1px solid var(--line); height:calc(100% - 250px); overflow:auto; scrollbar-width:thin; scrollbar-color:var(--surface-2) transparent; }
+    .paper-row { position:relative; padding:13px 90px 13px 0; border-bottom:1px dashed var(--line-soft); }
+    .paper-row h3 { margin:0; font-size:20px; font-weight:400; color:var(--text); }
+    .paper-row p { margin:4px 0 8px; font-size:15px; color:var(--muted); line-height:1.45; }
+    .paper-links { display:flex; flex-wrap:wrap; gap:9px; }
+    .paper-links a { color:var(--cyan); font-size:14px; border-bottom:1px dotted var(--cyan); }
+    .paper-links a:hover { color:var(--green); border-color:var(--green); }
+    .paper-remove { position:absolute; right:0; top:13px; color:var(--dim); font-size:14px; }
+    .paper-remove:hover { color:var(--red); }
+    .research-side { border-left:1px solid var(--line); padding-left:24px; display:flex; flex-direction:column; justify-content:center; }
+    .research-side h2 { font-family:var(--pixel); font-size:21px; line-height:1.35; font-weight:400; margin:0 0 18px; }
+    .chain { color:var(--muted); font-size:17px; line-height:1.8; }
+    .chain span { color:var(--green); }
+    .research-note { margin-top:20px; color:var(--dim); font-size:14px; line-height:1.55; }
+
+    /* ============================ 05 ============================= */
+    .network { display:grid; grid-template-columns:1.18fr .82fr; gap:5vw; height:100%; }
+    .social-list { margin-top:16px; border-top:1px solid var(--line); }
+    .social-row { display:grid; grid-template-columns:34px 1fr auto; gap:12px; align-items:center; padding:11px 0; border-bottom:1px dashed var(--line-soft); transition:padding-left .15s ease, background .15s ease; }
+    .social-row:hover { padding-left:7px; background:rgba(35,42,45,.28); }
+    .social-icon { width:24px; height:24px; color:var(--cyan); display:grid; place-items:center; }
+    .social-icon svg { width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
+    .social-row strong { display:block; font-size:19px; font-weight:400; }
+    .social-row small { color:var(--muted); font-size:14px; }
+    .social-state { color:var(--dim); font-size:13px; }
+    .social-state.live { color:var(--green); }
+    .network-side { border-left:1px solid var(--line); padding-left:24px; display:flex; flex-direction:column; justify-content:center; }
+    .network-side pre { margin:0; color:var(--muted); font:16px/1.65 var(--term); white-space:pre-wrap; }
+    .network-side .hot { color:var(--green); }
+    .network-side .warm { color:var(--orange); }
+
+    /* ============================ 06 ============================= */
+    .support { display:grid; grid-template-columns:1.18fr .82fr; gap:5vw; height:100%; }
+    .support-lead { color:var(--muted); font-size:20px; line-height:1.45; max-width:760px; }
+    .pay-list { margin-top:16px; border-top:1px solid var(--line); }
+    .pay-row { display:grid; grid-template-columns:34px 1fr auto; gap:12px; align-items:center; padding:12px 0; border-bottom:1px dashed var(--line-soft); }
+    .pay-icon { width:24px; height:24px; display:grid; place-items:center; color:var(--yellow); }
+    .pay-icon svg { width:21px; height:21px; fill:none; stroke:currentColor; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; }
+    .pay-row strong { font-weight:400; font-size:19px; }
+    .pay-row small { display:block; color:var(--muted); font-size:14px; }
+    .pay-state { color:var(--dim); font-size:13px; }
+    .pay-state.live { color:var(--green); }
+    .support-side { border-left:1px solid var(--line); padding-left:24px; display:flex; flex-direction:column; justify-content:center; }
+    .end-zone { position:relative; padding:18px 0 18px 18px; border-left:2px solid var(--green); transition:transform .16s ease, box-shadow .16s ease, border-color .16s ease; }
+    .end-zone:hover { transform:translateX(-4px); box-shadow:-28px 0 36px -34px rgba(140,207,126,.55); border-color:var(--orange); }
+    .end-zone::after { content:""; position:absolute; left:-2px; top:0; width:2px; height:100%; background:var(--orange); transform:scaleY(0); transform-origin:top; }
+    .end-zone.flash::after { animation:endFlash .42s ease; }
+    @keyframes endFlash { 0%{transform:scaleY(0)} 45%{transform:scaleY(1)} 100%{transform:scaleY(0); transform-origin:bottom} }
+    .end-zone h2 { font-family:var(--pixel); font-size:19px; font-weight:400; margin:0 0 12px; }
+    .end-zone p { margin:0; color:var(--muted); font-size:17px; line-height:1.6; }
+    .edge-msg { margin-top:18px; color:var(--dim); font-size:14px; }
+
+    /* ============================ TOAST =========================== */
+    #toast {
+      position:fixed;
+      right:18px;
+      bottom:50px;
+      z-index:90;
+      border:1px solid var(--line);
+      background:var(--surface);
+      color:var(--muted);
+      padding:9px 12px;
+      font-size:14px;
+      opacity:0;
+      transform:translateY(6px);
+      pointer-events:none;
+      transition:opacity .15s ease, transform .15s ease;
+    }
+    #toast.show { opacity:1; transform:none; }
+
+    .nav { position:fixed; left:50%; bottom:46px; transform:translateX(-50%); z-index:62; display:flex; gap:3px; padding:4px; border:1px solid var(--line); background:rgba(16,22,24,.9); backdrop-filter:blur(6px); }
+    .nav button { width:28px; height:24px; color:var(--dim); font-size:12px; border:1px solid transparent; }
+    .nav button:hover { color:var(--text); border-color:var(--line); }
+    .nav button.active { color:var(--green); border-color:var(--green); }
+    .edge-arrow { position:fixed; top:50%; width:29px; height:58px; transform:translateY(-50%); z-index:62; border-top:1px solid var(--line); border-bottom:1px solid var(--line); color:var(--muted); background:rgba(16,22,24,.54); }
+    .edge-arrow:hover { color:var(--green); border-color:var(--green); }
+    .edge-arrow.left { left:0; border-left:0; border-right:1px solid var(--line); }
+    .edge-arrow.right { right:0; border-left:1px solid var(--line); border-right:0; }
+    .edge-arrow.end-hit { color:var(--orange); border-color:var(--orange); animation:endBump .34s ease; }
+    @keyframes endBump { 40%{transform:translateY(-50%) translateX(4px)} }
+    .bottombar { bottom:0; min-height:31px; border-top:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; padding:0 12px; color:var(--dim); font-size:13px; }
+    #routeStatus { color:var(--muted); }
+    #routeStatus.hot { color:var(--orange); }
+
+    /* ============================ DIALOG ========================= */
+    dialog { border:1px solid var(--line); background:var(--surface); color:var(--text); width:min(590px,calc(100vw - 30px)); padding:18px; box-shadow:0 30px 100px rgba(0,0,0,.55); }
+    dialog::backdrop { background:rgba(0,0,0,.58); backdrop-filter:blur(3px); }
+    dialog h3 { margin:0 0 14px; font-family:var(--pixel); font-size:16px; font-weight:400; }
+    .form-grid { display:grid; gap:10px; }
+    .field label { display:block; color:var(--dim); font-size:13px; margin-bottom:4px; }
+    .field input, .field textarea { width:100%; background:var(--bg); border:1px solid var(--line); padding:8px 9px; outline:none; }
+    .field textarea { min-height:74px; resize:vertical; }
+    .field input:focus, .field textarea:focus { border-color:var(--green); }
+    .dialog-actions { display:flex; justify-content:flex-end; gap:8px; margin-top:14px; }
+    .dialog-actions button { border:1px solid var(--line); padding:7px 10px; font-size:14px; }
+    .dialog-actions .primary { color:var(--green); border-color:var(--green); }
+
+    @media (max-width: 980px) {
+      .welcome,.profile,.lab,.research,.network,.support { grid-template-columns:1fr; gap:24px; overflow:auto; }
+      .welcome-side,.lab-side,.research-side,.network-side,.support-side { border-left:0; border-top:1px solid var(--line); padding-left:0; padding-top:18px; }
+      .welcome { align-content:center; }
+      .boot-mark { width:130px; }
+      .research-output { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .list,.paper-list { height:auto; max-height:55vh; }
+      .social-row,.pay-row { grid-template-columns:30px 1fr auto; }
+    }
+
+    @media (max-width: 620px) {
+      .page { padding:57px 18px 45px; }
+      .page::before { inset:46px 9px 40px; }
+      .page-head { grid-template-columns:auto 1fr; }
+      .state { grid-column:2; }
+      .top-right { display:none; }
+      .nav { bottom:42px; }
+      .title { font-size:clamp(26px,8vw,46px); }
+      .welcome-word { font-size:clamp(34px,14vw,68px); }
+      .research-output { grid-template-columns:1fr 1fr; }
+      .boot-screen { min-height:calc(100vh - 20px); padding:18px; }
+      .boot-foot { flex-direction:column; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,*::before,*::after { animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; scroll-behavior:auto !important; }
+    }
+  </style>
+</head>
+<body>
+  <!-- /boot/pending :: initial waiting screen -->
+  <div id="boot" aria-label="Boot screen">
+    <div class="boot-screen">
+      <div class="boot-head">
+        <div class="boot-brand">ARPAN // PERSONAL.OS</div>
+        <div class="boot-code">TTY-01 · build 06</div>
+      </div>
+
+      <div class="boot-centre">
+        <div class="boot-word">SYSTEM <span>READY</span></div>
+        <div class="pending" id="pendingText">pending power input</div>
+        <div class="boot-spinner" id="bootSpinner" aria-hidden="true"></div>
+        <button class="power" id="powerButton" aria-label="Power on">
+          <svg viewBox="0 0 24 24"><path d="M12 3v8M7.8 5.8a7 7 0 1 0 8.4 0"/></svg>
+        </button>
+        <div class="boot-gate" id="bootGate">
+          <label for="nameInput">login:</label>
+          <input id="nameInput" class="boot-input" autocomplete="off" spellcheck="false" placeholder="enter name">
+          <button class="boot-submit" id="bootSubmit">OK</button>
+        </div>
+        <div class="gate-error" id="gateError" aria-live="polite"></div>
+      </div>
+
+      <div class="boot-terminal" id="bootTerminal" aria-live="polite">
+        <div class="boot-line" data-line="0">&gt; power state: waiting</div>
+        <div class="boot-line" data-line="1">&gt; environment: personal workspace</div>
+        <div class="boot-line" data-line="2">&gt; theme: everblush / dark / warm</div>
+        <div class="boot-line" data-line="3">&gt; modules: welcome / profile / lab / research / network / support</div>
+        <div class="boot-line" data-line="4">&gt; access gate: <span class="warn">name verification</span></div>
+      </div>
+
+      <div class="boot-foot">
+        <span>red button = power</span>
+        <span>no account · no tracking · local data only</span>
+      </div>
+    </div>
+  </div>
+
+  <main id="app" aria-hidden="true">
+    <div class="shell">
+      <header class="topbar">
+        <div class="top-left"><span class="sysdot"></span><span class="brand"><b>arpan</b>@personal:~</span><span id="routeLabel">/boot/welcome</span></div>
+        <div class="top-right"><span>SESSION <b id="sessionClock">00:00:00</b></span><span>TTY 01</span></div>
+      </header>
+
+      <div id="stage" tabindex="0">
+        <!-- ========================================================
+             01 :: /boot/welcome
+             COMMAND: ./welcome --fast --clean
+             ======================================================== -->
+        <section class="page" data-page="1" data-number="01" style="grid-column:1;grid-row:1" aria-label="Welcome">
+          <div class="page-head">
+            <div class="page-no">01</div>
+            <div class="cmd"><b>arpan@personal</b>:~$ ./welcome --fast --clean</div>
+            <div class="state">online</div>
+          </div>
+          <div class="page-body welcome">
+            <div>
+              <div class="eyebrow">/boot/welcome</div>
+              <div class="welcome-word" id="welcomeWord"></div>
+              <div class="welcome-sub cursor" id="welcomeSub">personal workspace // built by arpan</div>
+              <div class="welcome-prompt"><span class="prompt-user">arpan@personal</span>:<span class="prompt-path">~</span>$ <span id="typedWelcome"></span><span class="cursor"></span></div>
+            </div>
+            <aside class="welcome-side">
+              <div class="boot-mark"><span>A</span></div>
+              <div><b>MODE</b> personal</div>
+              <div><b>STYLE</b> retro / dark / everblush</div>
+              <div><b>ROUTE</b> 01 → 02 → 03 → 04 → 05 → 06</div>
+              <div><b>INPUT</b> wheel · touch · keys</div>
+            </aside>
+          </div>
+        </section>
+
+        <!-- ========================================================
+             02 :: /home/arpan/profile
+             COMMAND: cat ./arpan.md
+             ======================================================== -->
+        <section class="page" data-page="2" data-number="02" style="grid-column:2;grid-row:1" aria-label="Arpan profile">
+          <div class="page-head">
+            <div class="page-no">02</div>
+            <div class="cmd"><b>arpan@personal</b>:~$ cat ./arpan.md</div>
+            <div class="state">profile</div>
+          </div>
+          <div class="page-body profile">
+            <div class="identity">
+              <div class="eyebrow">/home/arpan</div>
+              <div class="name">ARPAN</div>
+              <ul class="facts">
+                <li>builder / tinkerer</li>
+                <li>linux-minded</li>
+                <li>curious about systems</li>
+                <li>likes tools that actually do things</li>
+              </ul>
+            </div>
+            <div class="profile-copy">
+              <div class="eyebrow">/persona</div>
+              <p><strong>Arpan is interested in the layer between “it works” and “why does it work?”</strong> The sweet spot is where software, models and machines start touching each other.</p>
+              <p>Current attention leans towards <strong>computer vision, computer-use agents, LLM workflows, multi-agent systems, local AI, automation and reverse engineering</strong>, with a longer pull towards lower-level computing and hardware.</p>
+              <p>The public GitHub profile also points towards <strong>Linux, local AI, agents, automation, computer architecture, RTL/HDL, FPGA, embedded, robotics and RISC-V</strong>. This page keeps that direction compact, because a biography is not a hostage situation.</p>
+              <div class="interest-line" aria-label="Interests">
+                <span class="interest">computer vision</span><span class="interest">CUA</span><span class="interest">LLMs</span><span class="interest">multi-agent</span><span class="interest">local AI</span><span class="interest">automation</span><span class="interest">reverse engineering</span><span class="interest">systems</span><span class="interest">robotics</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========================================================
+             03 :: /lab
+             COMMAND: ls -la ./lab
+             ======================================================== -->
+        <section class="page" data-page="3" data-number="03" style="grid-column:2;grid-row:2" aria-label="Lab">
+          <div class="page-head">
+            <div class="page-no">03</div>
+            <div class="cmd"><b>arpan@personal</b>:~$ ls -la ./lab</div>
+            <div class="state">experiments</div>
+          </div>
+          <div class="page-body lab">
+            <div>
+              <div class="eyebrow">/lab</div>
+              <h1 class="title">BUILD / BREAK / REPEAT</h1>
+              <div class="lab-intro">Manual project shelf. Keep it rough. Keep it honest. Add only what actually exists.</div>
+              <div class="section-tools">
+                <button class="toolbtn" id="addLab" title="Add lab item">+</button>
+                <button class="toolbtn" id="clearLab" title="Clear all lab items">−</button>
+                <span class="toolhint">+ add · − remove all</span>
+              </div>
+              <div id="labList" class="list"></div>
+            </div>
+            <aside class="lab-side">
+              <div class="eyebrow">/lab/map</div>
+              <div class="lab-tree">
+                <div>lab/</div>
+                <div>├── <span class="hot">cua</span></div>
+                <div>├── <span class="hot">vision</span></div>
+                <div>├── <span class="warm">agents</span></div>
+                <div>├── <span class="warm">reverse</span></div>
+                <div>└── <span class="hot">systems</span></div>
+              </div>
+              <div class="lab-note">Manual fields are stored locally. No backend, no database, no mysterious dashboard machinery.</div>
+            </aside>
+          </div>
+        </section>
+        <div class="void" style="grid-column:3;grid-row:1" aria-hidden="true"></div>
+        <div class="void" style="grid-column:1;grid-row:2" aria-hidden="true"></div>
+
+        <!-- ========================================================
+             04 :: /research
+             COMMAND: ls -la ./research
+             ======================================================== -->
+        <section class="page" data-page="4" data-number="04" style="grid-column:3;grid-row:2" aria-label="Research and papers">
+          <div class="page-head">
+            <div class="page-no">04</div>
+            <div class="cmd"><b>arpan@personal</b>:~$ ls -la ./research</div>
+            <div class="state">papers</div>
+          </div>
+          <div class="page-body research">
+            <div>
+              <div class="eyebrow">/research</div>
+              <h1 class="title">PAPERS / RESULTS</h1>
+              <div class="research-lead">Manual paper shelf. One line of context, then the real destination: PDF, arXiv, DOI, repo or dataset.</div>
+              <div class="research-output">
+                <div><b>WRITE</b><span>paper / note</span></div>
+                <div><b>PUBLISH</b><span>PDF / preprint</span></div>
+                <div><b>SHIP</b><span>repo / dataset</span></div>
+                <div><b>TRACE</b><span>DOI / source</span></div>
+              </div>
+              <div class="section-tools">
+                <button class="toolbtn" id="addPaper" title="Add paper">+</button>
+                <span class="toolhint">+ add paper</span>
+              </div>
+              <div id="paperList" class="paper-list"></div>
+            </div>
+            <aside class="research-side">
+              <h2>RESEARCH OUTPUT CHAIN</h2>
+              <div class="chain">idea <span>→</span> draft <span>→</span> paper <span>→</span> proof <span>→</span> code <span>→</span> result</div>
+              <div class="research-note">Use the links on each row to send readers to the actual work. Nothing is published here by magic.</div>
+            </aside>
+          </div>
+        </section>
+        <div class="void" style="grid-column:1;grid-row:3" aria-hidden="true"></div>
+        <div class="void" style="grid-column:2;grid-row:3" aria-hidden="true"></div>
+
+        <!-- ========================================================
+             05 :: /network
+             COMMAND: ls -la ./social
+             ======================================================== -->
+        <section class="page" data-page="5" data-number="05" style="grid-column:2;grid-row:3" aria-label="Social accounts">
+          <div class="page-head">
+            <div class="page-no">05</div>
+            <div class="cmd"><b>arpan@personal</b>:~$ ls -la ./social</div>
+            <div class="state">network</div>
+          </div>
+          <div class="page-body network">
+            <div>
+              <div class="eyebrow">/home/arpan/social</div>
+              <h1 class="title">CONTACT / CODE / SIGNAL</h1>
+              <div id="socialList" class="social-list"></div>
+            </div>
+            <aside class="network-side">
+              <pre><span class="hot">$ tree ./social</span>
+./social
+├── github
+├── youtube
+├── linkedin
+├── instagram
+├── x
+└── email
+
+<span class="warm">$ note</span>
+keep icons small.
+keep links real.
+keep the noise outside.</pre>
+            </aside>
+          </div>
+        </section>
+
+        <!-- ========================================================
+             06 :: /support
+             COMMAND: ./support --links
+             ======================================================== -->
+        <section class="page" data-page="6" data-number="06" style="grid-column:3;grid-row:3" aria-label="Payments and support">
+          <div class="page-head">
+            <div class="page-no">06</div>
+            <div class="cmd"><b>arpan@personal</b>:~$ ./support --links</div>
+            <div class="state">final</div>
+          </div>
+          <div class="page-body support">
+            <div>
+              <div class="eyebrow">/support</div>
+              <h1 class="title">FUND THE NEXT THING</h1>
+              <div class="support-lead">Payment links are manual. Pick a provider and send the visitor to the provider checkout.</div>
+              <div id="payList" class="pay-list"></div>
+            </div>
+            <aside class="support-side">
+              <div class="end-zone" id="endZone">
+                <h2>EOF // WORKSPACE CLOSED</h2>
+                <p>There is no page 07. The right edge now has a job: hover it or press → again for a small boundary response.</p>
+                <div class="edge-msg">route terminated cleanly // use ← to return</div>
+              </div>
+            </aside>
+          </div>
+        </section>
+      </div>
+
+      <button class="edge-arrow left" id="prevBtn" aria-label="Previous section">←</button>
+      <button class="edge-arrow right" id="nextBtn" aria-label="Next section">→</button>
+      <nav class="nav" aria-label="Section navigation">
+        <button data-go="1" class="active">01</button><button data-go="2">02</button><button data-go="3">03</button><button data-go="4">04</button><button data-go="5">05</button><button data-go="6">06</button>
+      </nav>
+      <div class="bottombar"><span>/home/arpan/personal.os</span><span id="routeStatus">← previous · → next · 1–6 direct</span></div>
+      <div id="toast" role="status" aria-live="polite"></div>
+    </div>
+  </main>
+
+  <!-- Manual item editor. Same dialog is reused for labs and papers. -->
+  <dialog id="editor">
+    <h3 id="editorTitle">ADD ITEM</h3>
+    <form id="editorForm">
+      <div class="form-grid">
+        <div class="field"><label for="fTitle">Title</label><input id="fTitle" required maxlength="100"></div>
+        <div class="field"><label for="fType">Type</label><input id="fType" maxlength="60" placeholder="experiment / paper / note"></div>
+        <div class="field"><label for="fNote">Description</label><textarea id="fNote" maxlength="300" placeholder="short manual note"></textarea></div>
+        <div class="field" id="labStatusField"><label for="fStatus">Status</label><input id="fStatus" maxlength="30" placeholder="draft / active / archived"></div>
+        <div class="field" id="linkFields">
+          <label>Links</label>
+          <div class="form-grid">
+            <input id="fPdf" placeholder="PDF URL">
+            <input id="fArxiv" placeholder="arXiv URL">
+            <input id="fDoi" placeholder="DOI URL">
+            <input id="fRepo" placeholder="Repository URL">
+          </div>
+        </div>
+      </div>
+      <div class="dialog-actions"><button type="button" id="cancelEdit">cancel</button><button class="primary" type="submit">save</button></div>
+    </form>
+  </dialog>
+
+  <script>
+    /* ================================================================
+       DATA
+       ----------------------------------------------------------------
+       The URLs below are intentionally conservative. Replace blank
+       social/payment values manually. The lab/paper arrays are also
+       intentionally short so the page does not pretend to know work
+       that has not been entered yet.
+       ================================================================ */
+    const DATA = {
+      labs: [
+        { title:'Computer-Use Experiments', type:'cua', status:'direction', note:'screen → state → action → recovery' },
+        { title:'Local AI / Agent Bench', type:'agents', status:'direction', note:'local models, tools, automation, orchestration' },
+        { title:'Reverse Engineering Room', type:'reverse', status:'direction', note:'behaviour first; binaries, protocols, assumptions' }
+      ],
+      papers: [],
+      social: [
+        { key:'github', label:'GitHub', note:'code / repositories', url:'https://github.com/Zzzzzzzpeng/Zzzzzzzpeng' },
+        { key:'youtube', label:'YouTube', note:'videos / demos', url:'' },
+        { key:'linkedin', label:'LinkedIn', note:'professional profile', url:'' },
+        { key:'instagram', label:'Instagram', note:'visual / personal', url:'' },
+        { key:'x', label:'X', note:'short updates', url:'' },
+        { key:'email', label:'Email', note:'direct contact', url:'' }
+      ],
+      payments: [
+        { key:'kofi', label:'Ko-fi', note:'tips / support', url:'' },
+        { key:'paypal', label:'PayPal', note:'direct payment', url:'' },
+        { key:'saweria', label:'Saweria', note:'local support', url:'' },
+        { key:'trakteer', label:'Trakteer', note:'local support', url:'' }
+      ]
+    };
+
+    const STORAGE = 'arpan.personal.os.v2';
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORAGE) || 'null');
+      if (saved) {
+        DATA.labs = Array.isArray(saved.labs) ? saved.labs : DATA.labs;
+        DATA.papers = Array.isArray(saved.papers) ? saved.papers : DATA.papers;
+        DATA.social = Array.isArray(saved.social) ? saved.social : DATA.social;
+        DATA.payments = Array.isArray(saved.payments) ? saved.payments : DATA.payments;
+      }
+    } catch (_) {}
+
+    function persist() {
+      try { localStorage.setItem(STORAGE, JSON.stringify(DATA)); } catch (_) {}
+    }
+
+    function safeUrl(value, schemes=['http:','https:']) {
+      if (!value) return '';
+      try {
+        const u = new URL(value, location.href);
+        return schemes.includes(u.protocol) ? u.href : '';
+      } catch (_) { return ''; }
+    }
+
+    const ICONS = {
+      github:'<svg viewBox="0 0 24 24"><path d="M9 19c-4 1-4-2-6-2m12 4v-3.3c0-1 .1-2.1-1-3 3.3-.4 6.7-1.6 6.7-7A5.4 5.4 0 0 0 19.2 4 5 5 0 0 0 19 1s-1.1-.4-3.6 1.3a12.3 12.3 0 0 0-6.8 0C6.1.6 5 1 5 1a5 5 0 0 0-.2 3A5.4 5.4 0 0 0 3.3 7.7c0 5.4 3.4 6.6 6.7 7-.9.8-1 2.1-1 3.3V21"/></svg>',
+      youtube:'<svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="3"/><path d="m10 9 5 3-5 3z" fill="currentColor" stroke="none"/></svg>',
+      linkedin:'<svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 10v6M8 8v.1M12 16v-3.2a2.3 2.3 0 1 1 4.6 0V16M12 10v6"/></svg>',
+      instagram:'<svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4"/><circle cx="12" cy="12" r="3.5"/><circle cx="17.2" cy="6.8" r=".6" fill="currentColor" stroke="none"/></svg>',
+      x:'<svg viewBox="0 0 24 24"><path d="M5 4l14 16M19 4L5 20"/></svg>',
+      email:'<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg>',
+      kofi:'<svg viewBox="0 0 24 24"><path d="M4 7h10a4 4 0 0 1 0 8H8v2H5V10H4z"/><path d="M15 9h2.5a2.5 2.5 0 0 1 0 4H15"/></svg>',
+      paypal:'<svg viewBox="0 0 24 24"><path d="M7 19 9.2 5.8h5.1c2.4 0 4 1.4 3.6 3.5-.4 2.5-2.2 3.8-4.7 3.8h-2L10.4 19H7z"/><path d="M10.1 16.2h2.5c2.4 0 4-1.2 4.5-3.2"/></svg>',
+      generic:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v8M9 10h6"/></svg>'
+    };
+
+    const app = document.getElementById('app');
+    const boot = document.getElementById('boot');
+    const powerButton = document.getElementById('powerButton');
+    const bootGate = document.getElementById('bootGate');
+    const nameInput = document.getElementById('nameInput');
+    const bootSubmit = document.getElementById('bootSubmit');
+    const bootSpinner = document.getElementById('bootSpinner');
+    const pendingText = document.getElementById('pendingText');
+    const gateError = document.getElementById('gateError');
+    const bootLines = [...document.querySelectorAll('.boot-line')];
+    const bootTerminal = document.getElementById('bootTerminal');
+    const welcomeWord = document.getElementById('welcomeWord');
+    const typedWelcome = document.getElementById('typedWelcome');
+
+    function bootType(text, delay=22) {
+      return new Promise(resolve => {
+        let i = 0;
+        const tick = () => {
+          bootTerminal.lastElementChild?.remove();
+          const line = document.createElement('div');
+          line.textContent = '> ' + text.slice(0, i);
+          bootTerminal.appendChild(line);
+          i++;
+          if (i <= text.length) setTimeout(tick, delay);
+          else resolve();
+        };
+        tick();
+      });
+    }
+
+    powerButton.addEventListener('click', async () => {
+      powerButton.disabled = true;
+      bootSpinner.classList.add('show');
+      pendingText.textContent = 'boot sequence initialising';
+      bootLines.forEach(x => x.classList.remove('show'));
+      for (let i=0;i<bootLines.length;i++) {
+        await new Promise(r => setTimeout(r, 120));
+        bootLines[i].classList.add('show');
+      }
+      await new Promise(r => setTimeout(r, 220));
+      bootSpinner.classList.remove('show');
+      pendingText.textContent = 'waiting for local identity';
+      bootGate.classList.add('show');
+      nameInput.focus();
+    });
+
+    async function unlock() {
+      const value = nameInput.value.trim().toLowerCase();
+      if (value !== 'arpan') {
+        gateError.textContent = 'access denied // expected: arpan';
+        nameInput.select();
+        return;
+      }
+      gateError.textContent = '';
+      bootSubmit.disabled = true;
+      nameInput.disabled = true;
+      await bootType('loading /home/arpan/personal.os', 18);
+      await new Promise(r => setTimeout(r, 110));
+      app.classList.add('ready');
+      app.setAttribute('aria-hidden','false');
+      boot.classList.add('off');
+      document.body.style.overflow = 'hidden';
+      typeWelcome();
+      goTo(1);
+    }
+    bootSubmit.addEventListener('click', unlock);
+    nameInput.addEventListener('keydown', e => { if (e.key === 'Enter') unlock(); });
+
+    function typeWelcome() {
+      const word = 'WELCOME';
+      let i = 0;
+      const timer = setInterval(() => {
+        welcomeWord.innerHTML = word.slice(0, i) + (i > 4 ? '<span>' + word.slice(i, i+1) + '</span>' : '');
+        i++;
+        if (i > word.length) clearInterval(timer);
+      }, 45);
+      const command = 'cat ./readme';
+      let j = 0;
+      const wt = setInterval(() => {
+        typedWelcome.textContent = command.slice(0, j);
+        j++;
+        if (j > command.length) clearInterval(wt);
+      }, 28);
+    }
+
+    /* ======================== RENDERERS ============================ */
+    function safe(text) {
+      return String(text ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+    }
+
+    function renderLabs() {
+      const el = document.getElementById('labList');
+      el.innerHTML = '';
+      if (!DATA.labs.length) {
+        el.innerHTML = '<div class="row"><div class="row-index">--</div><div class="row-main"><strong>empty</strong><small>Use + to add a lab item.</small></div><div></div></div>';
+        return;
+      }
+      DATA.labs.forEach((item, idx) => {
+        const row = document.createElement('div');
+        row.className = 'row';
+        row.innerHTML = `<div class="row-index">${String(idx+1).padStart(2,'0')}</div><div class="row-main"><strong>${safe(item.title)}</strong><small>${safe(item.note || '')}</small></div><div class="row-actions"><span class="row-meta">${safe(item.status || item.type || 'manual')}</span><button class="mini-btn" data-remove-lab="${idx}" aria-label="Remove lab item">−</button></div>`;
+        el.appendChild(row);
+      });
+      el.querySelectorAll('[data-remove-lab]').forEach(btn => btn.addEventListener('click', () => {
+        DATA.labs.splice(Number(btn.dataset.removeLab), 1); persist(); renderLabs(); toast('lab item removed');
+      }));
+    }
+
+    function renderPapers() {
+      const el = document.getElementById('paperList');
+      el.innerHTML = '';
+      if (!DATA.papers.length) {
+        el.innerHTML = '<div class="paper-row"><h3>research shelf empty</h3><p>Use + add paper. Then attach only the links that actually exist.</p></div>';
+        return;
+      }
+      DATA.papers.forEach((p, idx) => {
+        const links = [
+          safeUrl(p.pdf) && `<a href="${safe(safeUrl(p.pdf))}" target="_blank" rel="noreferrer">PDF</a>`,
+          safeUrl(p.arxiv) && `<a href="${safe(safeUrl(p.arxiv))}" target="_blank" rel="noreferrer">arXiv</a>`,
+          safeUrl(p.doi) && `<a href="${safe(safeUrl(p.doi))}" target="_blank" rel="noreferrer">DOI</a>`,
+          safeUrl(p.repo) && `<a href="${safe(safeUrl(p.repo))}" target="_blank" rel="noreferrer">REPO</a>`
+        ].filter(Boolean).join(' · ');
+        const row = document.createElement('div');
+        row.className='paper-row';
+        row.innerHTML = `<h3>${safe(p.title)}</h3><p>${safe(p.note || '')}</p><div class="paper-links">${links || '<span class="dim">no links yet</span>'}</div><button class="paper-remove" data-remove-paper="${idx}" aria-label="Remove paper">− remove</button>`;
+        el.appendChild(row);
+      });
+      el.querySelectorAll('[data-remove-paper]').forEach(btn => btn.addEventListener('click', () => {
+        DATA.papers.splice(Number(btn.dataset.removePaper),1); persist(); renderPapers(); toast('paper removed');
+      }));
+    }
+
+    function renderSocial() {
+      const el = document.getElementById('socialList');
+      el.innerHTML='';
+      DATA.social.forEach(item => {
+        const row = document.createElement(item.url ? 'a' : 'div');
+        row.className='social-row';
+        if (item.url && safeUrl(item.url)) { row.href=safeUrl(item.url); row.target='_blank'; row.rel='noreferrer'; }
+        row.innerHTML = `<span class="social-icon">${ICONS[item.key] || ICONS.generic}</span><span><strong>${safe(item.label)}</strong><small>${safe(item.note)}</small></span><span class="social-state ${item.url ? 'live' : ''}">${item.url ? 'OPEN' : 'CONFIG'}</span>`;
+        el.appendChild(row);
+      });
+    }
+
+    function renderPayments() {
+      const el = document.getElementById('payList');
+      el.innerHTML='';
+      DATA.payments.forEach(item => {
+        const row = document.createElement(item.url ? 'a' : 'div');
+        row.className='pay-row';
+        if (item.url && safeUrl(item.url)) { row.href=safeUrl(item.url); row.target='_blank'; row.rel='noreferrer'; }
+        row.innerHTML = `<span class="pay-icon">${ICONS[item.key] || ICONS.generic}</span><span><strong>${safe(item.label)}</strong><small>${safe(item.note)}</small></span><span class="pay-state ${item.url ? 'live' : ''}">${item.url ? 'OPEN' : 'CONFIG'}</span>`;
+        el.appendChild(row);
+      });
+    }
+
+    renderLabs(); renderPapers(); renderSocial(); renderPayments();
+
+    /* ======================== EDITOR ============================== */
+    const editor = document.getElementById('editor');
+    const editorForm = document.getElementById('editorForm');
+    const editorTitle = document.getElementById('editorTitle');
+    let editorMode = null;
+
+    function openEditor(mode) {
+      editorMode = mode;
+      editorTitle.textContent = mode === 'lab' ? 'ADD LAB ITEM' : 'ADD PAPER';
+      document.getElementById('labStatusField').style.display = mode === 'lab' ? '' : 'none';
+      document.getElementById('linkFields').style.display = mode === 'lab' ? 'none' : '';
+      editorForm.reset();
+      editor.showModal();
+    }
+    function closeEditor() { editor.close(); editorMode = null; }
+    document.getElementById('addLab').addEventListener('click', () => openEditor('lab'));
+    document.getElementById('addPaper').addEventListener('click', () => openEditor('paper'));
+    document.getElementById('clearLab').addEventListener('click', () => { if (!DATA.labs.length) return; DATA.labs=[]; persist(); renderLabs(); toast('lab cleared'); });
+    document.getElementById('cancelEdit').addEventListener('click', closeEditor);
+    editorForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const title=document.getElementById('fTitle').value.trim();
+      const type=document.getElementById('fType').value.trim();
+      const note=document.getElementById('fNote').value.trim();
+      if (!title) return;
+      if (editorMode === 'lab') {
+        DATA.labs.push({ title, type, status:document.getElementById('fStatus').value.trim() || 'manual', note });
+        persist(); renderLabs(); toast('lab item added');
+      } else {
+        DATA.papers.push({ title, type, note, pdf:document.getElementById('fPdf').value.trim(), arxiv:document.getElementById('fArxiv').value.trim(), doi:document.getElementById('fDoi').value.trim(), repo:document.getElementById('fRepo').value.trim() });
+        persist(); renderPapers(); toast('paper added');
+      }
+      closeEditor();
+    });
+
+    function toast(message) {
+      const el=document.getElementById('toast');
+      el.textContent=message;
+      el.classList.add('show');
+      clearTimeout(toast._t);
+      toast._t=setTimeout(() => el.classList.remove('show'), 900);
+    }
+
+    /* ======================== ROUTER ============================= */
+    const stage = document.getElementById('stage');
+    const pages = [...document.querySelectorAll('.page')];
+    const navButtons = [...document.querySelectorAll('.nav button')];
+    const route = [
+      {n:1,c:0,r:0,label:'/boot/welcome'},
+      {n:2,c:1,r:0,label:'/home/arpan/profile'},
+      {n:3,c:1,r:1,label:'/lab'},
+      {n:4,c:2,r:1,label:'/research'},
+      {n:5,c:1,r:2,label:'/network'},
+      {n:6,c:2,r:2,label:'/support'}
+    ];
+    let current=1;
+    let wheelLock=false;
+    const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function goTo(n) {
+      const target=route.find(x=>x.n===n); if(!target)return;
+      current=n;
+      stage.scrollTo({left:target.c*innerWidth, top:target.r*innerHeight, behavior:reduced?'auto':'smooth'});
+      navButtons.forEach(b=>b.classList.toggle('active',Number(b.dataset.go)===n));
+      document.getElementById('routeLabel').textContent=target.label;
+      document.getElementById('routeStatus').textContent=n===6?'EOF · right boundary active · ← return':'← previous · → next · ↑ ↓ zig-zag · 1–6 direct';
+      document.title='ARPAN :: '+target.label;
+      stage.focus({preventScroll:true});
+    }
+    function boundary() {
+      const zone=document.getElementById('endZone');
+      const next=document.getElementById('nextBtn');
+      zone.classList.remove('flash'); void zone.offsetWidth; zone.classList.add('flash');
+      next.classList.remove('end-hit'); void next.offsetWidth; next.classList.add('end-hit');
+      const rs=document.getElementById('routeStatus'); rs.classList.add('hot'); setTimeout(()=>rs.classList.remove('hot'),500);
+      toast('EOF // no page 07');
+    }
+    function next(){ current<6 ? goTo(current+1) : boundary(); }
+    function prev(){ current>1 ? goTo(current-1) : goTo(1); }
+    navButtons.forEach(b=>b.addEventListener('click',()=>goTo(Number(b.dataset.go))));
+    document.getElementById('nextBtn').addEventListener('click',next);
+    document.getElementById('prevBtn').addEventListener('click',prev);
+
+    window.addEventListener('keydown',e=>{
+      const tag=document.activeElement?.tagName;
+      if(tag==='INPUT'||tag==='TEXTAREA')return;
+      if(e.key==='ArrowRight'||e.key==='PageDown'){e.preventDefault();next();}
+      else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();prev();}
+      else if(e.key==='ArrowDown'){e.preventDefault();current<6?goTo(current+1):boundary();}
+      else if(e.key==='ArrowUp'){e.preventDefault();prev();}
+      else if(/^[1-6]$/.test(e.key))goTo(Number(e.key));
+      else if(e.key==='Home'){e.preventDefault();goTo(1);}
+      else if(e.key==='End'){e.preventDefault();goTo(6);}
+    });
+
+    stage.addEventListener('wheel',e=>{
+      if(wheelLock)return;
+      const dx=e.deltaX,dy=e.deltaY;
+      if(Math.max(Math.abs(dx),Math.abs(dy))<24)return;
+      e.preventDefault(); wheelLock=true;
+      Math.abs(dx)>=Math.abs(dy) ? (dx>0?next():prev()) : (dy>0?next():prev());
+      setTimeout(()=>wheelLock=false,reduced?110:300);
+    },{passive:false});
+
+    let pointerStart=null;
+    stage.addEventListener('pointerdown',e=>{ if(e.pointerType==='mouse'&&e.button!==0)return; pointerStart={x:e.clientX,y:e.clientY}; stage.classList.add('dragging'); });
+    stage.addEventListener('pointerup',e=>{
+      if(!pointerStart)return;
+      stage.classList.remove('dragging');
+      const dx=e.clientX-pointerStart.x,dy=e.clientY-pointerStart.y; pointerStart=null;
+      if(Math.max(Math.abs(dx),Math.abs(dy))<48)return;
+      Math.abs(dx)>=Math.abs(dy)?(dx<0?next():prev()):(dy<0?next():prev());
+    });
+    stage.addEventListener('pointercancel',()=>{pointerStart=null;stage.classList.remove('dragging');});
+
+    function tick(){const d=new Date();document.getElementById('sessionClock').textContent=[d.getHours(),d.getMinutes(),d.getSeconds()].map(x=>String(x).padStart(2,'0')).join(':');}
+    tick(); setInterval(tick,1000);
+
+    /* Initial route remains hidden behind boot until unlock. */
+    goTo(1);
+  </script>
+</body>
+</html>
