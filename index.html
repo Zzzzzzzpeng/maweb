@@ -5,7 +5,9 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#141b1e">
   <meta name="description" content="Muhamad Arpan Kurnia — personal website, projects, research and public links.">
-  <title>PERSONAL // MUHAMAD ARPAN KURNIA</title>
+<title>Wagwan</title>
+
+<link rel="icon" type="image/svg+xml" href="assets/wagwan.svg">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,19 +22,31 @@
       --text:#dadada;
       --muted:#9aa3a5;
       --dim:#687174;
+
+      /* Everblush palette. */
       --green:#8ccf7e;
       --cyan:#6cbfbf;
+      --blue:#67b0e8;
       --orange:#fcb163;
       --yellow:#e5c76b;
       --red:#e57474;
       --purple:#c47fd5;
+
       --pixel:'Press Start 2P',monospace;
       --mono:'VT323',ui-monospace,Menlo,monospace;
     }
 
     *{box-sizing:border-box}
-    html,body{height:100%;margin:0}
-    html{scroll-behavior:smooth}
+
+    html,body{
+      height:100%;
+      margin:0;
+    }
+
+    html{
+      scroll-behavior:smooth;
+    }
+
     body{
       background:
         radial-gradient(circle at 20% 15%,rgba(252,177,99,.045),transparent 32%),
@@ -43,12 +57,35 @@
       overflow:hidden;
     }
 
-    a{color:inherit;text-decoration:none}
-    button,input{font:inherit;color:inherit}
-    button{background:none;border:0;cursor:pointer}
-    button:disabled{cursor:default}
-    :focus-visible{outline:2px solid var(--orange);outline-offset:3px}
-    ::selection{background:var(--orange);color:var(--bg)}
+    a{
+      color:inherit;
+      text-decoration:none;
+    }
+
+    button,input{
+      font:inherit;
+      color:inherit;
+    }
+
+    button{
+      background:none;
+      border:0;
+      cursor:pointer;
+    }
+
+    button:disabled{
+      cursor:default;
+    }
+
+    :focus-visible{
+      outline:2px solid var(--orange);
+      outline-offset:3px;
+    }
+
+    ::selection{
+      background:var(--orange);
+      color:var(--bg);
+    }
 
     /* CRT texture stays subtle so content remains readable. */
     .crt{
@@ -57,8 +94,16 @@
       pointer-events:none;
       z-index:90;
       background:
-        repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0 1px,transparent 1px 3px),
-        radial-gradient(ellipse at center,transparent 62%,rgba(0,0,0,.38));
+        repeating-linear-gradient(
+          0deg,
+          rgba(255,255,255,.025) 0 1px,
+          transparent 1px 3px
+        ),
+        radial-gradient(
+          ellipse at center,
+          transparent 62%,
+          rgba(0,0,0,.38)
+        );
       mix-blend-mode:screen;
     }
 
@@ -70,12 +115,30 @@
       height:18vh;
       pointer-events:none;
       z-index:91;
-      background:linear-gradient(transparent,rgba(252,177,99,.08),transparent);
+      background:
+        linear-gradient(
+          transparent,
+          rgba(252,177,99,.08),
+          transparent
+        );
       opacity:0;
     }
 
-    .scanline.active{animation:scan 1s linear}
-    @keyframes scan{from{transform:translateY(0);opacity:.8}to{transform:translateY(125vh);opacity:0}}
+    .scanline.active{
+      animation:scan 1s linear;
+    }
+
+    @keyframes scan{
+      from{
+        transform:translateY(0);
+        opacity:.8;
+      }
+
+      to{
+        transform:translateY(125vh);
+        opacity:0;
+      }
+    }
 
     .cursor{
       display:inline-block;
@@ -87,17 +150,28 @@
       animation:cursorBlink .72s steps(1) infinite;
       box-shadow:0 0 10px currentColor;
     }
-    @keyframes cursorBlink{50%{opacity:0}}
+
+    @keyframes cursorBlink{
+      50%{
+        opacity:0;
+      }
+    }
 
     .accent-green{color:var(--green)}
     .accent-cyan{color:var(--cyan)}
+    .accent-blue{color:var(--blue)}
     .accent-orange{color:var(--orange)}
     .accent-yellow{color:var(--yellow)}
+    .accent-red{color:var(--red)}
+    .accent-purple{color:var(--purple)}
     .muted{color:var(--muted)}
     .dim{color:var(--dim)}
     .small{font-size:17px}
 
-    /* Welcome screen. */
+    /* =========================================================
+       WELCOME
+       ========================================================= */
+
     #welcome{
       position:fixed;
       inset:0;
@@ -106,9 +180,15 @@
       place-items:center;
       padding:24px;
       background:
-        radial-gradient(circle at 50% 45%,rgba(140,207,126,.07),transparent 38%),
+        radial-gradient(
+          circle at 50% 45%,
+          rgba(140,207,126,.07),
+          transparent 38%
+        ),
         var(--bg);
-      transition:opacity .45s ease,visibility .45s ease;
+      transition:
+        opacity .45s ease,
+        visibility .45s ease;
     }
 
     #welcome.hidden{
@@ -140,7 +220,9 @@
       text-shadow:0 0 24px rgba(140,207,126,.2);
     }
 
-    .welcome-title span{color:var(--green)}
+    .welcome-title span{
+      color:var(--green);
+    }
 
     .welcome-copy{
       max-width:780px;
@@ -160,7 +242,9 @@
       opacity:0;
       transform:translateY(8px);
       pointer-events:none;
-      transition:opacity .22s ease,transform .22s ease;
+      transition:
+        opacity .22s ease,
+        transform .22s ease;
     }
 
     .welcome-next.show{
@@ -169,8 +253,15 @@
       pointer-events:auto;
     }
 
-    .arrow-blink{animation:arrowBlink .9s steps(1) infinite}
-    @keyframes arrowBlink{50%{opacity:.25}}
+    .arrow-blink{
+      animation:arrowBlink .9s steps(1) infinite;
+    }
+
+    @keyframes arrowBlink{
+      50%{
+        opacity:.25;
+      }
+    }
 
     .version{
       margin-top:52px;
@@ -178,7 +269,10 @@
       font-size:16px;
     }
 
-    /* App shell. */
+    /* =========================================================
+       APP SHELL
+       ========================================================= */
+
     #app{
       position:fixed;
       inset:0;
@@ -187,7 +281,9 @@
       opacity:0;
       pointer-events:none;
       transform:translateY(6px);
-      transition:opacity .3s ease,transform .3s ease;
+      transition:
+        opacity .3s ease,
+        transform .3s ease;
     }
 
     #app.active{
@@ -214,18 +310,39 @@
       font-size:16px;
     }
 
-    .route{min-width:0}
-    .route strong{color:var(--green)}
-    .route .path{color:var(--cyan)}
-    .clock{color:var(--dim);font-size:16px;white-space:nowrap}
+    .route{
+      min-width:0;
+    }
 
-    nav{display:flex;align-items:center;gap:4px}
+    .route strong{
+      color:var(--green);
+    }
+
+    .route .path{
+      color:var(--cyan);
+    }
+
+    .clock{
+      color:var(--dim);
+      font-size:16px;
+      white-space:nowrap;
+    }
+
+    nav{
+      display:flex;
+      align-items:center;
+      gap:4px;
+    }
+
     nav button{
       min-width:34px;
       height:30px;
       border:1px solid var(--line);
       color:var(--muted);
-      transition:border-color .15s,color .15s,background .15s;
+      transition:
+        border-color .15s,
+        color .15s,
+        background .15s;
     }
 
     nav button:hover:not(:disabled){
@@ -254,7 +371,10 @@
       opacity:0;
       visibility:hidden;
       transform:translateX(22px);
-      transition:opacity .2s ease,transform .2s ease,visibility .2s ease;
+      transition:
+        opacity .2s ease,
+        transform .2s ease,
+        visibility .2s ease;
     }
 
     .page.active{
@@ -278,7 +398,9 @@
       margin-bottom:10px;
     }
 
-    .prompt strong{color:var(--green)}
+    .prompt strong{
+      color:var(--green);
+    }
 
     .eyebrow{
       color:var(--orange);
@@ -302,7 +424,10 @@
       margin-bottom:24px;
     }
 
-    /* Persona. */
+    /* =========================================================
+       PERSONA
+       ========================================================= */
+
     .persona-head{
       display:grid;
       grid-template-columns:minmax(0,1.45fr) minmax(220px,.55fr);
@@ -336,30 +461,74 @@
       background:var(--bg);
       color:var(--orange);
       font-size:13px;
+      z-index:5;
     }
 
+    /*
+     * Everblush animated profile border.
+     * The image stays still while the border colours rotate:
+     * green -> cyan -> blue -> purple -> red -> orange -> yellow.
+     */
     .profile-frame{
       aspect-ratio:1;
       position:relative;
       overflow:hidden;
-      border:2px solid var(--orange);
-      background:linear-gradient(135deg,#252a27,#111719);
+      background:#0f1619;
+      box-shadow:
+        0 0 18px rgba(140,207,126,.12),
+        0 0 34px rgba(108,191,191,.06);
+    }
+
+    .profile-frame::before{
+      content:"";
+      position:absolute;
+      inset:-48%;
+      background:
+        conic-gradient(
+          from 0deg,
+          var(--green),
+          var(--cyan),
+          var(--blue),
+          var(--purple),
+          var(--red),
+          var(--orange),
+          var(--yellow),
+          var(--green)
+        );
+      animation:profileBorderSpin 7s linear infinite;
+      z-index:0;
+    }
+
+    @keyframes profileBorderSpin{
+      to{
+        transform:rotate(360deg);
+      }
     }
 
     .profile-frame img{
-      width:100%;
-      height:100%;
+      position:absolute;
+      inset:3px;
+      z-index:1;
+      width:calc(100% - 6px);
+      height:calc(100% - 6px);
       object-fit:cover;
       display:block;
+      background:#141b1e;
       filter:saturate(.95) contrast(1.04);
     }
 
     .profile-frame::after{
       content:"";
       position:absolute;
-      inset:0;
+      inset:3px;
+      z-index:2;
       pointer-events:none;
-      background:repeating-linear-gradient(0deg,rgba(255,255,255,.035) 0 1px,transparent 1px 3px);
+      background:
+        repeating-linear-gradient(
+          0deg,
+          rgba(255,255,255,.035) 0 1px,
+          transparent 1px 3px
+        );
     }
 
     .profile-caption{
@@ -384,7 +553,12 @@
       animation:reveal .32s ease forwards;
     }
 
-    @keyframes reveal{to{opacity:1;transform:none}}
+    @keyframes reveal{
+      to{
+        opacity:1;
+        transform:none;
+      }
+    }
 
     .bio-key{
       display:block;
@@ -400,7 +574,10 @@
       max-width:850px;
     }
 
-    /* Generic index box used for projects and research lists. */
+    /* =========================================================
+       GENERIC INDEX / PANELS
+       ========================================================= */
+
     .index-layout{
       display:grid;
       grid-template-columns:minmax(280px,.75fr) minmax(0,1.25fr);
@@ -444,7 +621,10 @@
       text-align:left;
       padding:13px 14px;
       border-bottom:1px dashed var(--line);
-      transition:background .15s,transform .15s,border-color .15s;
+      transition:
+        background .15s,
+        transform .15s,
+        border-color .15s;
     }
 
     .list-item:hover,
@@ -544,13 +724,17 @@
       color:var(--green);
       padding:6px 11px;
       font-size:18px;
-      transition:background .15s,color .15s,box-shadow .15s;
+      transition:
+        background .15s,
+        color .15s,
+        box-shadow .15s;
     }
 
     .btn:hover{
       background:var(--green);
       color:var(--bg);
-      box-shadow:0 0 18px rgba(140,207,126,.22);
+      box-shadow:
+        0 0 18px rgba(140,207,126,.22);
     }
 
     .btn.orange{
@@ -563,13 +747,9 @@
       color:var(--bg);
     }
 
-    /* PDF preview. */
-    .paper-preview{
-      height:100%;
-      display:grid;
-      grid-template-rows:auto 1fr;
-      min-height:0;
-    }
+    /* =========================================================
+       PDF BASICS
+       ========================================================= */
 
     .pdf-stage{
       min-height:0;
@@ -578,16 +758,18 @@
     }
 
     .pdf-stage iframe{
+      display:block;
       width:100%;
       height:100%;
-      min-height:480px;
+      min-height:0;
       border:1px solid var(--line);
       background:#0a0d0e;
     }
 
     .pdf-placeholder{
+      width:100%;
       height:100%;
-      min-height:480px;
+      min-height:0;
       border:1px dashed var(--line);
       display:grid;
       place-items:center;
@@ -596,7 +778,125 @@
       color:var(--dim);
     }
 
-    /* Social page. */
+    /* =========================================================
+       RESEARCH
+       1 = PAPER INDEX
+       2 = PAPER INFORMATION
+       3 = PDF PREVIEW
+       ========================================================= */
+
+    .page[data-page="2"] .page-inner{
+      width:min(1500px,100%);
+    }
+
+    .page[data-page="2"] .index-layout{
+      display:grid;
+
+      /*
+       * PDF gets the largest portion.
+       *
+       * 1 = 0.75
+       * 2 = 1
+       * 3 = 2.35
+       */
+      grid-template-columns:
+        minmax(200px,.75fr)
+        minmax(280px,1fr)
+        minmax(0,2.35fr);
+
+      gap:18px;
+      min-height:calc(100vh - 265px);
+      align-items:stretch;
+    }
+
+    /* =========================================================
+       RESEARCH — COLUMN 1
+       PAPER INDEX
+       ========================================================= */
+
+    .page[data-page="2"] .paper-index{
+      min-width:0;
+      min-height:0;
+      height:calc(100vh - 265px);
+      overflow:hidden;
+    }
+
+    .page[data-page="2"] .paper-index .scroll-list{
+      height:calc(100% - 40px);
+      max-height:none;
+      overflow-y:auto;
+      overflow-x:hidden;
+    }
+
+    /* =========================================================
+       RESEARCH — COLUMN 2
+       PAPER INFORMATION
+       ========================================================= */
+
+    .page[data-page="2"] .paper-info{
+      min-width:0;
+      min-height:0;
+      height:calc(100vh - 265px);
+      overflow:hidden;
+      display:grid;
+      grid-template-rows:auto minmax(0,1fr);
+    }
+
+    .page[data-page="2"] .paper-info .detail{
+      width:100%;
+      height:100%;
+      max-height:none;
+      min-height:0;
+      padding:20px;
+      overflow-y:auto;
+      overflow-x:hidden;
+    }
+
+    /* =========================================================
+       RESEARCH — COLUMN 3
+       PDF PREVIEW
+       ========================================================= */
+
+    .page[data-page="2"] .paper-pdf{
+      min-width:0;
+      min-height:0;
+      height:calc(100vh - 265px);
+      overflow:hidden;
+
+      display:grid;
+      grid-template-rows:auto minmax(0,1fr);
+    }
+
+    .page[data-page="2"] #paperViewer{
+      width:100%;
+      height:100%;
+      min-width:0;
+      min-height:0;
+      padding:10px;
+      background:#0d1113;
+      overflow:hidden;
+    }
+
+    .page[data-page="2"] #paperViewer iframe{
+      display:block;
+      width:100%;
+      height:100%;
+      min-width:0;
+      min-height:0;
+      border:1px solid var(--line);
+      background:#0a0d0e;
+    }
+
+    .page[data-page="2"] #paperViewer .pdf-placeholder{
+      width:100%;
+      height:100%;
+      min-height:0;
+    }
+
+    /* =========================================================
+       SOCIAL
+       ========================================================= */
+
     .social-grid{
       display:grid;
       grid-template-columns:repeat(2,minmax(0,1fr));
@@ -609,13 +909,22 @@
       padding:18px;
       min-height:120px;
       background:rgba(17,23,25,.56);
-      transition:transform .15s,border-color .15s,box-shadow .15s;
+      transition:
+        transform .15s,
+        border-color .15s,
+        box-shadow .15s;
     }
 
     .social-card:hover{
       transform:translateY(-3px);
       border-color:var(--accent,var(--green));
-      box-shadow:0 0 22px color-mix(in srgb,var(--accent,var(--green)) 18%,transparent);
+      box-shadow:
+        0 0 22px
+        color-mix(
+          in srgb,
+          var(--accent,var(--green)) 18%,
+          transparent
+        );
     }
 
     .social-card strong{
@@ -636,7 +945,10 @@
       font-size:18px;
     }
 
-    /* Support page. */
+    /* =========================================================
+       SUPPORT
+       ========================================================= */
+
     .support-wrap{
       max-width:900px;
     }
@@ -672,7 +984,10 @@
       cursor:default;
     }
 
-    /* Sleep overlay. */
+    /* =========================================================
+       SLEEP
+       ========================================================= */
+
     #sleep{
       position:fixed;
       inset:0;
@@ -684,7 +999,9 @@
       opacity:0;
       visibility:hidden;
       pointer-events:none;
-      transition:opacity .35s ease,visibility .35s ease;
+      transition:
+        opacity .35s ease,
+        visibility .35s ease;
     }
 
     #sleep.active{
@@ -712,7 +1029,10 @@
     }
 
     @keyframes sleepPulse{
-      50%{transform:scale(1.04);box-shadow:0 0 42px rgba(252,177,99,.2)}
+      50%{
+        transform:scale(1.04);
+        box-shadow:0 0 42px rgba(252,177,99,.2);
+      }
     }
 
     .sleep-title{
@@ -739,751 +1059,2158 @@
       margin-top:18px;
     }
 
-    /* Responsive layout. */
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+
+    @media(max-width:1100px){
+      .page[data-page="2"] .index-layout{
+        grid-template-columns:
+          minmax(180px,.7fr)
+          minmax(250px,.95fr)
+          minmax(0,1.8fr);
+        gap:14px;
+      }
+    }
+
     @media(max-width:920px){
-      .persona-head,
-      .index-layout{
+      .persona-head{
         grid-template-columns:1fr;
       }
 
-      .profile-box{justify-self:start;max-width:240px}
-      .index-layout{min-height:auto}
-      .scroll-list,.detail{max-height:none;height:auto}
-      .scroll-list{max-height:42vh}
-      .detail{max-height:none}
-      .pdf-stage{min-height:70vh}
-      .social-grid,.support-grid{grid-template-columns:1fr}
+      .profile-box{
+        justify-self:start;
+        max-width:240px;
+      }
+
+      .social-grid,
+      .support-grid{
+        grid-template-columns:1fr;
+      }
+
+      /*
+       * Research still stays 1 | 2 | 3 while there
+       * is enough horizontal space.
+       */
+      .page[data-page="2"] .index-layout{
+        grid-template-columns:
+          minmax(165px,.7fr)
+          minmax(230px,.95fr)
+          minmax(0,1.45fr);
+        gap:12px;
+        min-height:calc(100vh - 245px);
+      }
+
+      .page[data-page="2"] .paper-index,
+      .page[data-page="2"] .paper-info,
+      .page[data-page="2"] .paper-pdf{
+        height:calc(100vh - 245px);
+      }
+
+      .page[data-page="2"] .paper-info .detail{
+        padding:16px;
+      }
+
+      .page[data-page="2"] #paperViewer{
+        padding:7px;
+      }
+
+      .page[data-page="2"] #paperViewer iframe{
+        min-height:0;
+      }
+    }
+
+    @media(max-width:760px){
+      .page[data-page="2"] .index-layout{
+        grid-template-columns:1fr;
+        gap:12px;
+        min-height:0;
+      }
+
+      .page[data-page="2"] .paper-index{
+        height:175px;
+        max-height:175px;
+      }
+
+      .page[data-page="2"] .paper-index .scroll-list{
+        height:calc(100% - 40px);
+        max-height:none;
+      }
+
+      .page[data-page="2"] .paper-info{
+        height:250px;
+      }
+
+      .page[data-page="2"] .paper-pdf{
+        height:72vh;
+        min-height:520px;
+      }
+
+      .page[data-page="2"] #paperViewer{
+        padding:7px;
+      }
     }
 
     @media(max-width:680px){
-      header{padding:7px 9px}
-      .clock{display:none}
-      .page{padding:20px 14px}
-      .welcome-wrap{min-height:78vh}
-      .welcome-copy{font-size:21px}
-      .welcome-title{font-size:clamp(30px,12vw,58px)}
-      .pdf-stage iframe{min-height:58vh}
-      .pdf-placeholder{min-height:58vh}
-      nav button{min-width:30px}
-      footer{font-size:14px}
+      header{
+        padding:7px 9px;
+      }
+
+      .clock{
+        display:none;
+      }
+
+      .page{
+        padding:20px 14px;
+      }
+
+      .welcome-wrap{
+        min-height:78vh;
+      }
+
+      .welcome-copy{
+        font-size:21px;
+      }
+
+      .welcome-title{
+        font-size:clamp(30px,12vw,58px);
+      }
+
+      nav button{
+        min-width:30px;
+      }
+
+      footer{
+        font-size:14px;
+      }
+
+      .profile-frame::before{
+        animation-duration:8s;
+      }
     }
 
     @media(prefers-reduced-motion:reduce){
-      *,*::before,*::after{
+      *,
+      *::before,
+      *::after{
         animation-duration:.001ms!important;
         animation-iteration-count:1!important;
         transition-duration:.001ms!important;
       }
-      .cursor{animation:none}
-      .welcome-next{transition:none}
+
+      .cursor{
+        animation:none;
+      }
+
+      .welcome-next{
+        transition:none;
+      }
     }
   </style>
 </head>
 
 <body>
+
   <div class="crt" aria-hidden="true"></div>
   <div class="scanline" id="scanline" aria-hidden="true"></div>
 
-  <!-- The landing screen introduces the site without pretending to be an operating system. -->
+  <!-- =======================================================
+       WELCOME
+       ======================================================= -->
+
   <section id="welcome" aria-label="Welcome screen">
     <div class="welcome-wrap">
-      <div class="terminal-label">visitor@personal:~$ ./welcome</div>
-      <h1 class="welcome-title">WELCOME<span>.</span></h1>
-      <div class="welcome-copy" id="welcomeCopy" aria-live="polite"></div>
 
-      <button class="welcome-next" id="welcomeNext" type="button" aria-label="Continue to persona">
+      <div class="terminal-label">
+        visitor@personal:~$ ./welcome
+      </div>
+
+      <h1 class="welcome-title">
+        WELCOME<span>.</span>
+      </h1>
+
+      <div
+        class="welcome-copy"
+        id="welcomeCopy"
+        aria-live="polite"
+      ></div>
+
+      <button
+        class="welcome-next"
+        id="welcomeNext"
+        type="button"
+        aria-label="Continue to persona"
+      >
         <span class="arrow-blink">→</span>
-        <span>continue to persona</span>
+        <span>Start inference pipeline</span>
       </button>
 
-      <div class="version">version 1.1 · personal website</div>
+      <div class="version">
+        version 1.1 · personal website
+      </div>
+
     </div>
   </section>
 
-  <!-- The main application shell only provides navigation and page framing. -->
+  <!-- =======================================================
+       MAIN APP
+       ======================================================= -->
+
   <div id="app" aria-hidden="true">
+
     <header>
+
       <div class="route">
-        <strong>visitor@personal</strong>:<span class="path">~</span>$ <span id="routeCommand">./persona</span>
+        <strong>visitor@personal</strong>:<span class="path">~</span>$
+        <span id="routeCommand">./persona</span>
       </div>
 
-      <div class="clock" id="clock">--:--:--</div>
+      <div class="clock" id="clock">
+        --:--:--
+      </div>
 
       <nav aria-label="Pages">
-        <button id="prevPage" type="button" aria-label="Previous page">←</button>
+
+        <button
+          id="prevPage"
+          type="button"
+          aria-label="Previous page"
+        >
+          ←
+        </button>
+
         <span id="pageNav"></span>
-        <button id="nextPage" type="button" aria-label="Next page">→</button>
-        <button id="sleepButton" type="button" aria-label="Put site to sleep" title="Sleep">⏻</button>
+
+        <button
+          id="nextPage"
+          type="button"
+          aria-label="Next page"
+        >
+          →
+        </button>
+
+        <button
+          id="sleepButton"
+          type="button"
+          aria-label="Put site to sleep"
+          title="Sleep"
+        >
+          ⏻
+        </button>
+
       </nav>
+
     </header>
 
     <main id="main">
-      <!-- Persona is the only section that displays the full name. -->
-      <section class="page active" data-page="0" aria-label="Persona">
+
+      <!-- =====================================================
+           PERSONA
+           ===================================================== -->
+
+      <section
+        class="page active"
+        data-page="0"
+        aria-label="Persona"
+      >
         <div class="page-inner">
-          <div class="prompt"><strong>visitor@personal</strong>:~$ cat ./persona.md</div>
-          <div class="eyebrow">/persona</div>
+
+          <div class="prompt">
+            <strong>visitor@personal</strong>:~$ cat ./persona.md
+          </div>
+
+          <div class="eyebrow">
+            /persona
+          </div>
 
           <div class="persona-head">
+
             <div>
-              <h1 class="persona-name">MUHAMAD ARPAN KURNIA</h1>
-              <div class="bio-stream" id="bioStream"></div>
+
+              <h2 class="persona-name">
+                MUHAMAD ARPAN KURNIA
+              </h2>
+
+              <div
+                class="bio-stream"
+                id="bioStream"
+              ></div>
+
             </div>
 
-            <aside class="profile-box" aria-label="Profile">
+            <aside
+              class="profile-box"
+              aria-label="Profile"
+            >
+
               <div class="profile-frame">
-                <img id="profileImage" src="assets/kaguya1.gif" alt="Profile portrait" loading="lazy">
+
+                <img
+                  id="profileImage"
+                  src="assets/kaguya1.gif"
+                  alt="Profile portrait"
+                  loading="lazy"
+                >
+
               </div>
-              <div class="profile-caption">personal profile · local asset</div>
+
+              <div class="profile-caption">
+                personal profile · local asset
+              </div>
+
             </aside>
+
           </div>
         </div>
       </section>
 
-      <!-- Lab is exclusively for projects and remains scalable through an internal list. -->
-      <section class="page" data-page="1" aria-label="Lab projects">
+      <!-- =====================================================
+           LAB
+           ===================================================== -->
+
+      <section
+        class="page"
+        data-page="1"
+        aria-label="Lab projects"
+      >
         <div class="page-inner">
-          <div class="prompt"><strong>visitor@personal</strong>:~$ ls ./lab</div>
-          <div class="eyebrow">/lab</div>
-          <h1>PROJECTS</h1>
+
+          <div class="prompt">
+            <strong>visitor@personal</strong>:~$ ls ./lab
+          </div>
+
+          <div class="eyebrow">
+            /lab
+          </div>
+
+          <h1>
+            PROJECTS
+          </h1>
+
           <p class="section-lead">
             Projects, experiments and software work. The index scrolls independently so the page stays usable when the archive grows.
           </p>
 
           <div class="index-layout">
+
             <section class="panel">
+
               <div class="panel-title">
                 <span>PROJECT INDEX</span>
                 <span id="projectCount">00</span>
               </div>
-              <div class="scroll-list" id="projectList"></div>
+
+              <div
+                class="scroll-list"
+                id="projectList"
+              ></div>
+
             </section>
 
             <section class="panel">
-              <div class="panel-title">PROJECT DETAIL</div>
-              <div class="detail" id="projectDetail"></div>
+
+              <div class="panel-title">
+                PROJECT DETAIL
+              </div>
+
+              <div
+                class="detail"
+                id="projectDetail"
+              ></div>
+
             </section>
+
           </div>
         </div>
       </section>
 
-      <!-- Research has its own archive and only loads the selected PDF into the viewer. -->
-      <section class="page" data-page="2" aria-label="Research papers">
+      <!-- =====================================================
+           RESEARCH
+           1 | PAPER INDEX
+           2 | PAPER INFORMATION
+           3 | PDF PREVIEW
+           ===================================================== -->
+
+      <section
+        class="page"
+        data-page="2"
+        aria-label="Research papers"
+      >
         <div class="page-inner">
-          <div class="prompt"><strong>visitor@personal</strong>:~$ ls ./research</div>
-          <div class="eyebrow">/research</div>
-          <h1>RESEARCH ARCHIVE</h1>
+
+          <div class="prompt">
+            <strong>visitor@personal</strong>:~$ ls ./research
+          </div>
+
+          <div class="eyebrow">
+            /research
+          </div>
+
+          <h1>
+            RESEARCH ARCHIVE
+          </h1>
+
           <p class="section-lead">
-            Papers are listed separately from projects. Select a record to preview its local PDF, then open the file directly when needed.
+            Papers are listed separately from projects. Select a record to view its information and local PDF.
           </p>
 
           <div class="index-layout">
-            <section class="panel">
+
+            <!-- =================================================
+                 1. PAPER INDEX
+                 ================================================= -->
+
+            <section class="panel paper-index">
+
               <div class="panel-title">
                 <span>PAPER INDEX</span>
                 <span id="paperCount">00</span>
               </div>
-              <div class="scroll-list" id="paperList"></div>
+
+              <div
+                class="scroll-list"
+                id="paperList"
+              ></div>
+
             </section>
 
-            <section class="panel paper-preview">
+            <!-- =================================================
+                 2. PAPER INFORMATION
+                 ================================================= -->
+
+            <section class="panel paper-info">
+
               <div class="panel-title">
-                <span>PAPER PREVIEW</span>
-                <span id="paperState">READY</span>
+
+                <span>
+                  PAPER INFORMATION
+                </span>
+
+                <span id="paperState">
+                  READY
+                </span>
+
               </div>
-              <div class="detail" id="paperDetail">
+
+              <div
+                class="detail"
+                id="paperInfo"
+              >
                 <div class="detail-empty">
-                  <div>Select a paper from the archive.</div>
+
+                  <div>
+                    Select a paper from the archive.
+                  </div>
+
                 </div>
               </div>
+
             </section>
+
+            <!-- =================================================
+                 3. PDF PREVIEW
+                 ================================================= -->
+
+            <section class="panel paper-pdf">
+
+              <div class="panel-title">
+                <span>
+                  PDF PREVIEW
+                </span>
+              </div>
+
+              <div id="paperViewer">
+
+                <div class="pdf-placeholder">
+                  Select a paper from the archive.
+                </div>
+
+              </div>
+
+            </section>
+
           </div>
         </div>
       </section>
 
-      <!-- Social contains only public profiles and links. -->
-      <section class="page" data-page="3" aria-label="Social media">
+      <!-- =====================================================
+           SOCIAL
+           ===================================================== -->
+
+      <section
+        class="page"
+        data-page="3"
+        aria-label="Social media"
+      >
         <div class="page-inner">
-          <div class="prompt"><strong>visitor@personal</strong>:~$ ls ./social</div>
-          <div class="eyebrow">/social</div>
-          <h1>SOCIAL</h1>
+
+          <div class="prompt">
+            <strong>visitor@personal</strong>:~$ ls ./social
+          </div>
+
+          <div class="eyebrow">
+            /social
+          </div>
+
+          <h1>
+            SOCIAL
+          </h1>
+
           <p class="section-lead">
             Public profiles, code and activity. One card per service, no moving carousel, no duplicated links.
           </p>
 
-          <div class="social-grid" id="socialGrid"></div>
+          <div
+            class="social-grid"
+            id="socialGrid"
+          ></div>
+
         </div>
       </section>
 
-      <!-- Support contains payment methods only. -->
-      <section class="page" data-page="4" aria-label="Support">
+      <!-- =====================================================
+           SUPPORT
+           ===================================================== -->
+
+      <section
+        class="page"
+        data-page="4"
+        aria-label="Support"
+      >
         <div class="page-inner support-wrap">
-          <div class="prompt"><strong>visitor@personal</strong>:~$ ./support</div>
-          <div class="eyebrow">/support</div>
-          <h1>SUPPORT</h1>
+
+          <div class="prompt">
+            <strong>visitor@personal</strong>:~$ ./support
+          </div>
+
+          <div class="eyebrow">
+            /support
+          </div>
+
+          <h1>
+            SUPPORT
+          </h1>
+
           <p class="section-lead">
             If something here helped you, support is appreciated. Nothing is required.
           </p>
 
-          <div class="support-grid" id="supportGrid"></div>
+          <div
+            class="support-grid"
+            id="supportGrid"
+          ></div>
+
         </div>
       </section>
+
     </main>
 
     <footer>
-      <span>← → navigate · 1–5 jump · Esc sleep</span>
-      <span id="pageIndicator" class="accent-green">PERSONA</span>
+
+      <span>
+        ← → navigate · 1–5 jump · Esc sleep
+      </span>
+
+      <span
+        id="pageIndicator"
+        class="accent-green"
+      >
+        PERSONA
+      </span>
+
     </footer>
+
   </div>
 
-  <!-- Sleep mode keeps the screen interactive without using a fake hardware boot sequence. -->
-  <section id="sleep" aria-hidden="true">
+  <!-- =======================================================
+       SLEEP
+       ======================================================= -->
+
+  <section
+    id="sleep"
+    aria-hidden="true"
+  >
+
     <div class="sleep-inner">
-      <div class="sleep-mark" aria-hidden="true">⏻</div>
-      <h2 class="sleep-title">SESSION SLEEPING</h2>
+
+      <div
+        class="sleep-mark"
+        aria-hidden="true"
+      >
+        ⏻
+      </div>
+
+      <h2 class="sleep-title">
+        SESSION SLEEPING
+      </h2>
+
       <div class="sleep-copy">
         The page is resting. Your position is preserved.
       </div>
+
       <div class="sleep-hint">
-        press <span class="accent-yellow">ENTER</span> to wake
+        press
+        <span class="accent-yellow">ENTER</span>
+        to wake
+
         <span class="dim">·</span>
+
         or use the button
       </div>
+
       <div class="sleep-actions">
-        <button class="btn orange" id="wakeButton" type="button">[ WAKE ]</button>
+
+        <button
+          class="btn orange"
+          id="wakeButton"
+          type="button"
+        >
+          [ WAKE ]
+        </button>
+
       </div>
+
     </div>
+
   </section>
 
   <script>
-    /* Owner configuration. Replace only the values you want to customise. */
+    /* =========================================================
+       CONFIGURATION
+       ========================================================= */
+
     const CONFIG = {
-      profileImage: "assets/kaguya1.gif",
+
+      profileImage:
+        "assets/kaguya1.gif",
+
       socials: {
-        github: "https://github.com/Zzzzzzzpeng/Zzzzzzzpeng",
-        youtube: "",
-        wakatime: ""
+
+        github:
+          "https://github.com/Zzzzzzzpeng/Zzzzzzzpeng",
+
+        youtube:
+          "",
+
+        wakatime:
+          ""
       },
+
       payments: {
-        paypal: "",
-        kofi: "",
+
+        paypal:
+          "",
+
+        kofi:
+          "",
+
         bank: {
-          bankName: "",
-          accountName: "",
-          accountNumber: ""
+
+          bankName:
+            "",
+
+          accountName:
+            "",
+
+          accountNumber:
+            ""
         },
-        bitcoin: ""
+
+        bitcoin:
+          ""
       }
     };
 
-    /* Persona content is intentionally restricted to the persona page. */
-    const PERSONA = [
-      ["ABOUT",
-        "I am building a personal path around software, Linux, automation, local AI, computer vision, and the systems that connect them. I like understanding how things work beneath the polished surface, then turning that understanding into something I can actually use."],
-      ["HOW I WORK",
-        "I learn by building, breaking, tracing the problem, fixing it, and writing down what happened. Projects are part of the learning process rather than a separate stage after learning, so experiments, notes, prototypes and finished work all belong in the same timeline."],
-      ["CURRENT FOCUS",
-        "My current focus includes computer vision, local AI, computer-use agents, automation, system control and practical software engineering. I also spend a lot of time around Linux, terminals, developer tooling, databases and the small details that make a system feel dependable."],
-      ["NEXT DIRECTION",
-        "The longer-term direction moves closer to lower-level computing: C and C++, Rust, embedded systems, robotics, ROS, Arduino, Raspberry Pi, computer architecture, RTL and HDL, FPGA work, and eventually RISC-V."],
-      ["WHY THIS SITE EXISTS",
-        "i don't know bruv !!"]
-    ];
+    /* =========================================================
+       PERSONA
+       ========================================================= */
 
-    /* Projects remain data-driven so the list can scale without changing the layout. */
-    const PROJECTS = [
-      {
-        title:"Computer Vision Learning",
-        category:"COMPUTER VISION",
-        status:"learning",
-        description:"Learning notes and experiments in computer vision.",
-        technologies:["Python","OpenCV"],
-        url:"https://github.com/Zzzzzzzpeng/computer-vision-learning"
-      },
-      {
-        title:"Dotrice",
-        category:"PYTHON",
-        status:"active",
-        description:"A Python project and continuing experiment.",
-        technologies:["Python"],
-        url:"https://github.com/Zzzzzzzpeng/Dotrice"
-      },
-      {
-        title:"Capstone Project, Kelompok B",
-        category:"CAPSTONE",
-        status:"final project",
-        description:"Final project for the Bachelor of Information Systems programme.",
-        technologies:["HTML","CSS","JavaScript"],
-        url:"https://github.com/Zzzzzzzpeng/CAPSTONE_PROJECT_KELOMPOK_B"
-      },
-      {
-        title:"maweb",
-        category:"WEB",
-        status:"live",
-        description:"The retro personal website currently being refined.",
-        technologies:["HTML","CSS","JavaScript"],
-        url:"https://github.com/Zzzzzzzpeng/maweb"
-      }
-    ];
+const PERSONA = [
 
-    /* Two local paper examples are included so the archive works immediately. */
-const PAPERS = [
-  {
-    year:"2026",
-    title:"Sumber Aquarium PGK",
-    topic:"Information Systems",
-    status:"capstone",
-    description:"An Information Systems capstone project for managing inventory, sales, fish mortality records, and operational history in an ornamental fish shop.",
-    abstract:"Sumber Aquarium PGK is a web-based Information System developed as a Capstone Project for the S1 Information Systems programme at Universitas Terbuka. The system integrates fish inventory management, sales recording, mortality recording, operational history, dashboard reporting, session-based authentication, and PostgreSQL database management.",
-    pdf:"paper/capstone_project/cp.pdf",
-    href:"paper/capstone_project/cp.pdf"
-  }
+  [
+    "ABOUT",
+
+    "I am an Information Systems student building my way through software engineering, Linux, automation, computer vision, local AI, and the systems around them. I prefer learning by actually building things, because reading documentation without eventually breaking something is apparently considered suspicious in engineering."
+  ],
+
+  [
+    "HOW I WORK",
+
+    "Most of my work starts as an experiment. I build a small thing, observe what happens, trace the failure, change the implementation, and repeat. I care about understanding the layer underneath the interface, whether that means following a process through a codebase, inspecting a database, working from the terminal, or figuring out why a perfectly reasonable piece of code decided to become unreasonable."
+  ],
+
+  [
+    "CURRENT FOCUS",
+
+    "My current interests sit around computer vision, local AI, computer-use agents, automation, system control, and practical software engineering. I am particularly interested in how models interact with real software and operating-system environments, rather than treating AI as something that only exists inside a chat box."
+  ],
+
+  [
+    "ENGINEERING STACK",
+
+    "Linux is a major part of my workflow, especially the terminal, developer tooling, Git, scripting, databases, and system-level configuration. I work primarily around Python and web technologies while continuing to explore C, C++, Rust, computer vision, and the lower-level concepts that make higher-level software possible."
+  ],
+
+  [
+    "RESEARCH & PROJECTS",
+
+    "My projects range from personal web experiments and computer-vision studies to Information Systems development through my university capstone. I keep research and implementation close together because a prototype is often the fastest way to discover whether an idea actually survives contact with reality."
+  ],
+
+  [
+    "NEXT DIRECTION",
+
+    "The longer-term direction is moving closer to systems and hardware: C and C++, Rust, embedded systems, robotics, ROS, Arduino, Raspberry Pi, computer architecture, RTL and HDL, FPGA development, and eventually RISC-V. The goal is to understand more of the stack, from software behaviour down towards the hardware executing it."
+  ],
+
+  [
+    "WHY THIS SITE EXISTS",
+
+    "This site is a personal index of what I am learning, building, researching, and experimenting with. It is not meant to pretend that everything here is finished. Some things are projects, some are experiments, and some are simply evidence that I went down another technical rabbit hole."
+  ]
+
 ];
+    /* =========================================================
+       PROJECTS
+       ========================================================= */
 
-    /* Social services are rendered only when a real URL is configured. */
-    const SOCIALS = [
-      ["github","GITHUB","code / repositories","#8ccf7e"],
-      ["youtube","YOUTUBE","videos / demonstrations","#e57474"],
-      ["wakatime","WAKATIME","coding activity","#6cbfbf"]
-    ];
+    const PROJECTS = [
 
-    /* Support methods remain independent from the persona and social pages. */
-    const SUPPORT = [
-      ["paypal","PAYPAL","direct support", "#6cbfbf"],
-      ["kofi","KO-FI","tips / support", "#e57474"],
-      ["bank","BANK TRANSFER","account details", "#8ccf7e"],
-      ["bitcoin","BITCOIN","public address", "#fcb163"]
-    ];
+      {
+        title:
+          "Computer Vision Learning",
 
-    /* Small DOM helpers keep the code readable. */
-    const $ = selector => document.querySelector(selector);
-    const $$ = selector => [...document.querySelectorAll(selector)];
+        category:
+          "COMPUTER VISION",
 
-    const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+        status:
+          "learning",
 
-    const safeUrl = value => {
-      if (!value || typeof value !== "string") return "";
-      try{
-        const url = new URL(value, window.location.href);
-        if (["http:","https:"].includes(url.protocol)) return url.href;
-        if (url.protocol === "file:") return url.href;
-        return "";
-      }catch{
-        return "";
+        description:
+          "Learning notes and experiments in computer vision.",
+
+        technologies:
+          [
+            "Python",
+            "OpenCV"
+          ],
+
+        url:
+          "https://github.com/Zzzzzzzpeng/computer-vision-learning"
+      },
+
+      {
+        title:
+          "Dotrice",
+
+        category:
+          "PYTHON",
+
+        status:
+          "active",
+
+        description:
+          "A Python project and continuing experiment.",
+
+        technologies:
+          [
+            "Python"
+          ],
+
+        url:
+          "https://github.com/Zzzzzzzpeng/Dotrice"
+      },
+
+      {
+        title:
+          "Capstone Project, Kelompok B",
+
+        category:
+          "CAPSTONE",
+
+        status:
+          "final project",
+
+        description:
+          "Final project for the Bachelor of Information Systems programme.",
+
+        technologies:
+          [
+            "HTML",
+            "CSS",
+            "JavaScript"
+          ],
+
+        url:
+          "https://github.com/Zzzzzzzpeng/CAPSTONE_PROJECT_KELOMPOK_B"
+      },
+
+      {
+        title:
+          "maweb",
+
+        category:
+          "WEB",
+
+        status:
+          "live",
+
+        description:
+          "The retro personal website currently being refined.",
+
+        technologies:
+          [
+            "HTML",
+            "CSS",
+            "JavaScript"
+          ],
+
+        url:
+          "https://github.com/Zzzzzzzpeng/maweb"
       }
-    };
 
-    const esc = value => String(value ?? "").replace(/[&<>"']/g, char => ({
-      "&":"&amp;",
-      "<":"&lt;",
-      ">":"&gt;",
-      '"':"&quot;",
-      "'":"&#39;"
-    }[char]));
+    ];
 
-    /* The welcome message is the only long typewriter animation on the site. */
-    const WELCOME_TEXT =
-      "Thanks for coming by. This is a small personal space for the things I build, study, experiment with, and occasionally break while figuring out how they work. Have a look around, take your time, and follow the trail.";
+    /* =========================================================
+       PAPERS
+       ========================================================= */
 
-    let welcomeFinished = false;
-    let currentPage = 0;
-    let previousPage = 0;
-    let sleeping = false;
+    const PAPERS = [
 
-    /* Type one sentence into one element and keep a single cursor at the end. */
-    async function typeText(target, text, speed = 18){
+      {
+        year:
+          "2026",
+
+        title:
+          "Sumber Aquarium PGK",
+
+        topic:
+          "Information Systems",
+
+        status:
+          "capstone",
+
+        description:
+          "An Information Systems capstone project for managing inventory, sales, fish mortality records, and operational history in an ornamental fish shop.",
+
+        abstract:
+          "Sumber Aquarium PGK is a web-based Information System developed as a Capstone Project for the S1 Information Systems programme at Universitas Terbuka. The system integrates fish inventory management, sales recording, mortality recording, operational history, dashboard reporting, session-based authentication, and PostgreSQL database management.",
+
+        pdf:
+          "paper/capstone_project/cp.pdf",
+
+        href:
+          "paper/capstone_project/cp.pdf"
+      }
+
+    ];
+
+    /* =========================================================
+       SOCIALS
+       ========================================================= */
+
+    const SOCIALS = [
+
+      [
+        "github",
+        "GITHUB",
+        "code / repositories",
+        "#8ccf7e"
+      ],
+
+      [
+        "youtube",
+        "YOUTUBE",
+        "videos / demonstrations",
+        "#e57474"
+      ],
+
+      [
+        "wakatime",
+        "WAKATIME",
+        "coding activity",
+        "#6cbfbf"
+      ]
+
+    ];
+
+    /* =========================================================
+       SUPPORT
+       ========================================================= */
+
+    const SUPPORT = [
+
+      [
+        "paypal",
+        "PAYPAL",
+        "direct support",
+        "#6cbfbf"
+      ],
+
+      [
+        "kofi",
+        "KO-FI",
+        "tips / support",
+        "#e57474"
+      ],
+
+      [
+        "bank",
+        "BANK TRANSFER",
+        "account details",
+        "#8ccf7e"
+      ],
+
+      [
+        "bitcoin",
+        "BITCOIN",
+        "public address",
+        "#fcb163"
+      ]
+
+    ];
+
+    /* =========================================================
+       DOM HELPERS
+       ========================================================= */
+
+    const $ =
+      selector =>
+        document.querySelector(selector);
+
+    const $$ =
+      selector =>
+        [
+          ...document.querySelectorAll(selector)
+        ];
+
+    const sleep =
+      ms =>
+        new Promise(
+          resolve =>
+            setTimeout(resolve,ms)
+        );
+
+    const safeUrl =
+      value => {
+
+        if(
+          !value ||
+          typeof value !== "string"
+        ){
+          return "";
+        }
+
+        try{
+
+          const url =
+            new URL(
+              value,
+              window.location.href
+            );
+
+          if(
+            ["http:","https:"]
+              .includes(url.protocol)
+          ){
+            return url.href;
+          }
+
+          if(
+            url.protocol === "file:"
+          ){
+            return url.href;
+          }
+
+          return "";
+
+        }catch{
+
+          return "";
+
+        }
+
+      };
+
+    const esc =
+      value =>
+        String(value ?? "")
+          .replace(
+            /[&<>"']/g,
+            char => ({
+              "&":"&amp;",
+              "<":"&lt;",
+              ">":"&gt;",
+              '"':"&quot;",
+              "'":"&#39;"
+            }[char])
+          );
+
+    /* =========================================================
+       WELCOME
+       ========================================================= */
+
+const WELCOME_TEXT =
+  "A personal space for things I build, study, experiment with, and break along the way. No polished story, just the work, the experiments, and the trail behind them.";
+
+    let welcomeFinished =
+      false;
+
+    let currentPage =
+      0;
+
+    let previousPage =
+      0;
+
+    let sleeping =
+      false;
+
+    async function typeText(
+      target,
+      text,
+      speed = 18
+    ){
+
       target.textContent = "";
-      const cursor = document.createElement("span");
-      cursor.className = "cursor";
-      cursor.setAttribute("aria-hidden","true");
+
+      const cursor =
+        document.createElement("span");
+
+      cursor.className =
+        "cursor";
+
+      cursor.setAttribute(
+        "aria-hidden",
+        "true"
+      );
+
       target.appendChild(cursor);
 
-      for(const character of text){
-        target.insertBefore(document.createTextNode(character),cursor);
+      for(
+        const character of text
+      ){
+
+        target.insertBefore(
+          document.createTextNode(character),
+          cursor
+        );
+
         await sleep(speed);
       }
     }
 
-    /* Reveal persona blocks quickly, one paragraph at a time. */
+    /* =========================================================
+       PERSONA REVEAL
+       ========================================================= */
+
     async function revealPersona(){
-      const root = $("#bioStream");
+
+      const root =
+        $("#bioStream");
+
       root.innerHTML = "";
 
-      for(const [label,text] of PERSONA){
-        const block = document.createElement("article");
-        block.className = "bio-block";
+      for(
+        const [label,text]
+        of PERSONA
+      ){
+
+        const block =
+          document.createElement("article");
+
+        block.className =
+          "bio-block";
+
         block.innerHTML = `
-          <span class="bio-key">// ${esc(label)}</span>
+          <span class="bio-key">
+            // ${esc(label)}
+          </span>
+
           <div class="bio-text"></div>
         `;
+
         root.appendChild(block);
-        requestAnimationFrame(() => block.classList.add("revealed"));
 
-        const target = block.querySelector(".bio-text");
-        await typeText(target,text,10);
+        requestAnimationFrame(
+          () =>
+            block.classList.add("revealed")
+        );
 
-        const cursor = target.querySelector(".cursor");
-        if(cursor) cursor.remove();
+        const target =
+          block.querySelector(".bio-text");
+
+        await typeText(
+          target,
+          text,
+          10
+        );
+
+        const cursor =
+          target.querySelector(".cursor");
+
+        if(cursor){
+          cursor.remove();
+        }
 
         await sleep(90);
       }
 
-      const last = root.lastElementChild?.querySelector(".bio-text");
+      const last =
+        root.lastElementChild
+          ?.querySelector(".bio-text");
+
       if(last){
-        last.appendChild(document.createTextNode(" "));
-        const cursor = document.createElement("span");
-        cursor.className = "cursor";
-        cursor.setAttribute("aria-hidden","true");
+
+        last.appendChild(
+          document.createTextNode(" ")
+        );
+
+        const cursor =
+          document.createElement("span");
+
+        cursor.className =
+          "cursor";
+
+        cursor.setAttribute(
+          "aria-hidden",
+          "true"
+        );
+
         last.appendChild(cursor);
       }
     }
 
-    /* Render the project index and wire one detail panel to the selected item. */
+    /* =========================================================
+       PROJECTS
+       ========================================================= */
+
     function renderProjects(){
-      $("#projectCount").textContent = String(PROJECTS.length).padStart(2,"0");
 
-      $("#projectList").innerHTML = PROJECTS.map((project,index) => `
-        <button class="list-item" type="button" data-project="${index}">
-          <span class="item-index">${String(index + 1).padStart(2,"0")}</span>
-          <span class="item-main">
-            <span class="item-title">${esc(project.title)}</span>
-            <span class="item-meta">${esc(project.category)} · ${esc(project.status)}</span>
-          </span>
-        </button>
-      `).join("");
+      $("#projectCount").textContent =
+        String(PROJECTS.length)
+          .padStart(2,"0");
 
-      $$("#projectList [data-project]").forEach(button => {
-        button.addEventListener("click",() => selectProject(Number(button.dataset.project)));
-      });
+      $("#projectList").innerHTML =
+        PROJECTS.map(
+          (project,index) => `
+
+            <button
+              class="list-item"
+              type="button"
+              data-project="${index}"
+            >
+
+              <span class="item-index">
+                ${String(index + 1).padStart(2,"0")}
+              </span>
+
+              <span class="item-main">
+
+                <span class="item-title">
+                  ${esc(project.title)}
+                </span>
+
+                <span class="item-meta">
+                  ${esc(project.category)}
+                  ·
+                  ${esc(project.status)}
+                </span>
+
+              </span>
+
+            </button>
+
+          `
+        ).join("");
+
+      $$("#projectList [data-project]")
+        .forEach(
+          button => {
+
+            button.addEventListener(
+              "click",
+              () =>
+                selectProject(
+                  Number(button.dataset.project)
+                )
+            );
+
+          }
+        );
 
       selectProject(0);
     }
 
     function selectProject(index){
-      const project = PROJECTS[index];
-      if(!project) return;
 
-      $$("#projectList .list-item").forEach((button,i) => {
-        button.classList.toggle("active",i === index);
-      });
+      const project =
+        PROJECTS[index];
+
+      if(!project){
+        return;
+      }
+
+      $$("#projectList .list-item")
+        .forEach(
+          (button,i) => {
+
+            button.classList.toggle(
+              "active",
+              i === index
+            );
+
+          }
+        );
 
       $("#projectDetail").innerHTML = `
+
         <div class="detail">
-          <h2>${esc(project.title)}</h2>
-          <div class="detail-label">DESCRIPTION</div>
-          <p>${esc(project.description)}</p>
 
-          <div class="detail-label">STATUS</div>
-          <p class="accent-green">${esc(project.status)}</p>
+          <h2>
+            ${esc(project.title)}
+          </h2>
 
-          <div class="detail-label">TECHNOLOGIES</div>
+          <div class="detail-label">
+            DESCRIPTION
+          </div>
+
+          <p>
+            ${esc(project.description)}
+          </p>
+
+          <div class="detail-label">
+            STATUS
+          </div>
+
+          <p class="accent-green">
+            ${esc(project.status)}
+          </p>
+
+          <div class="detail-label">
+            TECHNOLOGIES
+          </div>
+
           <div class="tag-row">
-            ${(project.technologies || []).map(tag => `<span class="tag">[${esc(tag)}]</span>`).join("")}
+
+            ${
+              (
+                project.technologies || []
+              )
+                .map(
+                  tag =>
+                    `<span class="tag">
+                      [${esc(tag)}]
+                    </span>`
+                )
+                .join("")
+            }
+
           </div>
 
           <div class="actions">
-            ${safeUrl(project.url)
-              ? `<a class="btn" href="${esc(safeUrl(project.url))}" target="_blank" rel="noopener noreferrer">OPEN PROJECT ↗</a>`
-              : `<span class="btn disabled">NO LINK</span>`}
+
+            ${
+              safeUrl(project.url)
+
+                ? `
+                  <a
+                    class="btn"
+                    href="${esc(safeUrl(project.url))}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    OPEN PROJECT ↗
+                  </a>
+                `
+
+                : `
+                  <span class="btn disabled">
+                    NO LINK
+                  </span>
+                `
+            }
+
           </div>
+
         </div>
+
       `;
     }
 
-    /* Research list uses one active iframe so dozens or hundreds of PDFs stay manageable. */
+    /* =========================================================
+       RESEARCH
+       One active PDF viewer.
+       ========================================================= */
+
     function renderPapers(){
-      $("#paperCount").textContent = String(PAPERS.length).padStart(2,"0");
 
-      $("#paperList").innerHTML = PAPERS.map((paper,index) => `
-        <button class="list-item" type="button" data-paper="${index}">
-          <span class="item-index">${String(index + 1).padStart(2,"0")}</span>
-          <span class="item-main">
-            <span class="item-title">${esc(paper.title)}</span>
-            <span class="item-meta">${esc(paper.year)} · ${esc(paper.topic)}</span>
-          </span>
-        </button>
-      `).join("");
+      $("#paperCount").textContent =
+        String(PAPERS.length)
+          .padStart(2,"0");
 
-      $$("#paperList [data-paper]").forEach(button => {
-        button.addEventListener("click",() => selectPaper(Number(button.dataset.paper)));
-      });
+      $("#paperList").innerHTML =
+        PAPERS.map(
+          (paper,index) => `
+
+            <button
+              class="list-item"
+              type="button"
+              data-paper="${index}"
+            >
+
+              <span class="item-index">
+                ${String(index + 1).padStart(2,"0")}
+              </span>
+
+              <span class="item-main">
+
+                <span class="item-title">
+                  ${esc(paper.title)}
+                </span>
+
+                <span class="item-meta">
+                  ${esc(paper.year)}
+                  ·
+                  ${esc(paper.topic)}
+                </span>
+
+              </span>
+
+            </button>
+
+          `
+        ).join("");
+
+      $$("#paperList [data-paper]")
+        .forEach(
+          button => {
+
+            button.addEventListener(
+              "click",
+              () =>
+                selectPaper(
+                  Number(button.dataset.paper)
+                )
+            );
+
+          }
+        );
 
       selectPaper(0);
     }
 
     function selectPaper(index){
-      const paper = PAPERS[index];
-      if(!paper) return;
 
-      $$("#paperList .list-item").forEach((button,i) => {
-        button.classList.toggle("active",i === index);
-      });
+      const paper =
+        PAPERS[index];
 
-      $("#paperState").textContent = "LOADING";
+      if(!paper){
+        return;
+      }
 
-      const pdf = safeUrl(paper.pdf);
-      const direct = safeUrl(paper.href || paper.pdf);
+      /* Highlight selected paper. */
+      $$("#paperList .list-item")
+        .forEach(
+          (button,i) => {
 
-      $("#paperDetail").innerHTML = `
-        <div class="paper-preview">
-          <div class="detail" style="max-height:none;height:auto;padding-bottom:14px">
-            <h2>${esc(paper.title)}</h2>
+            button.classList.toggle(
+              "active",
+              i === index
+            );
 
-            <div class="detail-label">METADATA</div>
-            <p>${esc(paper.year)} · ${esc(paper.topic)} · <span class="accent-green">${esc(paper.status)}</span></p>
+          }
+        );
 
-            <div class="detail-label">DESCRIPTION</div>
-            <p>${esc(paper.description)}</p>
+      $("#paperState").textContent =
+        "LOADING";
 
-            <div class="detail-label">ABSTRACT</div>
-            <p>${esc(paper.abstract)}</p>
+      const pdf =
+        safeUrl(paper.pdf);
 
-            <div class="actions">
-              ${direct
-                ? `<a class="btn orange" href="${esc(direct)}" target="_blank" rel="noopener noreferrer">OPEN PDF ↗</a>`
-                : `<span class="btn disabled">NO PDF LINK</span>`}
-            </div>
-          </div>
+      const direct =
+        safeUrl(
+          paper.href ||
+          paper.pdf
+        );
 
-          <div class="pdf-stage">
-            ${pdf
-              ? `<iframe title="PDF preview of ${esc(paper.title)}" src="${esc(pdf)}"></iframe>`
-              : `<div class="pdf-placeholder">No local PDF is configured for this record.</div>`}
-          </div>
+      /* =======================================================
+         SECTION 2
+         PAPER INFORMATION
+         ======================================================= */
+
+      $("#paperInfo").innerHTML = `
+
+        <h2>
+          ${esc(paper.title)}
+        </h2>
+
+        <div class="detail-label">
+          METADATA
+        </div>
+
+        <p>
+          ${esc(paper.year)}
+          ·
+          ${esc(paper.topic)}
+          ·
+
+          <span class="accent-green">
+            ${esc(paper.status)}
+          </span>
+        </p>
+
+        <div class="detail-label">
+          DESCRIPTION
+        </div>
+
+        <p>
+          ${esc(paper.description)}
+        </p>
+
+        <div class="detail-label">
+          ABSTRACT
+        </div>
+
+        <p>
+          ${esc(paper.abstract)}
+        </p>
+
+        <div class="actions">
+
+          ${
+            direct
+
+              ? `
+                <a
+                  class="btn orange"
+                  href="${esc(direct)}"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  OPEN PDF ↗
+                </a>
+              `
+
+              : `
+                <span class="btn disabled">
+                  NO PDF LINK
+                </span>
+              `
+          }
+
         </div>
       `;
 
-      $("#paperState").textContent = pdf ? "READY" : "NO FILE";
-    }
+      /* =======================================================
+         SECTION 3
+         PDF VIEWER
+         ======================================================= */
 
-    /* Render social cards without carousels or duplicated nodes. */
-    function renderSocials(){
-      $("#socialGrid").innerHTML = SOCIALS.map(([key,label,description,accent]) => {
-        const url = safeUrl(CONFIG.socials[key]);
+      $("#paperViewer").innerHTML =
+        pdf
 
-        if(!url){
-          return `
-            <div class="social-card" style="--accent:${accent};opacity:.55">
-              <strong>${esc(label)}</strong>
-              <span>${esc(description)}</span>
-              <div class="dim small">not configured</div>
+          ? `
+            <iframe
+              title="PDF preview of ${esc(paper.title)}"
+              src="${esc(pdf)}"
+            ></iframe>
+          `
+
+          : `
+            <div class="pdf-placeholder">
+              No local PDF is configured for this record.
             </div>
           `;
-        }
 
-        return `
-          <a class="social-card" style="--accent:${accent}" href="${esc(url)}" target="_blank" rel="noopener noreferrer">
-            <strong>${esc(label)}</strong>
-            <span>${esc(description)}</span>
-            <div class="social-arrow">open profile ↗</div>
-          </a>
-        `;
-      }).join("");
+      $("#paperState").textContent =
+        pdf
+          ? "READY"
+          : "NO FILE";
     }
 
-    /* Render support methods independently from the other sections. */
+    /* =========================================================
+       SOCIAL
+       ========================================================= */
+
+    function renderSocials(){
+
+      $("#socialGrid").innerHTML =
+        SOCIALS.map(
+          ([key,label,description,accent]) => {
+
+            const url =
+              safeUrl(
+                CONFIG.socials[key]
+              );
+
+            if(!url){
+
+              return `
+
+                <div
+                  class="social-card"
+                  style="--accent:${accent};opacity:.55"
+                >
+
+                  <strong>
+                    ${esc(label)}
+                  </strong>
+
+                  <span>
+                    ${esc(description)}
+                  </span>
+
+                  <div class="dim small">
+                    not configured
+                  </div>
+
+                </div>
+
+              `;
+            }
+
+            return `
+
+              <a
+                class="social-card"
+                style="--accent:${accent}"
+                href="${esc(url)}"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+
+                <strong>
+                  ${esc(label)}
+                </strong>
+
+                <span>
+                  ${esc(description)}
+                </span>
+
+                <div class="social-arrow">
+                  open profile ↗
+                </div>
+
+              </a>
+
+            `;
+
+          }
+        ).join("");
+    }
+
+    /* =========================================================
+       SUPPORT
+       ========================================================= */
+
     function renderSupport(){
-      const payments = CONFIG.payments || {};
 
-      $("#supportGrid").innerHTML = SUPPORT.map(([key,label,description,accent]) => {
-        let ready = false;
-        let action = "";
+      const payments =
+        CONFIG.payments || {};
 
-        if(key === "paypal" || key === "kofi"){
-          const url = safeUrl(payments[key]);
-          ready = Boolean(url);
-          action = ready
-            ? `<a class="btn" href="${esc(url)}" target="_blank" rel="noopener noreferrer">OPEN ${esc(label)} ↗</a>`
-            : `<span class="btn disabled">NOT CONFIGURED</span>`;
-        }
+      $("#supportGrid").innerHTML =
+        SUPPORT.map(
+          ([key,label,description,accent]) => {
 
-        if(key === "bank"){
-          ready = Boolean(payments.bank?.accountNumber);
-          action = ready
-            ? `<button class="btn" type="button" data-bank>VIEW DETAILS</button>`
-            : `<span class="btn disabled">NOT CONFIGURED</span>`;
-        }
+            let ready =
+              false;
 
-        if(key === "bitcoin"){
-          ready = Boolean(payments.bitcoin);
-          action = ready
-            ? `<button class="btn orange" type="button" data-bitcoin>VIEW ADDRESS</button>`
-            : `<span class="btn disabled">NOT CONFIGURED</span>`;
-        }
+            let action =
+              "";
 
-        return `
-          <article class="support-card">
-            <strong>${esc(label)}</strong>
-            <p>${esc(description)}</p>
-            ${action}
-          </article>
-        `;
-      }).join("");
+            if(
+              key === "paypal" ||
+              key === "kofi"
+            ){
 
-      $("[data-bank]")?.addEventListener("click",() => {
-        const bank = payments.bank || {};
-        window.prompt("Bank account number", bank.accountNumber || "");
-      });
+              const url =
+                safeUrl(
+                  payments[key]
+                );
 
-      $("[data-bitcoin]")?.addEventListener("click",() => {
-        window.prompt("Bitcoin address", payments.bitcoin || "");
-      });
+              ready =
+                Boolean(url);
+
+              action =
+                ready
+
+                  ? `
+                    <a
+                      class="btn"
+                      href="${esc(url)}"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      OPEN ${esc(label)} ↗
+                    </a>
+                  `
+
+                  : `
+                    <span class="btn disabled">
+                      NOT CONFIGURED
+                    </span>
+                  `;
+            }
+
+            if(key === "bank"){
+
+              ready =
+                Boolean(
+                  payments.bank?.accountNumber
+                );
+
+              action =
+                ready
+
+                  ? `
+                    <button
+                      class="btn"
+                      type="button"
+                      data-bank
+                    >
+                      VIEW DETAILS
+                    </button>
+                  `
+
+                  : `
+                    <span class="btn disabled">
+                      NOT CONFIGURED
+                    </span>
+                  `;
+            }
+
+            if(key === "bitcoin"){
+
+              ready =
+                Boolean(
+                  payments.bitcoin
+                );
+
+              action =
+                ready
+
+                  ? `
+                    <button
+                      class="btn orange"
+                      type="button"
+                      data-bitcoin
+                    >
+                      VIEW ADDRESS
+                    </button>
+                  `
+
+                  : `
+                    <span class="btn disabled">
+                      NOT CONFIGURED
+                    </span>
+                  `;
+            }
+
+            return `
+
+              <article class="support-card">
+
+                <strong>
+                  ${esc(label)}
+                </strong>
+
+                <p>
+                  ${esc(description)}
+                </p>
+
+                ${action}
+
+              </article>
+
+            `;
+
+          }
+        ).join("");
+
+      $("[data-bank]")
+        ?.addEventListener(
+          "click",
+          () => {
+
+            const bank =
+              payments.bank || {};
+
+            window.prompt(
+              "Bank account number",
+              bank.accountNumber || ""
+            );
+
+          }
+        );
+
+      $("[data-bitcoin]")
+        ?.addEventListener(
+          "click",
+          () => {
+
+            window.prompt(
+              "Bitcoin address",
+              payments.bitcoin || ""
+            );
+
+          }
+        );
     }
 
-    /* Animate page movement and remember the current section. */
+    /* =========================================================
+       NAVIGATION
+       ========================================================= */
+
     function goToPage(index){
-      const total = $$(".page").length;
-      const next = Math.max(0,Math.min(total - 1,index));
-      if(next === currentPage) return;
 
-      const pages = $$(".page");
-      const old = pages[currentPage];
-      previousPage = currentPage;
-      currentPage = next;
+      const total =
+        $$(".page").length;
 
-      old.classList.remove("active");
-      old.classList.add("exit");
-      window.setTimeout(() => old.classList.remove("exit"),220);
+      const next =
+        Math.max(
+          0,
+          Math.min(
+            total - 1,
+            index
+          )
+        );
 
-      pages[currentPage].classList.add("active");
-      pages[currentPage].scrollTop = 0;
+      if(next === currentPage){
+        return;
+      }
 
-      $("#routeCommand").textContent = [
-        "./persona",
-        "ls ./lab",
-        "ls ./research",
-        "ls ./social",
-        "./support"
-      ][currentPage];
+      const pages =
+        $$(".page");
 
-      $("#pageIndicator").textContent = [
-        "PERSONA",
-        "LAB",
-        "RESEARCH",
-        "SOCIAL",
-        "SUPPORT"
-      ][currentPage];
+      const old =
+        pages[currentPage];
 
-      $$("#pageNav button").forEach((button,i) => {
-        if(i === currentPage) button.setAttribute("aria-current","page");
-        else button.removeAttribute("aria-current");
-      });
+      previousPage =
+        currentPage;
 
-      $("#prevPage").disabled = currentPage === 0;
-      $("#nextPage").disabled = currentPage === pages.length - 1;
+      currentPage =
+        next;
 
-      const scanline = $("#scanline");
-      scanline.classList.remove("active");
+      old.classList.remove(
+        "active"
+      );
+
+      old.classList.add(
+        "exit"
+      );
+
+      window.setTimeout(
+        () =>
+          old.classList.remove("exit"),
+        220
+      );
+
+      pages[currentPage]
+        .classList.add("active");
+
+      pages[currentPage]
+        .scrollTop = 0;
+
+      $("#routeCommand")
+        .textContent = [
+
+          "./persona",
+          "ls ./lab",
+          "ls ./research",
+          "ls ./social",
+          "./support"
+
+        ][currentPage];
+
+      $("#pageIndicator")
+        .textContent = [
+
+          "PERSONA",
+          "LAB",
+          "RESEARCH",
+          "SOCIAL",
+          "SUPPORT"
+
+        ][currentPage];
+
+      $$("#pageNav button")
+        .forEach(
+          (button,i) => {
+
+            if(i === currentPage){
+
+              button.setAttribute(
+                "aria-current",
+                "page"
+              );
+
+            }else{
+
+              button.removeAttribute(
+                "aria-current"
+              );
+
+            }
+
+          }
+        );
+
+      $("#prevPage").disabled =
+        currentPage === 0;
+
+      $("#nextPage").disabled =
+        currentPage === pages.length - 1;
+
+      const scanline =
+        $("#scanline");
+
+      scanline.classList.remove(
+        "active"
+      );
+
       void scanline.offsetWidth;
-      scanline.classList.add("active");
+
+      scanline.classList.add(
+        "active"
+      );
     }
 
-    /* Build the numbered page navigation. */
     function renderNavigation(){
-      $("#pageNav").innerHTML = [1,2,3,4,5].map(page => `
-        <button type="button" aria-label="Page ${page}" data-page="${page - 1}">${String(page).padStart(2,"0")}</button>
-      `).join("");
 
-      $$("#pageNav button").forEach(button => {
-        button.addEventListener("click",() => goToPage(Number(button.dataset.page)));
-      });
+      $("#pageNav").innerHTML =
+        [1,2,3,4,5]
+          .map(
+            page => `
 
-      $("#prevPage").addEventListener("click",() => goToPage(currentPage - 1));
-      $("#nextPage").addEventListener("click",() => goToPage(currentPage + 1));
+              <button
+                type="button"
+                aria-label="Page ${page}"
+                data-page="${page - 1}"
+              >
+                ${String(page).padStart(2,"0")}
+              </button>
 
-      $$("#pageNav button").forEach((button,i) => {
-        if(i === currentPage) button.setAttribute("aria-current","page");
-      });
+            `
+          )
+          .join("");
 
-      $("#prevPage").disabled = true;
+      $$("#pageNav button")
+        .forEach(
+          button => {
+
+            button.addEventListener(
+              "click",
+              () =>
+                goToPage(
+                  Number(button.dataset.page)
+                )
+            );
+
+          }
+        );
+
+      $("#prevPage")
+        .addEventListener(
+          "click",
+          () =>
+            goToPage(
+              currentPage - 1
+            )
+        );
+
+      $("#nextPage")
+        .addEventListener(
+          "click",
+          () =>
+            goToPage(
+              currentPage + 1
+            )
+        );
+
+      $$("#pageNav button")
+        .forEach(
+          (button,i) => {
+
+            if(i === currentPage){
+
+              button.setAttribute(
+                "aria-current",
+                "page"
+              );
+
+            }
+
+          }
+        );
+
+      $("#prevPage").disabled =
+        true;
     }
 
-    /* Sleep preserves the active page and returns to it when the screen wakes. */
-    function sleepScreen(){
-      if(sleeping) return;
-      sleeping = true;
+    /* =========================================================
+       SLEEP
+       ========================================================= */
 
-      $("#sleep").classList.add("active");
-      $("#sleep").setAttribute("aria-hidden","false");
-      $("#app").setAttribute("aria-hidden","true");
-      $("#wakeButton").focus({preventScroll:true});
+    function sleepScreen(){
+
+      if(sleeping){
+        return;
+      }
+
+      sleeping =
+        true;
+
+      $("#sleep")
+        .classList.add("active");
+
+      $("#sleep")
+        .setAttribute(
+          "aria-hidden",
+          "false"
+        );
+
+      $("#app")
+        .setAttribute(
+          "aria-hidden",
+          "true"
+        );
+
+      $("#wakeButton")
+        .focus({
+          preventScroll:true
+        });
     }
 
     function wakeScreen(){
-      sleeping = false;
 
-      $("#sleep").classList.remove("active");
-      $("#sleep").setAttribute("aria-hidden","true");
-      $("#app").setAttribute("aria-hidden","false");
+      sleeping =
+        false;
 
-      $("#sleepButton").focus({preventScroll:true});
+      $("#sleep")
+        .classList.remove(
+          "active"
+        );
+
+      $("#sleep")
+        .setAttribute(
+          "aria-hidden",
+          "true"
+        );
+
+      $("#app")
+        .setAttribute(
+          "aria-hidden",
+          "false"
+        );
+
+      $("#sleepButton")
+        .focus({
+          preventScroll:true
+        });
     }
 
-    /* The welcome screen transitions into the actual website once the paragraph is complete. */
+    /* =========================================================
+       WELCOME -> SITE
+       ========================================================= */
+
     async function startWelcome(){
-      const copy = $("#welcomeCopy");
-      await typeText(copy,WELCOME_TEXT,17);
 
-      const currentCursor = copy.querySelector(".cursor");
-      if(currentCursor) currentCursor.remove();
+      const copy =
+        $("#welcomeCopy");
 
-      welcomeFinished = true;
-      $("#welcomeNext").classList.add("show");
+      await typeText(
+        copy,
+        WELCOME_TEXT,
+        17
+      );
 
-      $("#welcomeNext").addEventListener("click",enterSite,{once:true});
+      const currentCursor =
+        copy.querySelector(
+          ".cursor"
+        );
+
+      if(currentCursor){
+        currentCursor.remove();
+      }
+
+      welcomeFinished =
+        true;
+
+      $("#welcomeNext")
+        .classList.add("show");
+
+      $("#welcomeNext")
+        .addEventListener(
+          "click",
+          enterSite,
+          {once:true}
+        );
     }
 
     function enterSite(){
-      if(!welcomeFinished) return;
-      $("#welcome").classList.add("hidden");
-      $("#app").classList.add("active");
-      $("#app").setAttribute("aria-hidden","false");
-      $("#bioStream").innerHTML = "";
+
+      if(!welcomeFinished){
+        return;
+      }
+
+      $("#welcome")
+        .classList.add(
+          "hidden"
+        );
+
+      $("#app")
+        .classList.add(
+          "active"
+        );
+
+      $("#app")
+        .setAttribute(
+          "aria-hidden",
+          "false"
+        );
+
+      $("#bioStream")
+        .innerHTML = "";
+
       revealPersona();
     }
 
-    /* Global keyboard controls stay predictable and do not hijack form input. */
+    /* =========================================================
+       KEYBOARD
+       ========================================================= */
+
     function initKeyboard(){
-      window.addEventListener("keydown",event => {
-        if(sleeping){
-          if(event.key === "Enter" || event.key === "Escape"){
-            event.preventDefault();
-            wakeScreen();
+
+      window.addEventListener(
+        "keydown",
+        event => {
+
+          if(sleeping){
+
+            if(
+              event.key === "Enter" ||
+              event.key === "Escape"
+            ){
+
+              event.preventDefault();
+
+              wakeScreen();
+            }
+
+            return;
           }
-          return;
-        }
 
-        if(!$("#app").classList.contains("active")) return;
-        if(["INPUT","TEXTAREA","SELECT"].includes(document.activeElement?.tagName)) return;
-        if(event.ctrlKey || event.metaKey || event.altKey) return;
+          if(
+            !$("#app")
+              .classList
+              .contains("active")
+          ){
+            return;
+          }
 
-        if(event.key === "ArrowRight"){
-          event.preventDefault();
-          goToPage(currentPage + 1);
-        }else if(event.key === "ArrowLeft"){
-          event.preventDefault();
-          goToPage(currentPage - 1);
-        }else if(/^[1-5]$/.test(event.key)){
-          event.preventDefault();
-          goToPage(Number(event.key) - 1);
-        }else if(event.key === "Escape"){
-          event.preventDefault();
-          sleepScreen();
+          if(
+            [
+              "INPUT",
+              "TEXTAREA",
+              "SELECT"
+            ]
+              .includes(
+                document.activeElement
+                  ?.tagName
+              )
+          ){
+            return;
+          }
+
+          if(
+            event.ctrlKey ||
+            event.metaKey ||
+            event.altKey
+          ){
+            return;
+          }
+
+          if(
+            event.key === "ArrowRight"
+          ){
+
+            event.preventDefault();
+
+            goToPage(
+              currentPage + 1
+            );
+
+          }else if(
+            event.key === "ArrowLeft"
+          ){
+
+            event.preventDefault();
+
+            goToPage(
+              currentPage - 1
+            );
+
+          }else if(
+            /^[1-5]$/.test(event.key)
+          ){
+
+            event.preventDefault();
+
+            goToPage(
+              Number(event.key) - 1
+            );
+
+          }else if(
+            event.key === "Escape"
+          ){
+
+            event.preventDefault();
+
+            sleepScreen();
+          }
+
         }
-      });
+      );
     }
+
+    /* =========================================================
+       CLOCK
+       ========================================================= */
 
     function initClock(){
-      const update = () => {
-        $("#clock").textContent = new Date().toLocaleTimeString("en-GB",{hour12:false});
-      };
+
+      const update =
+        () => {
+
+          $("#clock")
+            .textContent =
+              new Date()
+                .toLocaleTimeString(
+                  "en-GB",
+                  {
+                    hour12:false
+                  }
+                );
+        };
+
       update();
-      window.setInterval(update,1000);
+
+      window.setInterval(
+        update,
+        1000
+      );
     }
 
-    /* Initialise every independent section once. */
+    /* =========================================================
+       INIT
+       ========================================================= */
+
     function init(){
-      $("#profileImage").src = CONFIG.profileImage || "assets/kaguya1.gif";
+
+      $("#profileImage")
+        .src =
+          CONFIG.profileImage ||
+          "assets/kaguya1.gif";
 
       renderNavigation();
       renderProjects();
@@ -1493,13 +3220,23 @@ const PAPERS = [
       initKeyboard();
       initClock();
 
-      $("#sleepButton").addEventListener("click",sleepScreen);
-      $("#wakeButton").addEventListener("click",wakeScreen);
+      $("#sleepButton")
+        .addEventListener(
+          "click",
+          sleepScreen
+        );
+
+      $("#wakeButton")
+        .addEventListener(
+          "click",
+          wakeScreen
+        );
 
       startWelcome();
     }
 
     init();
   </script>
+
 </body>
 </html>
