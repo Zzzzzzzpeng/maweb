@@ -539,7 +539,7 @@ let welcomeFinished = false, currentPage = 0, previousPage = 0, sleeping = false
 const thunder = (() => {
   const ids = ["tA","tB","tC","tD"].map(i => document.getElementById(i));
   const spec = [["dy",700,0],["dy",0,-700],["dx",490,0],["dx",0,-490]];
-  const steps = [33,50,83,0];      /* ms between thunder updates; 0 = frozen frame */
+  const steps = [1,33,50,83,0];    /* ms between updates: 1 = every frame (matches 100Hz+), 0 = frozen */
   let level = 0, raf = 0, last = 0, prev = 0, slow = 0, frames = 0;
   const apply = now => {
     const t = (now % 6000) / 6000;
@@ -547,8 +547,8 @@ const thunder = (() => {
   };
   const frame = now => {
     raf = requestAnimationFrame(frame);
-    /* governor: if real frames are slower than ~28fps for 45 frames, drop a level */
-    if(prev){ if(now - prev > 36) slow++; frames++; }
+    /* governor: only steps down if real frames fall under ~45fps for 45 frames */
+    if(prev){ if(now - prev > 22) slow++; frames++; }
     prev = now;
     if(frames >= 45){
       if(slow > 18 && level < steps.length - 1){ level++; if(!steps[level]) apply(now); }
