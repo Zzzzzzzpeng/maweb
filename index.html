@@ -89,7 +89,7 @@ h1{margin:8px 0 22px;font-family:var(--pixel);font-size:clamp(21px,4vw,38px);lin
 
 /* THUNDER: same look + same 6s motion. Now ONE filter pass on the wrapper. */
 .profile-electric-wrap{position:absolute;inset:-8px;z-index:0;pointer-events:none;overflow:visible}
-.profile-electric-fx{position:absolute;inset:0;filter:url(#profileElectricWarp);transform:translateZ(0)}
+.profile-electric-fx{position:absolute;inset:0;}
 .profile-box{contain:layout style;will-change:transform}
 .bio-stream{contain:layout style}
 .bio-block{contain:content}
@@ -109,11 +109,13 @@ h1{margin:8px 0 22px;font-family:var(--pixel);font-size:clamp(21px,4vw,38px);lin
 .profile-frame img{position:absolute;inset:4px;z-index:1;width:calc(100% - 8px);height:calc(100% - 8px);object-fit:cover;object-position:center;display:block;background:#141b1e;filter:saturate(.95) contrast(1.04)}
 .profile-frame::after{content:"";position:absolute;inset:4px;z-index:2;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(255,255,255,.035) 0 1px,transparent 1px 3px)}
 .profile-caption{margin-top:15px;color:var(--text);font-family:var(--pixel);font-size:14px;line-height:1.5}
-.profile-box[data-level="1"]{--level-color:#8ccf7e;--level-glow:rgba(140,207,126,.24)}
-.profile-box[data-level="2"]{--level-color:#67b0e8;--level-glow:rgba(103,176,232,.24)}
-.profile-box[data-level="3"]{--level-color:#c47fd5;--level-glow:rgba(196,127,213,.25)}
-.profile-box[data-level="4"]{--level-color:#fcb163;--level-glow:rgba(252,177,99,.25)}
-.profile-box[data-level="5"]{--level-color:#e57474;--level-glow:rgba(229,116,116,.28)}
+.profile-box[data-level="1"]{--level-color:#c47fd5;--level-glow:rgba(196,127,213,.25)}
+.profile-box[data-level="2"]{--level-color:#6f7ff2;--level-glow:rgba(111,127,242,.25)}
+.profile-box[data-level="3"]{--level-color:#67b0e8;--level-glow:rgba(103,176,232,.24)}
+.profile-box[data-level="4"]{--level-color:#8ccf7e;--level-glow:rgba(140,207,126,.24)}
+.profile-box[data-level="5"]{--level-color:#e5c76b;--level-glow:rgba(229,199,107,.25)}
+.profile-box[data-level="6"]{--level-color:#fcb163;--level-glow:rgba(252,177,99,.25)}
+.profile-box[data-level="7"]{--level-color:#e57474;--level-glow:rgba(229,116,116,.28)}
 .profile-status{display:grid;gap:9px;margin-top:14px;padding-top:14px;border-top:1px solid var(--line);color:var(--text);font-size:16px}
 .status-card,.level-card,.xp-card,.stats-card{border:1px solid var(--line);background:rgba(10,15,17,.52);padding:10px 11px}
 .status-line{display:flex;align-items:center;justify-content:space-between;gap:10px;animation:statusFlicker 3.2s steps(1,end) infinite}
@@ -203,27 +205,43 @@ h1{margin:8px 0 22px;font-family:var(--pixel);font-size:clamp(21px,4vw,38px);lin
 .support-card strong{color:var(--orange);font-family:var(--pixel);font-size:13px}
 .support-card p{margin:8px 0 12px;color:var(--muted);font-size:18px}
 
-/* ===== NEW 2026 EXPERIMENTS (cheap, progressive: ignored if unsupported) ===== */
-/* 1. @property conic-gradient border, spins only on hover (zero cost at rest) */
-.social-card,.support-card{position:relative}
-.social-card::after,.support-card::after{content:"";position:absolute;inset:-1px;padding:1px;pointer-events:none;opacity:0;transition:opacity .25s;background:conic-gradient(from var(--spin),transparent 0 70%,var(--accent,var(--orange)) 85%,transparent);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0)}
-.social-card:hover::after,.support-card:hover::after{opacity:1;animation:spin 2.4s linear infinite}
-@keyframes spin{to{--spin:360deg}}
-/* 2. :has() focus-dim: siblings fade while one card is hovered */
-.social-grid:has(.social-card:hover) .social-card:not(:hover),.support-grid:has(.support-card:hover) .support-card:not(:hover){opacity:.55}
-/* 3. scroll-driven reveal on cards/panels (compositor-only) */
-@supports (animation-timeline:view()){
-  .support-card,.social-card,.panel{animation:rise linear both;animation-timeline:view();animation-range:entry 0% entry 35%}
-  @keyframes rise{from{opacity:.0;transform:translateY(14px)}to{opacity:1;transform:none}}
-}
-/* 4. accent-colour scrollbars + 5. soft inner highlight on panels */
-.page,.detail{scrollbar-width:thin;scrollbar-color:var(--line) transparent}
-.panel,.social-card,.support-card{box-shadow:inset 0 1px 0 rgba(255,255,255,.035)}
-/* 6. eyebrow slash glow via color-mix */
-.eyebrow{text-shadow:0 0 14px color-mix(in srgb,var(--orange) 35%,transparent)}
-/* 7. View Transitions cross-fade between pages */
-@view-transition{navigation:auto}
-::view-transition-old(root),::view-transition-new(root){animation-duration:.18s}
+
+/* ===== FAST CSS v3: animations are back, but ONLY on transform/opacity (GPU compositor, zero repaint) ===== */
+.crt{contain:strict}
+.scanline{will-change:transform}
+.page{transition:opacity .16s ease-out,transform .16s ease-out,visibility .16s!important;will-change:opacity,transform}
+.page:not(.active){will-change:auto}
+.list-item,.social-card,.btn,nav button{transition:transform .12s ease-out,background-color .12s,border-color .12s,color .12s,opacity .12s!important}
+.bio-block.revealed{animation:reveal .28s ease-out forwards}
+.profile-status-dot,.level-badge,.xp-track::after,.xp-fill::after,.sleep-mark,.arrow-blink{will-change:transform,opacity}
+/* thunder v3: no SVG filter. Three layers jitter on the compositor at different rates + flash + running dash */
+.profile-electric-fx{filter:none}
+.profile-electric-main{animation:bolt .8s steps(1) infinite;will-change:transform}
+.profile-electric-glow{animation:bolt 1.1s steps(1) -.35s infinite;will-change:transform}
+.profile-electric-glow-strong{animation:flash 1.7s steps(1) infinite;will-change:opacity}
+@keyframes bolt{
+0%{transform:translate(-2px,-2px) scale(1)}
+12%{transform:translate(0,-3px) scale(1.004)}
+25%{transform:translate(-3px,-1px) scale(.998)}
+37%{transform:translate(-1px,-3px) scale(1.003)}
+50%{transform:translate(-3px,-3px) scale(1)}
+62%{transform:translate(0,-1px) scale(1.005)}
+75%{transform:translate(-2px,0) scale(.997)}
+88%{transform:translate(-1px,-2px) scale(1.002)}}
+@keyframes flash{0%{opacity:.22}8%{opacity:.6}12%{opacity:.18}40%{opacity:.3}44%{opacity:.7}48%{opacity:.2}81%{opacity:.4}85%{opacity:.15}}
+.profile-electric-runner rect{animation:electricRunner 2.2s linear infinite}
+
+/* LEVEL-UP POPUP (shows once per level change; opacity/transform only) */
+#levelPopup{position:fixed;inset:0;z-index:110;display:grid;place-items:center;padding:24px;background:rgba(8,10,11,.78);opacity:0;visibility:hidden;transition:opacity .2s,visibility .2s}
+#levelPopup.show{opacity:1;visibility:visible}
+.lp-card{width:min(460px,100%);border:1px solid var(--lp-to,var(--green));background:var(--bg-panel);padding:24px;text-align:center;transform:translateY(10px) scale(.96);transition:transform .22s cubic-bezier(.2,.8,.2,1);box-shadow:0 0 28px var(--lp-glow,rgba(140,207,126,.25))}
+#levelPopup.show .lp-card{transform:none}
+.lp-title{font-family:var(--pixel);font-size:clamp(16px,3vw,22px);color:var(--lp-to,var(--green));margin:0 0 14px}
+.lp-names{font-size:24px;margin-bottom:12px}
+.lp-names s{color:var(--dim)}
+.lp-colours{display:flex;align-items:center;justify-content:center;gap:12px;color:var(--muted);font-size:18px;margin-bottom:14px}
+.lp-swatch{width:26px;height:26px;border:1px solid var(--line)}
+.lp-copy{color:var(--muted);font-size:19px;margin-bottom:18px}
 
 /* RESPONSIVE */
 @media(max-width:1100px){.persona-head{grid-template-columns:minmax(0,1.5fr) minmax(280px,.75fr);gap:38px}.profile-box{width:min(100%,340px)}.page[data-page="2"] .index-layout{grid-template-columns:minmax(180px,.7fr) minmax(250px,.95fr) minmax(0,1.8fr);gap:14px}}
@@ -250,7 +268,7 @@ h1{margin:8px 0 22px;font-family:var(--pixel);font-size:clamp(21px,4vw,38px);lin
       <span class="arrow-blink">→</span>
       <span>Start inference pipeline</span>
     </button>
-    <div class="version">version 1.1 · personal website</div>
+    <div class="version">version 1.3 · personal website</div>
   </div>
 </section>
 
@@ -277,24 +295,6 @@ h1{margin:8px 0 22px;font-family:var(--pixel);font-size:clamp(21px,4vw,38px);lin
             <div class="bio-stream" id="bioStream"></div>
           </div>
           <aside class="profile-box" aria-label="Profile">
-            <svg class="profile-electric-defs" aria-hidden="true" focusable="false">
-              <defs>
-                <!-- Same thunder as before. Identical noise pairs now share one turbulence (2 instead of 4);
-                     octaves 10 -> 5 (extra octaves are sub-pixel at this frequency). Motion/scale/duration untouched. -->
-                <filter id="profileElectricWarp" color-interpolation-filters="sRGB" x="-6%" y="-3%" width="112%" height="106%">
-                  <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="3" result="noiseA" seed="1"/>
-                  <feOffset in="noiseA" dx="0" dy="0" id="tA" result="offsetNoise1"></feOffset>
-                  <feOffset in="noiseA" dx="0" dy="0" id="tB" result="offsetNoise2"></feOffset>
-                  <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="3" result="noiseB" seed="2"/>
-                  <feOffset in="noiseB" dx="0" dy="0" id="tC" result="offsetNoise3"></feOffset>
-                  <feOffset in="noiseB" dx="0" dy="0" id="tD" result="offsetNoise4"></feOffset>
-                  <feComposite in="offsetNoise1" in2="offsetNoise2" result="part1"/>
-                  <feComposite in="offsetNoise3" in2="offsetNoise4" result="part2"/>
-                  <feBlend in="part1" in2="part2" mode="color-dodge" result="combinedNoise"/>
-                  <feDisplacementMap in="SourceGraphic" in2="combinedNoise" scale="30" xChannelSelector="R" yChannelSelector="B"/>
-                </filter>
-              </defs>
-            </svg>
             <div class="profile-electric-wrap" aria-hidden="true">
               <div class="profile-electric-fx">
                 <div class="profile-electric-glow-strong"></div>
@@ -378,6 +378,16 @@ h1{margin:8px 0 22px;font-family:var(--pixel);font-size:clamp(21px,4vw,38px);lin
   </footer>
 </div>
 
+<div id="levelPopup" role="dialog" aria-modal="true" aria-labelledby="lpTitle" aria-hidden="true">
+  <div class="lp-card">
+    <h2 class="lp-title" id="lpTitle">LEVEL UP</h2>
+    <div class="lp-names" id="lpNames"></div>
+    <div class="lp-colours" id="lpColours"></div>
+    <div class="lp-copy" id="lpCopy"></div>
+    <button class="btn" id="lpClose" type="button">[ OK ]</button>
+  </div>
+</div>
+
 <section id="sleep" aria-hidden="true">
   <div class="sleep-inner">
     <div class="sleep-mark" aria-hidden="true">⏻</div>
@@ -416,11 +426,13 @@ const PROGRESSION = {
   projectBaseXP: 45,
   paperBaseXP: 90,
   levels: [
-    {level:1,name:"HUMAN",minXP:0,color:"#8ccf7e",description:"Starting the technical path."},
-    {level:2,name:"ASCENDANT",minXP:150,color:"#67b0e8",description:"Turning experiments into working systems."},
-    {level:3,name:"ABYSS",minXP:400,color:"#c47fd5",description:"Going deeper into research, systems and experimentation."},
-    {level:4,name:"TRANSCENDENT",minXP:750,color:"#fcb163",description:"Connecting software, research and systems thinking."},
-    {level:5,name:"GOD",minXP:1200,color:"#e57474",description:"The highest progression tier. Reserved for a long technical track."}
+    {level:1,name:"HUMAN",minXP:0,color:"#c47fd5",description:"Starting the technical path."},
+    {level:2,name:"ADEPT",minXP:100,color:"#6f7ff2",description:"Learning the tools and building the habit."},
+    {level:3,name:"ASCENDANT",minXP:250,color:"#67b0e8",description:"Turning experiments into working systems."},
+    {level:4,name:"ABYSS",minXP:400,color:"#8ccf7e",description:"Going deeper into research, systems and experimentation."},
+    {level:5,name:"TRANSCENDENT",minXP:600,color:"#e5c76b",description:"Connecting software, research and systems thinking."},
+    {level:6,name:"SOVEREIGN",minXP:850,color:"#fcb163",description:"Owning the whole stack, from idea to deployment."},
+    {level:7,name:"GOD",minXP:1200,color:"#e57474",description:"The highest progression tier. Reserved for a long technical track."}
   ]
 };
 const xpForProject = project => {
@@ -508,16 +520,23 @@ function renderProgression(){
         xpText = $("#profileXp"), fill = $("#profileXpFill"), bar = $(".xp-track"), description = $("#profileLevelDescription"),
         nextText = $("#profileXpNext"), levelUpBanner = $("#levelUpBanner");
   if(!box || !badge || !status || !levelName || !xpText || !fill || !bar || !description || !nextText) return;
-  let previousXP = 0, previousLevel = PROGRESSION.levels[0].level;
-  try{ previousXP = Number(localStorage.getItem("maweb.progress.xp") || 0); }catch{}
-  for(const level of PROGRESSION.levels){ if(previousXP >= level.minXP) previousLevel = level.level; }
+  let storedLevel = 0, hadOldXP = false;
+  try{
+    storedLevel = Number(localStorage.getItem("maweb.progress.level") || 0);
+    hadOldXP = localStorage.getItem("maweb.progress.xp") !== null;
+  }catch{}
   box.dataset.level = String(current.level);
   box.style.setProperty("--level-color",current.color);
-  if(previousXP > 0 && current.level > previousLevel && levelUpBanner){
-    box.classList.remove("level-up"); void box.offsetWidth; box.classList.add("level-up");
-    setTimeout(() => box.classList.remove("level-up"),1600);
+  /* popup is queued only when the level actually changed, then remembered so it never repeats */
+  if(storedLevel && current.level > storedLevel){
+    pendingLevelUp = {from:PROGRESSION.levels.find(l => l.level === storedLevel) || null,to:current};
+  }else if(!storedLevel && hadOldXP){
+    pendingLevelUp = {from:null,to:current};
   }
-  try{ localStorage.setItem("maweb.progress.xp",String(totalXP)); }catch{}
+  try{
+    localStorage.setItem("maweb.progress.level",String(current.level));
+    localStorage.setItem("maweb.progress.xp",String(totalXP));
+  }catch{}
   badge.textContent = `LVL ${String(current.level).padStart(2,"0")}`;
   status.textContent = current.name;
   levelName.textContent = current.name;
@@ -525,48 +544,46 @@ function renderProgression(){
   nextText.textContent = next ? `LVL ${String(next.level).padStart(2,"0")} · ${next.name}` : "MAX LEVEL";
   fill.style.width = `${progress}%`;
   bar.setAttribute("aria-valuenow",String(Math.round(progress)));
-  bar.setAttribute("aria-valuetext",`${totalXP} experience points, level ${current.level} of 5`);
+  bar.setAttribute("aria-valuetext",`${totalXP} experience points, level ${current.level} of ${PROGRESSION.levels.length}`);
   description.textContent = current.description;
   $("#profileProjectCount").textContent = String(PROJECTS.length).padStart(2,"0");
   $("#profilePaperCount").textContent = String(PAPERS.length).padStart(2,"0");
 }
 
+let pendingLevelUp = null;
+function showLevelUp(){
+  if(!pendingLevelUp) return;
+  const {from,to} = pendingLevelUp;
+  pendingLevelUp = null;
+  const pop = $("#levelPopup");
+  const glow = to.color + "40";
+  pop.style.setProperty("--lp-to",to.color);
+  pop.style.setProperty("--lp-glow",glow);
+  $("#lpNames").innerHTML = from
+    ? `<s>${esc(from.name)}</s> → <strong style="color:${esc(to.color)}">${esc(to.name)}</strong>`
+    : `<strong style="color:${esc(to.color)}">${esc(to.name)}</strong>`;
+  $("#lpColours").innerHTML = from && from.color !== to.color
+    ? `<span class="lp-swatch" style="background:${esc(from.color)}"></span><span>→</span><span class="lp-swatch" style="background:${esc(to.color)}"></span>`
+    : `<span class="lp-swatch" style="background:${esc(to.color)}"></span>`;
+  $("#lpCopy").textContent = from && from.color !== to.color
+    ? `Level ${to.level}. Your profile colour is changing now.`
+    : `Level ${to.level}. Your status has been updated.`;
+  pop.classList.add("show");
+  pop.setAttribute("aria-hidden","false");
+  $("#lpClose").focus({preventScroll:true});
+}
+function closeLevelUp(){
+  const pop = $("#levelPopup");
+  pop.classList.remove("show");
+  pop.setAttribute("aria-hidden","true");
+}
+const levelPopupOpen = () => $("#levelPopup").classList.contains("show");
+
 /* WELCOME */
 const WELCOME_TEXT = "A personal space for things I build, study, experiment with, and break along the way. No polished story, just the work, the experiments, and the trail behind them.";
 let welcomeFinished = false, currentPage = 0, previousPage = 0, sleeping = false;
 
-/* THUNDER DRIVER: same 6s linear loops as the old SMIL, but 30fps and only while page 1 is visible */
-const thunder = (() => {
-  const ids = ["tA","tB","tC","tD"].map(i => document.getElementById(i));
-  const spec = [["dy",700,0],["dy",0,-700],["dx",490,0],["dx",0,-490]];
-  const steps = [1,33,50,83,0];    /* ms between updates: 1 = every frame (matches 100Hz+), 0 = frozen */
-  let level = 0, raf = 0, last = 0, prev = 0, slow = 0, frames = 0;
-  const apply = now => {
-    const t = (now % 6000) / 6000;
-    spec.forEach(([attr,a,b],i) => ids[i].setAttribute(attr,(a + (b - a) * t).toFixed(1)));
-  };
-  const frame = now => {
-    raf = requestAnimationFrame(frame);
-    /* governor: only steps down if real frames fall under ~45fps for 45 frames */
-    if(prev){ if(now - prev > 22) slow++; frames++; }
-    prev = now;
-    if(frames >= 45){
-      if(slow > 18 && level < steps.length - 1){ level++; if(!steps[level]) apply(now); }
-      slow = 0; frames = 0;
-    }
-    if(!steps[level]) return;
-    if(now - last < steps[level]) return;
-    last = now;
-    apply(now);
-  };
-  return {
-    sync(){
-      const run = currentPage === 0 && !sleeping && !document.hidden && $("#app").classList.contains("active");
-      if(run && !raf){ prev = 0; slow = 0; frames = 0; raf = requestAnimationFrame(frame); }
-      else if(!run && raf){ cancelAnimationFrame(raf); raf = 0; }
-    }
-  };
-})();
+const thunder = {sync(){}};
 
 /* Typing: one text node updated in place (was one new node per character). Same speed. */
 async function typeText(target,text,speed=18){
@@ -760,11 +777,16 @@ function enterSite(){
   $("#bioStream").innerHTML = "";
   thunder.sync();
   revealPersona();
+  setTimeout(showLevelUp,700);
 }
 
 /* KEYBOARD */
 function initKeyboard(){
   window.addEventListener("keydown",event => {
+    if(levelPopupOpen()){
+      if(event.key === "Enter" || event.key === "Escape" || event.key === " "){ event.preventDefault(); closeLevelUp(); }
+      return;
+    }
     if(sleeping){
       if(event.key === "Enter" || event.key === "Escape"){ event.preventDefault(); wakeScreen(); }
       return;
@@ -803,6 +825,7 @@ function init(){
   renderSupport();
   initKeyboard();
   initClock();
+  $("#lpClose").addEventListener("click",closeLevelUp);
   $("#sleepButton").addEventListener("click",sleepScreen);
   $("#wakeButton").addEventListener("click",wakeScreen);
   startWelcome();
