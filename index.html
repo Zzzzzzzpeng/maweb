@@ -9,1275 +9,6691 @@
 <link rel="icon" type="image/svg+xml" href="assets/wagwan.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Bebas+Neue&family=Black+Ops+One&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Bebas+Neue&display=swap" rel="stylesheet">
+
 <style>
-/* PERF NOTES (v1.4): no backdrop-filter, no mix-blend-mode, no animated box-shadow,
-   hidden pages/tabs pause animations, thunder filter runs ONCE per frame (was 3x). */
-@property --spin{syntax:"<angle>";inherits:false;initial-value:0deg}
-:root{--bg:#141b1e;--bg-soft:#1a2226;--bg-panel:#111719;--line:#2f3a3d;--text:#dadada;--muted:#9aa3a5;--dim:#687174;--green:#8ccf7e;--cyan:#6cbfbf;--blue:#67b0e8;--orange:#fcb163;--yellow:#e5c76b;--red:#e57474;--purple:#c47fd5;--redline:#ff3048;--redline-deep:#8c0d20;--redline-soft:#1c0a0f;--redline-text:#f5e6e8;--pixel:'Press Start 2P',monospace;--mono:'VT323',ui-monospace,Menlo,monospace;--display:'Bebas Neue',sans-serif;--hell:'Black Ops One',sans-serif}
-*{box-sizing:border-box}
-html,body{height:100%;margin:0}
-html{scroll-behavior:smooth}
-body{background:radial-gradient(circle at 20% 15%,rgba(252,177,99,.045),transparent 32%),radial-gradient(circle at 80% 25%,rgba(140,207,126,.045),transparent 30%),linear-gradient(180deg,#182126,var(--bg) 55%,#111719);color:var(--text);font:20px/1.45 var(--mono);overflow:hidden;text-rendering:optimizeSpeed}
-a{color:inherit;text-decoration:none}
-button,input{font:inherit;color:inherit}
-button{background:none;border:0;cursor:pointer}
-button:disabled{cursor:default}
-:focus-visible{outline:2px solid var(--orange);outline-offset:3px}
-::selection{background:var(--orange);color:var(--bg)}
-h1,h2,.persona-name{text-wrap:balance}
-.bio-text,.section-lead,.detail p{text-wrap:pretty}
-.crt{position:fixed;inset:0;pointer-events:none;z-index:90;background:repeating-linear-gradient(0deg,rgba(255,255,255,.02) 0 1px,transparent 1px 3px),radial-gradient(ellipse at center,transparent 62%,rgba(0,0,0,.38));contain:strict}
-.scanline{position:fixed;left:0;right:0;top:-18vh;height:18vh;pointer-events:none;z-index:91;background:linear-gradient(transparent,rgba(252,177,99,.08),transparent);opacity:0;will-change:transform}
-.scanline.active{animation:scan 1s linear}
-@keyframes scan{from{transform:translateY(0);opacity:.8}to{transform:translateY(125vh);opacity:0}}
-.cursor{display:inline-block;width:.62em;height:1em;margin-left:.15em;vertical-align:-.08em;background:currentColor;animation:cursorBlink .72s steps(1) infinite}
-@keyframes cursorBlink{50%{opacity:0}}
-.accent-green{color:var(--green)}.accent-cyan{color:var(--cyan)}.accent-blue{color:var(--blue)}.accent-orange{color:var(--orange)}.accent-yellow{color:var(--yellow)}.accent-red{color:var(--red)}.accent-purple{color:var(--purple)}
-.muted{color:var(--muted)}.dim{color:var(--dim)}.small{font-size:17px}
-
-/* ===== REDLINE THEME / CRT GLITCH =====
-   Everblush remains the default. Redline is a persistent black/red CRT mode
-   with a short TV-failure transition when the theme changes. */
-body.redline{
-  --pixel:var(--hell);
-  --display:var(--hell);
-  --bg:#070709;
-  --bg-soft:#0f090b;
-  --bg-panel:#0b080a;
-  --line:#3a151c;
-  --text:#f5e6e8;
-  --muted:#c9a8ad;
-  --dim:#81545d;
-  --green:#ff3048;
-  --cyan:#ff6070;
-  --blue:#ff4558;
-  --orange:#ff596b;
-  --yellow:#ff8d99;
-  --red:#ff203d;
-  --purple:#e51f39;
-  background:
-    radial-gradient(circle at 18% 16%,rgba(255,48,72,.075),transparent 30%),
-    radial-gradient(circle at 82% 22%,rgba(140,13,32,.09),transparent 28%),
-    linear-gradient(180deg,#10080a,var(--bg) 58%,#050506);
-}
-body.redline #welcome{
-  background:
-    radial-gradient(circle at 50% 45%,rgba(255,48,72,.09),transparent 38%),
-    #070709;
-}
-body.redline .profile-box{
-  --level-color:var(--redline)!important;
-  --level-glow:rgba(255,48,72,.30)!important;
-}
-body.redline #levelPopup{
-  --lp-to:var(--redline)!important;
-  --lp-glow:rgba(255,48,72,.32)!important;
-}
-body.redline .profile-frame{
-  border-color:var(--redline);
-  box-shadow:0 0 22px rgba(255,48,72,.20),0 0 46px rgba(255,48,72,.06);
-}
-body.redline .profile-frame img{
-  filter:grayscale(.18) sepia(.28) saturate(1.55) hue-rotate(318deg) contrast(1.10);
-}
-body.redline .profile-frame::after{
-  background:
-    linear-gradient(rgba(255,30,55,.10),rgba(255,30,55,.10)) top/100% 1px no-repeat,
-    repeating-linear-gradient(0deg,rgba(255,70,85,.065) 0 1px,transparent 1px 3px);
-}
-body.redline .crt{
-  background:
-    repeating-linear-gradient(0deg,rgba(255,38,62,.055) 0 1px,transparent 1px 3px),
-    repeating-linear-gradient(90deg,rgba(255,38,62,.018) 0 1px,transparent 1px 5px),
-    radial-gradient(ellipse at center,transparent 54%,rgba(0,0,0,.56));
-}
-body.redline .scanline{
-  background:linear-gradient(transparent,rgba(255,48,72,.18),transparent);
-}
-body.redline .theme-toggle{
-  border-color:var(--redline);
-  color:var(--redline);
-  box-shadow:0 0 16px rgba(255,48,72,.16),inset 0 0 14px rgba(255,48,72,.04);
-}
-body.redline .theme-toggle:hover{
-  background:var(--redline);
-  color:#070709;
-}
-body.redline .persona-name{
-  text-shadow:2px 0 0 rgba(255,30,55,.38),-2px 0 0 rgba(120,0,24,.35);
-}
-body.redline .bio-block{
-  border-left-color:#5b1b25;
-}
-body.redline .bio-key{color:var(--redline)}
-body.redline .panel,
-body.redline .social-card,
-body.redline .support-card,
-body.redline .status-card,
-body.redline .level-card,
-body.redline .xp-card,
-body.redline .stats-card{
-  background:rgba(12,7,9,.78);
-}
-body.redline .panel-title{
-  background:rgba(12,7,9,.97);
-}
-body.redline .btn{
-  border-color:var(--redline);
-  color:var(--redline);
-}
-body.redline .btn:hover{
-  background:var(--redline);
-  color:#070709;
-}
-body.redline .item-meta,
-body.redline .tag{
-  color:#ff6978;
-}
-body.redline nav button{
-  border-color:#4b1821;
-}
-body.redline nav button:hover:not(:disabled){
-  border-color:var(--redline);
-  color:var(--redline);
-}
-body.redline nav button[aria-current="page"]{
-  border-color:var(--redline);
-  background:var(--redline);
-  color:#070709;
-}
-body.redline .route strong,
-body.redline .welcome-title span{
-  color:var(--redline);
-}
-body.redline .welcome-title{
-  text-shadow:0 0 26px rgba(255,48,72,.20),2px 0 0 rgba(255,48,72,.15);
-}
-body.redline ::selection{
-  background:var(--redline);
-  color:#070709;
+:root{
+  --bg:#141b1e;
+  --bg-deep:#0d1214;
+  --panel:#111719;
+  --panel-soft:rgba(17,23,25,.72);
+  --line:#2f3a3d;
+  --line-soft:#263034;
+  --text:#dadada;
+  --muted:#9aa3a5;
+  --dim:#687174;
+  --green:#8ccf7e;
+  --cyan:#6cbfbf;
+  --blue:#67b0e8;
+  --orange:#fcb163;
+  --yellow:#e5c76b;
+  --red:#e57474;
+  --purple:#c47fd5;
+  --pixel:'Press Start 2P',monospace;
+  --mono:'VT323',ui-monospace,Menlo,monospace;
+  --display:'Bebas Neue',sans-serif;
 }
 
+*{
+  box-sizing:border-box;
+}
 
-/* ===== HELL PROFILE / RARE TV FAILURE ===== */
-body.redline .persona-name,
-body.redline h1,
-body.redline h2{
-  font-family:var(--hell);
-  letter-spacing:.025em;
+html,
+body{
+  height:100%;
+  margin:0;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  background:
+    radial-gradient(circle at 20% 15%,rgba(252,177,99,.045),transparent 32%),
+    radial-gradient(circle at 80% 25%,rgba(140,207,126,.045),transparent 30%),
+    linear-gradient(180deg,#182126,var(--bg) 55%,#111719);
+  color:var(--text);
+  font:20px/1.45 var(--mono);
+  overflow:hidden;
+  text-rendering:optimizeSpeed;
+}
+
+a{
+  color:inherit;
+  text-decoration:none;
+}
+
+button,
+input{
+  font:inherit;
+  color:inherit;
+}
+
+button{
+  background:none;
+  border:0;
+  cursor:pointer;
+}
+
+button:disabled{
+  cursor:default;
+}
+
+:focus-visible{
+  outline:2px solid var(--orange);
+  outline-offset:3px;
+}
+
+::selection{
+  background:var(--orange);
+  color:var(--bg);
+}
+
+.crt{
+  position:fixed;
+  inset:0;
+  z-index:95;
+  pointer-events:none;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgba(255,255,255,.018) 0 1px,
+      transparent 1px 3px
+    ),
+    radial-gradient(
+      ellipse at center,
+      transparent 62%,
+      rgba(0,0,0,.34)
+    );
+}
+
+.scanline{
+  position:fixed;
+  left:0;
+  right:0;
+  top:-20vh;
+  height:20vh;
+  pointer-events:none;
+  z-index:96;
+  opacity:0;
+  background:
+    linear-gradient(
+      transparent,
+      rgba(252,177,99,.08),
+      transparent
+    );
+}
+
+.scanline.active{
+  animation:scanDown 1s linear;
+}
+
+@keyframes scanDown{
+  from{
+    transform:translateY(0);
+    opacity:.8;
+  }
+  to{
+    transform:translateY(125vh);
+    opacity:0;
+  }
+}
+
+.cursor{
+  display:inline-block;
+  width:.62em;
+  height:1em;
+  margin-left:.15em;
+  vertical-align:-.08em;
+  background:currentColor;
+  animation:blink .72s steps(1) infinite;
+}
+
+@keyframes blink{
+  50%{
+    opacity:0;
+  }
+}
+
+.accent-green{color:var(--green)}
+.accent-cyan{color:var(--cyan)}
+.accent-orange{color:var(--orange)}
+.accent-yellow{color:var(--yellow)}
+.accent-red{color:var(--red)}
+.muted{color:var(--muted)}
+.dim{color:var(--dim)}
+
+/* =========================================================
+   WELCOME
+   ========================================================= */
+
+#welcome{
+  position:fixed;
+  inset:0;
+  z-index:70;
+  display:grid;
+  place-items:center;
+  padding:clamp(20px,4vw,44px);
+  overflow:hidden;
+  isolation:isolate;
+
+  background:
+    radial-gradient(
+      circle at 50% 18%,
+      rgba(108,191,191,.08),
+      transparent 22%
+    ),
+    radial-gradient(
+      circle at 50% 48%,
+      rgba(140,207,126,.045),
+      transparent 46%
+    ),
+    linear-gradient(
+      180deg,
+      #182126 0%,
+      #141b1e 56%,
+      #0e1416 100%
+    );
+
+  transition:
+    opacity .46s ease,
+    visibility .46s ease;
+}
+
+#welcome.hidden{
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+}
+
+#welcome::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:-2;
+  pointer-events:none;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent 0 49.7%,
+      rgba(255,255,255,.024) 50%,
+      transparent 50.3%
+    ),
+    linear-gradient(
+      0deg,
+      transparent 0 49.7%,
+      rgba(255,255,255,.02) 50%,
+      transparent 50.3%
+    );
+
+  opacity:.18;
+}
+
+#welcome::after{
+  content:"";
+  position:absolute;
+
+  width:min(58vw,760px);
+  aspect-ratio:1;
+
+  left:50%;
+  top:15%;
+
+  transform:translateX(-50%);
+
+  border:1px solid rgba(108,191,191,.08);
+  border-radius:50%;
+
+  box-shadow:
+    0 0 90px rgba(108,191,191,.045),
+    inset 0 0 60px rgba(108,191,191,.02);
+
+  z-index:-1;
+}
+
+.welcome-shell{
+  width:min(1050px,100%);
+  display:grid;
+  justify-items:center;
+  text-align:center;
+  position:relative;
+  z-index:2;
+}
+
+.boot-meta{
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+  color:var(--dim);
+  font-size:11px;
+  letter-spacing:.14em;
   text-transform:uppercase;
 }
-body.redline .profile-box{
-  border-color:var(--redline)!important;
-  background:
-    linear-gradient(180deg,rgba(34,6,10,.92),rgba(8,5,7,.94) 56%,rgba(4,4,5,.98)),
-    #070709;
-  box-shadow:
-    0 0 0 1px rgba(255,48,72,.18) inset,
-    0 0 28px rgba(255,25,48,.18),
-    0 0 70px rgba(255,12,30,.08);
-  border-radius:3px;
+
+.boot-meta-left{
+  display:flex;
+  align-items:center;
+  gap:9px;
 }
-.hell-aura{
+
+.boot-led{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 12px rgba(140,207,126,.7);
+  animation:ledPulse 1.15s ease-in-out infinite;
+}
+
+@keyframes ledPulse{
+  50%{
+    opacity:.3;
+    transform:scale(.72);
+  }
+}
+
+.welcome-core{
+  width:min(880px,100%);
+  margin-top:clamp(40px,9vh,95px);
+  display:grid;
+  justify-items:center;
+}
+
+.welcome-kicker{
+  color:var(--cyan);
+  font-size:13px;
+  letter-spacing:.18em;
+  opacity:.9;
+}
+
+.welcome-title{
+  margin:13px 0 9px;
+  font-family:var(--pixel);
+  font-size:clamp(44px,10vw,118px);
+  line-height:1;
+  letter-spacing:-.055em;
+  color:var(--text);
+  text-shadow:0 0 32px rgba(108,191,191,.18);
+  animation:welcomeIn .72s cubic-bezier(.2,.8,.2,1) both;
+}
+
+@keyframes welcomeIn{
+  0%{
+    opacity:0;
+    transform:translateY(16px) scale(.98);
+    filter:blur(8px);
+  }
+  65%{
+    opacity:1;
+    filter:blur(0);
+  }
+  100%{
+    transform:none;
+  }
+}
+
+.welcome-subtitle{
+  min-height:1.55em;
+  color:var(--muted);
+  font-size:clamp(17px,2vw,23px);
+}
+
+.boot-track{
+  width:min(600px,82vw);
+  margin-top:27px;
+}
+
+.boot-line{
+  position:relative;
+  height:3px;
+  overflow:hidden;
+  background:rgba(255,255,255,.065);
+}
+
+.boot-line-fill{
+  width:0;
+  height:100%;
+  background:
+    linear-gradient(
+      90deg,
+      var(--green),
+      var(--cyan),
+      var(--orange)
+    );
+  box-shadow:0 0 18px rgba(108,191,191,.35);
+  transition:width .12s linear;
+}
+
+.boot-stats{
+  display:flex;
+  justify-content:space-between;
+  margin-top:7px;
+  color:var(--dim);
+  font-size:10px;
+  letter-spacing:.12em;
+}
+
+/* =========================================================
+   SEARCH
+   ========================================================= */
+
+.welcome-search{
+  position:relative;
+  width:min(760px,92vw);
+  margin-top:clamp(32px,5vh,54px);
+}
+
+.search-bubble{
   position:absolute;
-  left:9%;
-  top:-62px;
-  width:82%;
-  height:92px;
-  z-index:1;
-  pointer-events:none;
+  left:20px;
+  bottom:calc(100% + 10px);
+
+  padding:7px 11px;
+
+  border:1px solid rgba(108,191,191,.18);
+  border-radius:999px;
+
+  background:rgba(11,16,18,.9);
+  color:var(--muted);
+
+  font-size:11px;
+  letter-spacing:.08em;
+
   opacity:0;
-  transform-origin:50% 100%;
+  transform:translateY(6px) scale(.98);
+
+  pointer-events:none;
+
+  transition:
+    opacity .18s ease,
+    transform .18s ease;
 }
-.hell-flame{position:absolute;bottom:0;border-radius:48% 52% 18% 18%;transform-origin:50% 100%;filter:blur(5px)}
-.hell-flame-a{left:7%;width:26%;height:76%;background:radial-gradient(ellipse at 50% 92%,rgba(255,36,54,.72),transparent 72%);transform:rotate(-12deg)}
-.hell-flame-b{left:29%;width:40%;height:100%;background:radial-gradient(ellipse at 50% 95%,rgba(255,70,77,.94),rgba(170,10,28,.42) 48%,transparent 76%)}
-.hell-flame-c{right:6%;width:28%;height:79%;background:radial-gradient(ellipse at 50% 92%,rgba(255,28,47,.68),transparent 72%);transform:rotate(11deg)}
-body.redline .hell-aura{opacity:1;animation:hellAura 2.8s steps(7,end) infinite}
-body.redline .hell-aura::after{content:"";position:absolute;inset:6px 9% -2px;background:linear-gradient(90deg,transparent,rgba(255,35,52,.34),transparent);filter:blur(9px);animation:hellCore 1.8s ease-in-out infinite}
-.profile-frame,.profile-caption,.theme-switch-row,.profile-status{position:relative;z-index:4}
-@keyframes hellAura{0%,100%{transform:scaleY(.88) translateY(2px);filter:blur(5px)}22%{transform:scaleY(1.06) translateY(-4px);filter:blur(6px)}46%{transform:scaleY(.96) translateY(0)}71%{transform:scaleY(1.13) translateY(-6px);filter:blur(7px)}83%{transform:scaleY(.90) translateY(1px)}}
-@keyframes hellCore{50%{opacity:.28;transform:scaleX(.72) translateY(-3px)}}
-body.redline .profile-caption{font-family:var(--display);font-size:21px;letter-spacing:.12em;color:#fff1f2;text-shadow:2px 0 0 rgba(255,28,47,.45)}
-body.redline .profile-caption::after{content:" // HELL MODE";color:var(--redline);font-family:var(--mono);font-size:13px;letter-spacing:.08em}
-body.redline .status-card,
-body.redline .level-card,
-body.redline .xp-card,
-body.redline .stats-card{
-  border-color:#561923;
+
+.search-bubble::after{
+  content:"";
+  position:absolute;
+
+  left:18px;
+  top:100%;
+
+  width:8px;
+  height:8px;
+
+  border-right:1px solid rgba(108,191,191,.18);
+  border-bottom:1px solid rgba(108,191,191,.18);
+
+  background:rgba(11,16,18,.9);
+
+  transform:translateY(-4px) rotate(45deg);
+}
+
+.search-bubble-dot{
+  display:inline-block;
+  width:6px;
+  height:6px;
+  margin-right:7px;
+  border-radius:50%;
+
+  background:var(--cyan);
+  box-shadow:0 0 10px rgba(108,191,191,.65);
+}
+
+.welcome-search:hover .search-bubble,
+.welcome-search:focus-within .search-bubble{
+  opacity:1;
+  transform:none;
+}
+
+.search-form{
+  display:flex;
+  align-items:center;
+
+  min-height:64px;
+
+  padding:0 17px;
+
+  border:1px solid rgba(108,191,191,.24);
+  border-radius:18px;
+
   background:
-    linear-gradient(180deg,rgba(45,7,12,.72),rgba(10,6,8,.84)),
-    repeating-linear-gradient(0deg,rgba(255,42,62,.04) 0 1px,transparent 1px 4px);
-  box-shadow:inset 0 0 18px rgba(255,24,44,.035);
-}
-body.redline .status-value,
-body.redline .level-badge,
-body.redline .xp-meta,
-body.redline .stat-value strong{font-family:var(--display);letter-spacing:.08em}
-body.redline .level-badge{font-size:15px;padding:7px 10px}
-body.redline .xp-track{border-color:var(--redline);background:#100609;box-shadow:inset 0 0 14px rgba(255,48,72,.12),0 0 16px rgba(255,48,72,.14)}
-body.redline .xp-fill{background:linear-gradient(90deg,#720819,#ff203d 78%,#ff7180)}
-body.redline .profile-box .theme-toggle{font-family:var(--display);font-size:18px;letter-spacing:.08em}
-body.redline .profile-box .theme-hint{font-family:var(--mono);color:#9d5561}
-body.redline .profile-electric-main,
-body.redline .profile-electric-glow,
-body.redline .profile-electric-glow-strong{border-color:#ff2b43}
-body.redline .profile-electric-main::after{box-shadow:0 0 9px rgba(255,38,58,.76),0 0 24px rgba(255,18,38,.40)}
+    linear-gradient(
+      180deg,
+      rgba(27,37,41,.9),
+      rgba(10,15,17,.96)
+    );
 
-/* Rare micro-glitch: deliberately subtle, then a stronger burst at random intervals. */
-.redline-fx{position:fixed;inset:0;z-index:95;pointer-events:none;overflow:hidden;opacity:0}
-.redline-fx::before,
-.redline-fx::after{content:"";position:absolute;inset:0;pointer-events:none}
-.redline-fx::before{
+  box-shadow:
+    0 18px 48px rgba(0,0,0,.28),
+    inset 0 0 0 1px rgba(255,255,255,.018);
+
+  transition:
+    transform .18s ease,
+    border-color .18s ease,
+    box-shadow .18s ease;
+}
+
+.search-form:hover,
+.search-form:focus-within{
+  transform:translateY(-2px);
+
+  border-color:
+    rgba(108,191,191,.5);
+
+  box-shadow:
+    0 22px 58px rgba(0,0,0,.32),
+    0 0 26px rgba(108,191,191,.055),
+    inset 0 0 0 1px
+      rgba(108,191,191,.04);
+}
+
+.search-icon{
+  width:30px;
+  height:30px;
+
+  display:grid;
+  place-items:center;
+
+  margin-right:11px;
+
+  color:var(--cyan);
+
+  flex:0 0 auto;
+}
+
+.search-icon svg{
+  width:20px;
+  height:20px;
+}
+
+.search-form input{
+  width:100%;
+  min-width:0;
+
+  border:0;
+  outline:0;
+
+  background:transparent;
+  color:var(--text);
+
+  font-size:20px;
+}
+
+.search-form input::placeholder{
+  color:#717c80;
+}
+
+.search-hint{
+  margin-left:11px;
+  color:var(--dim);
+  font-size:10px;
+  letter-spacing:.1em;
+  white-space:nowrap;
+}
+
+.search-hint kbd{
+  display:inline-flex;
+  align-items:center;
+
+  min-height:24px;
+
+  padding:2px 6px;
+
+  border:1px solid var(--line);
+  border-radius:6px;
+
+  background:rgba(255,255,255,.025);
+  color:var(--muted);
+}
+
+.search-pulse{
+  position:absolute;
+
+  right:18px;
+  top:-3px;
+
+  width:6px;
+  height:6px;
+
+  border-radius:50%;
+
+  background:var(--orange);
+
+  box-shadow:
+    0 0 12px
+    rgba(252,177,99,.65);
+
+  animation:
+    searchPulse
+    1.6s
+    ease-in-out
+    infinite;
+}
+
+@keyframes searchPulse{
+  50%{
+    opacity:.2;
+    transform:scale(.6);
+  }
+}
+
+.search-meta{
+  display:flex;
+  justify-content:space-between;
+
+  gap:20px;
+
+  margin-top:7px;
+  padding:0 4px;
+
+  color:var(--dim);
+
+  font-size:9px;
+  letter-spacing:.1em;
+
+  text-transform:uppercase;
+}
+
+.search-meta strong{
+  color:var(--cyan);
+  font-weight:400;
+}
+
+/* ENTER */
+
+.enter-zone{
+  display:grid;
+  justify-items:center;
+  margin-top:25px;
+}
+
+.enter-button{
+  display:inline-flex;
+  align-items:center;
+
+  gap:11px;
+
+  min-height:42px;
+  padding:8px 2px;
+
+  color:var(--orange);
+
+  letter-spacing:.11em;
+  font-size:17px;
+
+  opacity:0;
+  transform:translateY(8px);
+
+  pointer-events:none;
+
+  transition:
+    opacity .22s ease,
+    transform .22s ease,
+    color .16s ease;
+}
+
+.enter-button.ready{
+  opacity:1;
+  transform:none;
+  pointer-events:auto;
+}
+
+.enter-button:hover{
+  color:var(--text);
+}
+
+.enter-arrow{
+  font-size:24px;
+  animation:blinkArrow .9s steps(1) infinite;
+}
+
+@keyframes blinkArrow{
+  50%{
+    opacity:.28;
+  }
+}
+
+.version{
+  margin-top:13px;
+  color:var(--dim);
+  font-size:10px;
+  letter-spacing:.1em;
+}
+
+.boot-log{
+  position:absolute;
+  left:clamp(18px,4vw,55px);
+  bottom:clamp(18px,3vw,35px);
+
+  color:#535d60;
+
+  font-size:10px;
+  text-align:left;
+  line-height:1.6;
+  letter-spacing:.05em;
+}
+
+.boot-log-line{
+  opacity:0;
+  transform:translateY(4px);
+  transition:.18s ease;
+}
+
+.boot-log-line.show{
+  opacity:.72;
+  transform:none;
+}
+
+.boot-log .ok{
+  color:#6e8c72;
+}
+
+
+/* =========================================================
+   MAIN APP
+   ========================================================= */
+
+#app{
+  position:fixed;
+  inset:0;
+
+  display:grid;
+  grid-template-rows:auto 1fr;
+
+  opacity:0;
+  pointer-events:none;
+
+  transform:translateY(6px);
+
+  transition:
+    opacity .28s ease,
+    transform .28s ease;
+}
+
+#app.active{
+  opacity:1;
+  pointer-events:auto;
+  transform:none;
+}
+
+header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+
+  gap:12px;
+
+  margin:10px 12px 0;
+  padding:8px 10px;
+
+  border:1px solid var(--line);
+  border-radius:12px;
+
   background:
-    repeating-linear-gradient(0deg,transparent 0 9px,rgba(255,40,58,.055) 9px 10px),
-    linear-gradient(90deg,transparent 0 14%,rgba(255,0,28,.09) 14% 15%,transparent 15% 76%,rgba(255,55,70,.06) 76% 77%,transparent 77%);
-}
-.redline-fx::after{
-  background:linear-gradient(90deg,transparent 0 22%,rgba(255,32,52,.18) 22% 35%,transparent 35% 62%,rgba(255,88,96,.12) 62% 68%,transparent 68%);
-  mix-blend-mode:screen;
-}
-body.redline.redline-glitch .redline-fx{animation:microTV .22s steps(7,end) both}
-body.redline.redline-glitch #app,
-body.redline.redline-glitch #welcome,
-body.redline.redline-glitch #sleep{animation:microScreen .22s steps(7,end) both}
-body.redline.redline-glitch .profile-box{animation:hellHit .22s steps(7,end) both}
-@keyframes microTV{0%,100%{opacity:0}18%{opacity:.25}34%{opacity:.07}52%{opacity:.32}72%{opacity:.12}88%{opacity:.26}}
-@keyframes microScreen{0%,100%{filter:none;transform:none}20%{filter:blur(.6px) contrast(1.14);transform:translateX(-1px)}42%{filter:none;transform:translateX(2px)}64%{filter:blur(.35px) contrast(1.20);transform:translateX(-1px) skewX(.08deg)}82%{filter:none;transform:none}}
-@keyframes hellHit{0%,100%{transform:none}18%{transform:translateX(-2px) skewX(.18deg)}38%{transform:translateX(2px)}55%{transform:translateX(-1px)}73%{transform:scale(1.003) translateX(1px)}90%{transform:none}}
-body.redline .route strong{font-family:var(--display);font-size:20px;letter-spacing:.08em}
-body.redline .route .path{color:#ff7a86}
-body.redline .clock{font-family:var(--display);font-size:17px;letter-spacing:.1em;color:#b8646f}
-body.redline header{background:linear-gradient(180deg,rgba(34,7,11,.90),rgba(10,6,8,.92));border-color:#4b141d;box-shadow:0 0 26px rgba(255,27,48,.07),inset 0 -1px 0 rgba(255,60,78,.12)}
-body.redline header::after{background:linear-gradient(90deg,transparent,#ff3048,transparent)!important}
-body.redline nav button{font-family:var(--display);font-size:17px;letter-spacing:.1em}
+    linear-gradient(
+      180deg,
+      rgba(25,33,36,.94),
+      rgba(14,19,21,.92)
+    );
 
-/* Modern welcome surface */
-#welcome .welcome-wrap{position:relative;padding:clamp(26px,5vw,58px);border:1px solid var(--line);background:linear-gradient(145deg,rgba(255,255,255,.025),rgba(255,255,255,0) 34%),rgba(10,14,16,.52);box-shadow:0 24px 70px rgba(0,0,0,.22),inset 0 0 0 1px rgba(255,255,255,.018);clip-path:polygon(0 12px,12px 0,calc(100% - 12px) 0,100% 12px,100% calc(100% - 12px),calc(100% - 12px) 100%,12px 100%,0 calc(100% - 12px))}
-#welcome .welcome-wrap::before{content:"SIGNAL / PERSONA / SYSTEMS";position:absolute;right:24px;top:14px;color:var(--dim);font-size:11px;letter-spacing:.18em}
-body.redline #welcome .welcome-wrap{background:linear-gradient(145deg,rgba(255,38,56,.055),rgba(255,38,56,0) 32%),rgba(8,5,7,.72);border-color:#551720;box-shadow:0 24px 90px rgba(0,0,0,.40),0 0 34px rgba(255,26,45,.08),inset 0 0 0 1px rgba(255,48,72,.05)}
-body.redline #welcome .welcome-wrap::before{color:#96414e}
-body.redline .welcome-title{font-family:var(--hell);letter-spacing:.02em}
-body.redline .welcome-next{font-family:var(--display);font-size:23px;letter-spacing:.12em;color:var(--redline)}
+  position:relative;
+  overflow:hidden;
 
-/* Theme button: deliberately icon-first so it reads as a small hardware switch. */
+  box-shadow:
+    0 10px 28px rgba(0,0,0,.12),
+    inset 0 1px 0 rgba(255,255,255,.025);
+}
+
+header::after{
+  content:"";
+  position:absolute;
+  left:8%;
+  right:8%;
+  bottom:0;
+  height:1px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      var(--green),
+      transparent
+    );
+
+  opacity:.65;
+}
+
+.route{
+  min-width:0;
+}
+
+.route strong{
+  color:var(--green);
+}
+
+.route .path{
+  color:var(--cyan);
+}
+
+.clock{
+  color:var(--dim);
+  font-size:16px;
+  white-space:nowrap;
+}
+
+nav{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  position:relative;
+  z-index:1;
+}
+
+nav button{
+  min-width:34px;
+  height:30px;
+
+  border:1px solid var(--line);
+  color:var(--muted);
+
+  transition:.14s ease;
+}
+
+nav button:hover:not(:disabled){
+  border-color:var(--green);
+  color:var(--green);
+  transform:translateY(-1px);
+}
+
+nav button[aria-current="page"]{
+  border-color:var(--green);
+  background:var(--green);
+  color:var(--bg);
+}
+
+main{
+  min-height:0;
+  position:relative;
+  overflow:hidden;
+}
+
+.page{
+  position:absolute;
+  inset:0;
+
+  padding:28px clamp(16px,5vw,68px);
+
+  overflow-y:auto;
+  overflow-x:hidden;
+
+  opacity:0;
+  visibility:hidden;
+
+  transform:translateX(20px);
+
+  transition:
+    opacity .18s ease,
+    transform .18s ease,
+    visibility .18s ease;
+}
+
+.page.active{
+  opacity:1;
+  visibility:visible;
+  transform:none;
+}
+
+.page.exit{
+  transform:translateX(-20px);
+}
+
+.page-inner{
+  width:min(1180px,100%);
+  margin:0 auto;
+}
+
+.prompt{
+  color:var(--muted);
+  font-size:18px;
+  margin-bottom:9px;
+}
+
+.prompt strong{
+  color:var(--green);
+}
+
+.eyebrow{
+  color:var(--orange);
+  font-size:14px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+}
+
+h1{
+  margin:8px 0 20px;
+  font-family:var(--pixel);
+  font-size:clamp(21px,4vw,38px);
+  line-height:1.3;
+}
+
+.section-lead{
+  max-width:900px;
+  color:var(--muted);
+  font-size:21px;
+  margin:0 0 22px;
+}
+
+
+/* =========================================================
+   PERSONA
+   ========================================================= */
+
+.persona-head{
+  display:grid;
+
+  grid-template-columns:
+    minmax(0,1.7fr)
+    minmax(320px,.8fr);
+
+  gap:clamp(38px,6vw,82px);
+
+  align-items:start;
+}
+
+.persona-name{
+  margin:0 0 30px;
+
+  font-family:var(--pixel);
+
+  font-size:clamp(24px,4vw,46px);
+
+  line-height:1.15;
+}
+
+.bio-stream{
+  width:100%;
+  max-width:880px;
+}
+
+.bio-block{
+  padding:
+    0
+    0
+    23px
+    19px;
+
+  border-left:2px solid var(--line);
+
+  margin:
+    0
+    0
+    24px;
+
+  opacity:0;
+
+  transform:translateY(8px);
+}
+
+.bio-block.revealed{
+  animation:
+    reveal
+    .28s
+    ease
+    forwards;
+}
+
+@keyframes reveal{
+  to{
+    opacity:1;
+    transform:none;
+  }
+}
+
+.bio-key{
+  display:block;
+
+  margin-bottom:8px;
+
+  color:var(--orange);
+
+  font-size:14px;
+  letter-spacing:.11em;
+}
+
+.bio-text{
+  color:var(--muted);
+
+  font-size:
+    clamp(20px,1.65vw,23px);
+
+  line-height:1.58;
+}
+
+
+/* =========================================================
+   PROFILE
+   ========================================================= */
+
+.profile-box{
+  width:min(100%,390px);
+
+  justify-self:end;
+
+  position:sticky;
+  top:20px;
+
+  padding:15px;
+
+  border:1px solid var(--green);
+
+  background:
+    rgba(17,23,25,.68);
+
+  --profile-glow:
+    rgba(140,207,126,.24);
+}
+
+.profile-box::before{
+  content:"PROFILE";
+
+  position:absolute;
+
+  top:-9px;
+  left:14px;
+
+  padding:0 8px;
+
+  background:var(--bg);
+
+  color:var(--orange);
+
+  font-size:12px;
+
+  letter-spacing:.08em;
+}
+
+.profile-frame{
+  position:relative;
+
+  width:100%;
+
+  aspect-ratio:1;
+
+  overflow:hidden;
+
+  border:1px solid var(--line);
+
+  background:#0f1619;
+
+  box-shadow:
+    0 0 20px
+    var(--profile-glow);
+}
+
+.profile-frame::after{
+  content:"";
+
+  position:absolute;
+  inset:4px;
+
+  pointer-events:none;
+
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgba(255,255,255,.035) 0 1px,
+      transparent 1px 3px
+    );
+}
+
+.profile-frame img{
+  position:absolute;
+
+  inset:4px;
+
+  width:calc(100% - 8px);
+  height:calc(100% - 8px);
+
+  object-fit:cover;
+
+  display:block;
+
+  background:#141b1e;
+
+  filter:
+    saturate(.95)
+    contrast(1.04);
+}
+
+.profile-caption{
+  margin-top:14px;
+
+  color:var(--text);
+
+  font-family:var(--pixel);
+
+  font-size:13px;
+}
+
 .theme-switch-row{
   display:flex;
   align-items:center;
   justify-content:space-between;
+
   gap:10px;
+
   margin-top:12px;
 }
+
 .theme-toggle{
   display:inline-flex;
   align-items:center;
-  gap:9px;
-  min-height:38px;
+
+  gap:8px;
+
+  min-height:37px;
+
   padding:7px 10px;
+
   border:1px solid var(--line);
-  background:rgba(8,12,14,.62);
+
   color:var(--muted);
-  transition:transform .12s ease,border-color .12s,color .12s,background-color .12s;
+
+  transition:.14s ease;
 }
+
 .theme-toggle:hover{
-  transform:translateY(-1px);
   border-color:var(--green);
   color:var(--green);
+  transform:translateY(-1px);
 }
-.theme-toggle:active{transform:translateY(1px)}
-.theme-toggle svg{width:18px;height:18px;flex:none}
+
+.theme-toggle svg{
+  width:18px;
+  height:18px;
+}
+
 .theme-toggle-label{
-  font-size:14px;
-  letter-spacing:.10em;
+  font-size:13px;
+  letter-spacing:.08em;
 }
+
 .theme-toggle-state{
   width:8px;
   height:8px;
+
   border:1px solid currentColor;
   border-radius:50%;
-  opacity:.75;
 }
-body.redline .theme-toggle-state{
-  background:var(--redline);
-  box-shadow:0 0 9px var(--redline);
-  opacity:1;
-}
+
 .theme-hint{
+  font-size:11px;
   color:var(--dim);
-  font-size:12px;
-  letter-spacing:.08em;
   text-align:right;
 }
 
-/* TV failure transition: brief blur, horizontal tearing, RGB separation and red flash. */
+.profile-status{
+  display:grid;
+  gap:9px;
+
+  margin-top:14px;
+  padding-top:14px;
+
+  border-top:1px solid var(--line);
+}
+
+.status-card,
+.level-card,
+.xp-card,
+.stats-card{
+  border:1px solid var(--line-soft);
+
+  background:
+    rgba(10,15,17,.52);
+
+  padding:10px 11px;
+}
+
+.status-line,
+.level-row,
+.xp-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+
+  gap:10px;
+}
+
+.status-main{
+  display:flex;
+  align-items:center;
+  gap:9px;
+}
+
+.profile-status-dot{
+  width:8px;
+  height:8px;
+
+  flex:0 0 8px;
+
+  border-radius:50%;
+
+  background:var(--green);
+
+  box-shadow:
+    0 0 8px
+    var(--green);
+
+  animation:
+    statusPulse
+    1.45s
+    ease-in-out
+    infinite;
+}
+
+@keyframes statusPulse{
+  50%{
+    opacity:.3;
+    transform:scale(.7);
+  }
+}
+
+.status-label,
+.xp-title,
+.stat-label{
+  color:var(--dim);
+
+  font-size:11px;
+
+  letter-spacing:.1em;
+}
+
+.status-value{
+  color:var(--green);
+  font-weight:400;
+  letter-spacing:.07em;
+}
+
+.status-signal{
+  color:var(--dim);
+  font-size:11px;
+}
+
+.level-badge{
+  min-width:73px;
+
+  padding:6px 8px;
+
+  border:1px solid var(--purple);
+
+  color:var(--purple);
+
+  font-size:11px;
+  letter-spacing:.04em;
+}
+
+.level-name{
+  text-align:right;
+  color:var(--text);
+  font-size:16px;
+}
+
+.level-description{
+  margin-top:7px;
+
+  color:var(--muted);
+
+  font-size:12px;
+  line-height:1.4;
+}
+
+.xp-meta{
+  color:var(--green);
+  font-size:14px;
+}
+
+.xp-track{
+  position:relative;
+
+  height:15px;
+
+  margin-top:7px;
+
+  overflow:hidden;
+
+  border:1px solid var(--green);
+
+  background:#0a0f11;
+}
+
+.xp-fill{
+  width:0;
+
+  height:100%;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(140,207,126,.35),
+      var(--green)
+    );
+
+  transition:
+    width .65s
+    cubic-bezier(.2,.75,.2,1);
+}
+
+.xp-scale{
+  display:flex;
+  justify-content:space-between;
+
+  margin-top:5px;
+
+  color:var(--dim);
+
+  font-size:10px;
+}
+
+.stats-card{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+
+.stat-item{
+  padding:8px;
+
+  border:1px solid var(--line-soft);
+}
+
+.stat-value{
+  display:block;
+
+  margin-top:2px;
+
+  color:var(--text);
+
+  font-size:16px;
+}
+
+.stat-value strong{
+  color:var(--green);
+  font-weight:400;
+}
+
+
+/* =========================================================
+   PANELS
+   ========================================================= */
+
+.index-layout{
+  display:grid;
+
+  grid-template-columns:
+    minmax(280px,.75fr)
+    minmax(0,1.25fr);
+
+  gap:18px;
+
+  min-height:
+    calc(100vh - 210px);
+}
+
+.panel{
+  min-height:0;
+
+  border:1px solid var(--line);
+
+  background:
+    rgba(17,23,25,.6);
+
+  overflow:hidden;
+
+  position:relative;
+}
+
+.panel-title{
+  position:sticky;
+
+  top:0;
+
+  z-index:2;
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+
+  padding:9px 12px;
+
+  border-bottom:1px solid var(--line);
+
+  background:
+    rgba(17,23,25,.97);
+
+  color:var(--orange);
+
+  font-size:14px;
+  letter-spacing:.08em;
+}
+
+.scroll-list{
+  height:100%;
+
+  max-height:
+    calc(100vh - 250px);
+
+  overflow-y:auto;
+
+  scrollbar-width:thin;
+
+  scrollbar-color:
+    var(--line)
+    transparent;
+}
+
+.list-item{
+  width:100%;
+
+  text-align:left;
+
+  padding:13px 14px;
+
+  border-bottom:
+    1px dashed
+    var(--line);
+
+  transition:.13s ease;
+}
+
+.list-item:hover,
+.list-item.active{
+  background:
+    rgba(140,207,126,.05);
+
+  transform:
+    translateX(4px);
+
+  border-color:
+    var(--green);
+}
+
+.item-index{
+  display:inline-block;
+
+  width:38px;
+
+  vertical-align:top;
+
+  color:var(--orange);
+}
+
+.item-main{
+  display:inline-block;
+
+  width:
+    calc(100% - 42px);
+
+  vertical-align:top;
+}
+
+.item-title{
+  color:var(--text);
+  font-size:20px;
+}
+
+.item-meta{
+  display:block;
+
+  margin-top:2px;
+
+  color:var(--cyan);
+
+  font-size:15px;
+}
+
+.detail{
+  padding:22px;
+
+  overflow-y:auto;
+
+  max-height:
+    calc(100vh - 250px);
+}
+
+.detail h2{
+  margin:0 0 10px;
+
+  font-family:var(--pixel);
+
+  font-size:
+    clamp(18px,3vw,27px);
+
+  line-height:1.35;
+}
+
+.detail-label{
+  color:var(--orange);
+
+  font-size:13px;
+
+  letter-spacing:.1em;
+
+  margin-top:16px;
+}
+
+.detail p{
+  color:var(--muted);
+
+  font-size:19px;
+
+  margin:
+    4px
+    0
+    11px;
+}
+
+.tag-row{
+  display:flex;
+
+  flex-wrap:wrap;
+
+  gap:6px;
+}
+
+.tag{
+  border:1px solid var(--line);
+
+  padding:3px 8px;
+
+  color:var(--cyan);
+
+  font-size:14px;
+}
+
+.actions{
+  display:flex;
+
+  flex-wrap:wrap;
+
+  gap:8px;
+
+  margin-top:17px;
+}
+
+.btn{
+  display:inline-flex;
+
+  align-items:center;
+
+  gap:6px;
+
+  border:1px solid var(--green);
+
+  color:var(--green);
+
+  padding:6px 11px;
+
+  font-size:17px;
+
+  transition:.13s ease;
+}
+
+.btn:hover{
+  background:var(--green);
+  color:var(--bg);
+  transform:translateY(-1px);
+}
+
+.btn.orange{
+  border-color:var(--orange);
+  color:var(--orange);
+}
+
+.btn.orange:hover{
+  background:var(--orange);
+  color:var(--bg);
+}
+
+.btn.gray{
+  border-color:#657074;
+  color:#abb3b5;
+}
+
+.btn.gray:hover{
+  background:#657074;
+  color:#080b0c;
+}
+
+
+/* RESEARCH */
+
+.page[data-page="2"] .page-inner{
+  width:min(1500px,100%);
+}
+
+.page[data-page="2"] .index-layout{
+  grid-template-columns:
+    minmax(190px,.72fr)
+    minmax(280px,1fr)
+    minmax(0,2.3fr);
+}
+
+.page[data-page="2"] .paper-index,
+.page[data-page="2"] .paper-info,
+.page[data-page="2"] .paper-pdf{
+  height:
+    calc(100vh - 250px);
+}
+
+.page[data-page="2"] .paper-info{
+  display:grid;
+  grid-template-rows:auto minmax(0,1fr);
+}
+
+.page[data-page="2"] .paper-pdf{
+  display:grid;
+  grid-template-rows:auto minmax(0,1fr);
+}
+
+#paperViewer{
+  height:100%;
+  padding:10px;
+
+  background:#0d1113;
+
+  overflow:hidden;
+}
+
+#paperViewer iframe{
+  display:block;
+
+  width:100%;
+  height:100%;
+
+  border:1px solid var(--line);
+
+  background:#0a0d0e;
+}
+
+.pdf-placeholder{
+  height:100%;
+
+  display:grid;
+  place-items:center;
+
+  border:1px dashed var(--line);
+
+  padding:30px;
+
+  text-align:center;
+
+  color:var(--dim);
+}
+
+
+/* SOCIAL */
+
+.social-grid{
+  display:grid;
+
+  grid-template-columns:
+    repeat(2,minmax(0,1fr));
+
+  gap:12px;
+
+  max-width:900px;
+}
+
+.social-card{
+  min-height:120px;
+
+  padding:18px;
+
+  border:1px solid var(--line);
+
+  background:
+    rgba(17,23,25,.56);
+
+  transition:.15s ease;
+}
+
+.social-card:hover{
+  transform:translateY(-3px);
+  border-color:
+    var(--accent,var(--green));
+}
+
+.social-card strong{
+  font-family:var(--pixel);
+
+  font-size:13px;
+
+  color:
+    var(--accent,var(--green));
+}
+
+.social-card span{
+  display:block;
+
+  margin:8px 0 12px;
+
+  color:var(--muted);
+
+  font-size:18px;
+}
+
+.social-arrow{
+  color:var(--orange);
+  font-size:17px;
+}
+
+
+/* SUPPORT */
+
+.support-wrap{
+  max-width:950px;
+}
+
+.support-grid{
+  display:grid;
+
+  grid-template-columns:
+    repeat(2,minmax(0,1fr));
+
+  gap:12px;
+}
+
+.support-card{
+  border:1px solid var(--line);
+
+  padding:17px;
+
+  background:
+    rgba(17,23,25,.56);
+}
+
+.support-card strong{
+  color:var(--orange);
+
+  font-family:var(--pixel);
+
+  font-size:12px;
+}
+
+.support-card p{
+  margin:
+    8px
+    0
+    12px;
+
+  color:var(--muted);
+
+  font-size:18px;
+}
+
+
+/* =========================================================
+   LEVEL POPUP
+   ========================================================= */
+
+#levelPopup{
+  position:fixed;
+  inset:0;
+
+  z-index:110;
+
+  display:grid;
+  place-items:center;
+
+  padding:24px;
+
+  background:
+    rgba(8,10,11,.78);
+
+  opacity:0;
+  visibility:hidden;
+
+  pointer-events:none;
+
+  transition:.2s ease;
+}
+
+#levelPopup.show{
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
+}
+
+.lp-card{
+  width:min(460px,100%);
+
+  padding:24px;
+
+  border:1px solid var(--green);
+
+  background:var(--panel);
+
+  text-align:center;
+
+  transform:
+    translateY(10px)
+    scale(.98);
+
+  transition:.2s ease;
+}
+
+#levelPopup.show .lp-card{
+  transform:none;
+}
+
+.lp-title{
+  margin:0;
+
+  font-family:var(--pixel);
+
+  font-size:19px;
+
+  color:var(--orange);
+}
+
+.lp-names{
+  margin-top:18px;
+  font-size:24px;
+}
+
+.lp-colours{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:8px;
+  margin-top:12px;
+}
+
+.lp-swatch{
+  width:14px;
+  height:14px;
+
+  border-radius:50%;
+
+  display:inline-block;
+}
+
+.lp-copy{
+  margin:13px 0 18px;
+
+  color:var(--muted);
+
+  font-size:17px;
+}
+
+
+/* =========================================================
+   THEME TRANSITION
+   ========================================================= */
+
 .theme-fx{
   position:fixed;
   inset:0;
-  z-index:1000;
+
+  z-index:120;
+
   pointer-events:none;
+
   opacity:0;
-  overflow:hidden;
-  background:
-    repeating-linear-gradient(0deg,transparent 0 8px,rgba(255,35,58,.08) 8px 10px),
-    repeating-linear-gradient(90deg,rgba(255,255,255,.018) 0 1px,transparent 1px 5px);
 }
-.theme-fx::before,
-.theme-fx::after{
-  content:"";
-  position:absolute;
-  inset:-12%;
-  pointer-events:none;
-}
-.theme-fx::before{
-  background:
-    linear-gradient(90deg,transparent 0 37%,rgba(255,0,35,.20) 37% 41%,transparent 41% 62%,rgba(255,255,255,.08) 62% 64%,transparent 64%),
-    repeating-linear-gradient(0deg,transparent 0 13px,rgba(255,0,35,.11) 13px 17px);
-  mix-blend-mode:screen;
-}
-.theme-fx::after{
-  background:
-    radial-gradient(circle at 32% 46%,rgba(255,25,48,.24),transparent 32%),
-    radial-gradient(circle at 72% 54%,rgba(112,0,22,.22),transparent 36%);
-  filter:blur(11px);
-}
-body.theme-switching #app,
-body.theme-switching #welcome,
-body.theme-switching #sleep{
-  animation:tvBreak .72s steps(10,end) both;
-}
+
 body.theme-switching .theme-fx{
-  animation:tvOverlay .72s steps(10,end) both;
-}
-@keyframes tvBreak{
-  0%{filter:none;transform:none}
-  10%{filter:blur(1px) contrast(1.05);transform:translateX(-2px) skewX(.3deg)}
-  18%{filter:blur(2.5px) contrast(1.35);transform:translateX(3px) skewX(-.5deg)}
-  25%{filter:blur(.6px) contrast(1.18);transform:translateX(-5px)}
-  42%{filter:blur(1.8px) contrast(1.4);transform:translateX(4px) scaleX(1.008)}
-  58%{filter:blur(0) contrast(1.65);transform:translateX(-2px)}
-  72%{filter:blur(.8px) contrast(1.25);transform:translateX(2px)}
-  100%{filter:none;transform:none}
-}
-@keyframes tvOverlay{
-  0%,100%{opacity:0}
-  12%{opacity:.42}
-  20%{opacity:.86}
-  30%{opacity:.30}
-  44%{opacity:.74}
-  58%{opacity:.24}
-  72%{opacity:.56}
-  84%{opacity:.12}
+  animation:
+    themeBurst
+    .62s
+    steps(8,end)
+    both;
 }
 
-/* WELCOME */
-#welcome{position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:24px;background:radial-gradient(circle at 50% 45%,rgba(140,207,126,.07),transparent 38%),var(--bg);transition:opacity .45s ease,visibility .45s ease}
-#welcome.hidden{opacity:0;visibility:hidden;pointer-events:none}
-.welcome-wrap{width:min(980px,100%);min-height:70vh;display:grid;align-content:center}
-.terminal-label{color:var(--muted);font-size:18px;margin-bottom:18px}
-.welcome-title{margin:0 0 26px;font-family:var(--pixel);font-size:clamp(32px,8vw,88px);line-height:1.05;letter-spacing:-.03em;color:var(--text);text-shadow:0 0 24px rgba(140,207,126,.2)}
-.welcome-title span{color:var(--green)}
-.welcome-copy{max-width:780px;min-height:140px;color:var(--muted);font-size:clamp(22px,2.3vw,28px)}
-.welcome-next{display:inline-flex;align-items:center;gap:12px;margin-top:20px;padding:8px 0;color:var(--orange);font-size:25px;opacity:0;transform:translateY(8px);pointer-events:none;transition:opacity .22s ease,transform .22s ease}
-.welcome-next.show{opacity:1;transform:none;pointer-events:auto}
-.arrow-blink{animation:arrowBlink .9s steps(1) infinite}
-@keyframes arrowBlink{50%{opacity:.25}}
-.version{margin-top:52px;color:var(--dim);font-size:16px}
-
-/* SHELL */
-#app{position:fixed;inset:0;display:grid;grid-template-rows:auto 1fr auto;opacity:0;pointer-events:none;transform:translateY(6px);transition:opacity .3s ease,transform .3s ease}
-#app.active{opacity:1;pointer-events:auto;transform:none}
-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:10px clamp(10px,2vw,20px) 0;padding:8px 10px;border:1px solid var(--line);border-radius:12px;background:linear-gradient(180deg,rgba(25,33,36,.94),rgba(14,19,21,.92));position:relative;overflow:hidden;box-shadow:0 10px 28px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.025)}
-header::after{content:"";position:absolute;left:8%;right:8%;bottom:0;height:1px;background:linear-gradient(90deg,transparent,var(--green),transparent);opacity:.65}
-nav{display:flex;align-items:center;gap:5px;position:relative;z-index:1}
-nav button{min-width:34px;height:30px;border:1px solid var(--line);color:var(--muted);transition:border-color .15s,color .15s,background .15s,transform .15s}
-
-.route{min-width:0}.route strong{color:var(--green)}.route .path{color:var(--cyan)}
-.clock{color:var(--dim);font-size:16px;white-space:nowrap}
-
-nav button:hover:not(:disabled){border-color:var(--green);color:var(--green)}
-nav button[aria-current="page"]{border-color:var(--green);background:var(--green);color:var(--bg)}
-main{min-height:0;position:relative;overflow:hidden}
-.page{position:absolute;inset:0;padding:30px clamp(18px,5vw,68px);overflow-y:auto;overflow-x:hidden;opacity:0;visibility:hidden;transform:translateX(22px);transition:opacity .2s ease,transform .2s ease,visibility .2s ease;contain:layout paint}
-.page.active{opacity:1;visibility:visible;transform:none}
-.page.exit{transform:translateX(-22px)}
-/* NEW: nothing animates on hidden pages / hidden tab / sleep screen */
-.page:not(.active) *,.page:not(.active) *::before,.page:not(.active) *::after,.paused *,.paused *::before,.paused *::after{animation-play-state:paused!important}
-.page-inner{width:min(1120px,100%);margin:0 auto}
-.prompt{color:var(--muted);font-size:18px;margin-bottom:10px}.prompt strong{color:var(--green)}
-.eyebrow{color:var(--orange);font-size:15px;letter-spacing:.14em;text-transform:uppercase;margin-top:8px}
-h1{margin:8px 0 22px;font-family:var(--pixel);font-size:clamp(21px,4vw,38px);line-height:1.3}
-.section-lead{max-width:860px;color:var(--muted);font-size:22px;margin-bottom:24px}
-
-/* PERSONA */
-.persona-head{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(320px,.8fr);gap:clamp(42px,6vw,88px);align-items:start;width:100%}
-.persona-head>div:first-child{min-width:0}
-.persona-name{margin:0 0 34px;font-family:var(--pixel);font-size:clamp(24px,4vw,48px);line-height:1.16;color:var(--text)}
-.bio-stream{width:100%;max-width:900px}
-.bio-block{padding:0 0 24px 20px;border-left:2px solid var(--line);margin:0 0 26px;opacity:0;transform:translateY(8px)}
-.bio-block.revealed{animation:reveal .32s ease forwards}
-@keyframes reveal{to{opacity:1;transform:none}}
-.bio-key{display:block;color:var(--orange);font-size:15px;letter-spacing:.12em;margin-bottom:8px}
-.bio-text{color:var(--muted);font-size:clamp(20px,1.65vw,23px);line-height:1.58;max-width:850px}
-
-.profile-box{width:min(100%,390px);border:1px solid var(--level-color,var(--line));background:rgba(17,23,25,.66);padding:16px;position:sticky;top:24px;justify-self:end;isolation:isolate;--level-color:#8ccf7e;--level-glow:rgba(140,207,126,.24)}
-.profile-box::before{content:"PROFILE";position:absolute;top:-9px;left:14px;padding:0 8px;background:var(--bg);color:var(--orange);font-size:13px;letter-spacing:.08em;z-index:9}
-
-/* THUNDER: same look + same 6s motion. Now ONE filter pass on the wrapper. */
-.profile-electric-wrap{position:absolute;inset:-8px;z-index:3;pointer-events:none;overflow:visible}
-.profile-electric-fx{position:absolute;inset:0;}
-.profile-box{contain:layout style;will-change:transform}
-.bio-stream{contain:layout style}
-.bio-block{contain:content}
-.profile-electric-main,.profile-electric-glow,.profile-electric-glow-strong{position:absolute;inset:0;border:2px solid var(--level-color);border-radius:10px;box-sizing:border-box}
-.profile-electric-main{opacity:.98;transform:translate(-2px,-2px)}
-.profile-electric-glow{box-shadow:0 0 3px var(--level-color);opacity:.55}
-.profile-electric-glow-strong{box-shadow:0 0 12px var(--level-color);opacity:.22}
-.profile-electric-main::after{content:"";position:absolute;inset:-1px;border:1px solid color-mix(in srgb,var(--level-color) 70%,transparent);border-radius:inherit;box-shadow:0 0 7px var(--level-glow),0 0 18px var(--level-glow);animation:electricFlicker 1.35s steps(9,end) infinite}
-.profile-electric-runner{position:absolute;inset:-2px;width:calc(100% + 4px);height:calc(100% + 4px);overflow:visible;pointer-events:none}
-.profile-electric-runner rect{fill:none;stroke:var(--level-color);stroke-width:1.8;stroke-linecap:round;stroke-dasharray:16 180;stroke-dashoffset:0;animation:electricRunner 2.2s linear infinite;opacity:.95}
-@keyframes electricRunner{to{stroke-dashoffset:-392}}
-@keyframes electricFlicker{0%,100%{opacity:.8}8%{opacity:.95}9%{opacity:.55}10%{opacity:.9}34%{opacity:.82}36%{opacity:.45}38%{opacity:.92}69%{opacity:.88}70%{opacity:.58}72%{opacity:.98}}
-.profile-electric-defs{position:absolute;width:0;height:0;overflow:hidden}
-
-.profile-frame{width:100%;aspect-ratio:1/1;position:relative;overflow:hidden;background:#0f1619;border:1px solid var(--line);box-shadow:0 0 18px var(--level-glow),0 0 34px rgba(108,191,191,.05)}
-.profile-frame::before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.035),transparent 42%,rgba(255,255,255,.018));z-index:0}
-.profile-frame img{position:absolute;inset:4px;z-index:1;width:calc(100% - 8px);height:calc(100% - 8px);object-fit:cover;object-position:center;display:block;background:#141b1e;filter:saturate(.95) contrast(1.04)}
-.profile-frame::after{content:"";position:absolute;inset:4px;z-index:2;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(255,255,255,.035) 0 1px,transparent 1px 3px)}
-.profile-caption{margin-top:15px;color:var(--text);font-family:var(--pixel);font-size:14px;line-height:1.5}
-.profile-box[data-level="1"]{--level-color:#c47fd5;--level-glow:rgba(196,127,213,.25)}
-.profile-box[data-level="2"]{--level-color:#6f7ff2;--level-glow:rgba(111,127,242,.25)}
-.profile-box[data-level="3"]{--level-color:#67b0e8;--level-glow:rgba(103,176,232,.24)}
-.profile-box[data-level="4"]{--level-color:#8ccf7e;--level-glow:rgba(140,207,126,.24)}
-.profile-box[data-level="5"]{--level-color:#e5c76b;--level-glow:rgba(229,199,107,.25)}
-.profile-box[data-level="6"]{--level-color:#fcb163;--level-glow:rgba(252,177,99,.25)}
-.profile-box[data-level="7"]{--level-color:#e57474;--level-glow:rgba(229,116,116,.28)}
-.profile-status{display:grid;gap:9px;margin-top:14px;padding-top:14px;border-top:1px solid var(--line);color:var(--text);font-size:16px}
-.status-card,.level-card,.xp-card,.stats-card{border:1px solid var(--line);background:rgba(10,15,17,.52);padding:10px 11px}
-.status-line{display:flex;align-items:center;justify-content:space-between;gap:10px;animation:statusFlicker 3.2s steps(1,end) infinite}
-.status-main{display:flex;align-items:center;gap:9px;min-width:0}
-.status-label{color:var(--dim);font-size:13px;letter-spacing:.12em}
-.status-value{color:var(--level-color);font-weight:400;letter-spacing:.08em}
-.profile-status-dot{width:8px;height:8px;flex:0 0 8px;border-radius:50%;background:var(--level-color);box-shadow:0 0 8px var(--level-color);animation:statusPulse 1.45s ease-in-out infinite}
-.status-signal{color:var(--dim);font-size:12px;letter-spacing:.08em}
-@keyframes statusPulse{50%{opacity:.28;transform:scale(.72)}}
-@keyframes statusFlicker{0%,92%,100%{opacity:1}94%{opacity:.55}96%{opacity:1}}
-.level-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.level-badge{display:inline-flex;align-items:center;justify-content:center;min-width:78px;padding:6px 9px;border:1px solid var(--level-color);color:var(--level-color);font-family:var(--pixel);font-size:11px;letter-spacing:.04em;box-shadow:0 0 14px var(--level-glow);animation:levelPulse 2.1s ease-in-out infinite}
-.level-name{color:var(--text);font-size:16px;text-align:right;letter-spacing:.06em}
-@keyframes levelPulse{50%{transform:translateY(-1px)}}
-.xp-head{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:7px}
-.xp-title{color:var(--dim);font-size:13px;letter-spacing:.12em}
-.xp-meta{color:var(--level-color);font-size:15px}
-.xp-track{height:17px;position:relative;overflow:hidden;border:1px solid var(--level-color);background:#0a0f11;box-shadow:0 0 16px var(--level-glow)}
-.xp-track::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 11px,rgba(255,255,255,.06) 11px 12px);pointer-events:none;z-index:2}
-.xp-track::after{content:"";position:absolute;inset:-30% -20%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.14),transparent);transform:translateX(-70%);animation:xpSweep 2.8s linear infinite;pointer-events:none;z-index:3}
-.xp-fill{width:0;height:100%;background:linear-gradient(90deg,color-mix(in srgb,var(--level-color) 42%,transparent),var(--level-color));transition:width .9s cubic-bezier(.2,.75,.2,1);position:relative;overflow:hidden}
-.xp-fill::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,.45) 50%,transparent 100%);animation:xpShine 1.8s linear infinite}
-@keyframes xpShine{from{transform:translateX(-120%)}to{transform:translateX(120%)}}
-@keyframes xpSweep{from{transform:translateX(-70%)}to{transform:translateX(120%)}}
-.xp-scale{display:flex;justify-content:space-between;margin-top:5px;color:var(--dim);font-size:11px;letter-spacing:.08em}
-.stats-card{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.stat-item{padding:8px 9px;border:1px solid rgba(47,58,61,.72);background:rgba(17,23,25,.42)}
-.stat-label{display:block;color:var(--dim);font-size:11px;letter-spacing:.1em}
-.stat-value{display:block;margin-top:2px;color:var(--text);font-size:17px}
-.stat-value strong{color:var(--level-color);font-weight:400}
-.level-description{color:var(--muted);font-size:13px;line-height:1.35}
-.level-up-banner{position:absolute;left:50%;top:50%;z-index:8;pointer-events:none;padding:8px 12px;border:1px solid var(--level-color);background:rgba(8,10,11,.9);color:var(--level-color);font-family:var(--pixel);font-size:12px;letter-spacing:.06em;opacity:0;transform:translate(-50%,-50%) scale(.82);white-space:nowrap}
-.profile-box.level-up .level-up-banner{animation:levelUpBanner 1.5s steps(1,end) forwards}
-@keyframes levelUpBanner{0%{opacity:0;transform:translate(-50%,-50%) scale(.82)}16%,62%{opacity:1;transform:translate(-50%,-50%) scale(1)}72%{opacity:.45;transform:translate(-50%,-50%) scale(1.03)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.1)}}
-.electric-defs{position:absolute;width:0;height:0;overflow:visible;pointer-events:none}
-
-/* INDEX / PANELS */
-.index-layout{display:grid;grid-template-columns:minmax(280px,.75fr) minmax(0,1.25fr);gap:22px;min-height:calc(100vh - 200px)}
-.panel{border:1px solid var(--line);background:rgba(17,23,25,.6);min-height:0;position:relative;overflow:hidden;contain:layout paint}
-.panel-title{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;padding:9px 12px;border-bottom:1px solid var(--line);background:rgba(17,23,25,.97);color:var(--orange);font-size:15px;letter-spacing:.09em}
-.scroll-list{height:100%;max-height:calc(100vh - 252px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
-.list-item{width:100%;text-align:left;padding:13px 14px;border-bottom:1px dashed var(--line);transition:background .15s,transform .15s,border-color .15s}
-.list-item:hover,.list-item.active{background:rgba(140,207,126,.055);transform:translateX(4px);border-color:var(--green)}
-.item-index{color:var(--orange);width:38px;display:inline-block;vertical-align:top}
-.item-main{display:inline-block;width:calc(100% - 42px);vertical-align:top}
-.item-title{color:var(--text);font-size:21px}
-.item-meta{color:var(--cyan);font-size:16px;margin-top:2px}
-.detail{padding:26px;overflow-y:auto;max-height:calc(100vh - 252px)}
-.detail-empty{height:100%;min-height:300px;display:grid;place-items:center;color:var(--dim);text-align:center;padding:30px}
-.detail h2{margin:0 0 10px;font-family:var(--pixel);font-size:clamp(18px,3vw,27px);line-height:1.35}
-.detail-label{color:var(--orange);font-size:14px;letter-spacing:.1em;margin-top:18px;margin-bottom:4px}
-.detail p{color:var(--muted);font-size:20px;margin:4px 0 12px}
-.tag-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
-.tag{border:1px solid var(--line);padding:3px 8px;color:var(--cyan);font-size:15px}
-.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
-.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--green);color:var(--green);padding:6px 11px;font-size:18px;transition:background .15s,color .15s}
-.btn:hover{background:var(--green);color:var(--bg)}
-.btn.orange{border-color:var(--orange);color:var(--orange)}
-.btn.orange:hover{background:var(--orange);color:var(--bg)}
-.disabled{color:var(--dim);border-color:var(--line);cursor:default}
-.pdf-stage{min-height:0;padding:14px;background:#0d1113}
-.pdf-stage iframe{display:block;width:100%;height:100%;min-height:0;border:1px solid var(--line);background:#0a0d0e}
-.pdf-placeholder{width:100%;height:100%;min-height:0;border:1px dashed var(--line);display:grid;place-items:center;text-align:center;padding:30px;color:var(--dim)}
-
-/* RESEARCH */
-.page[data-page="2"] .page-inner{width:min(1500px,100%)}
-.page[data-page="2"] .index-layout{display:grid;grid-template-columns:minmax(200px,.75fr) minmax(280px,1fr) minmax(0,2.35fr);gap:18px;min-height:calc(100vh - 265px);align-items:stretch}
-.page[data-page="2"] .paper-index{min-width:0;min-height:0;height:calc(100vh - 265px);overflow:hidden}
-.page[data-page="2"] .paper-index .scroll-list{height:calc(100% - 40px);max-height:none;overflow-y:auto;overflow-x:hidden}
-.page[data-page="2"] .paper-info{min-width:0;min-height:0;height:calc(100vh - 265px);overflow:hidden;display:grid;grid-template-rows:auto minmax(0,1fr)}
-.page[data-page="2"] .paper-info .detail{width:100%;height:100%;max-height:none;min-height:0;padding:20px;overflow-y:auto;overflow-x:hidden}
-.page[data-page="2"] .paper-pdf{min-width:0;min-height:0;height:calc(100vh - 265px);overflow:hidden;display:grid;grid-template-rows:auto minmax(0,1fr)}
-.page[data-page="2"] #paperViewer{width:100%;height:100%;min-width:0;min-height:0;padding:10px;background:#0d1113;overflow:hidden}
-.page[data-page="2"] #paperViewer iframe{display:block;width:100%;height:100%;min-width:0;min-height:0;border:1px solid var(--line);background:#0a0d0e}
-.page[data-page="2"] #paperViewer .pdf-placeholder{width:100%;height:100%;min-height:0}
-
-/* SOCIAL + SUPPORT */
-.social-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;max-width:900px}
-.social-card{border:1px solid var(--line);padding:18px;min-height:120px;background:rgba(17,23,25,.56);transition:transform .15s,border-color .15s,opacity .2s}
-.social-card:hover{transform:translateY(-3px);border-color:var(--accent,var(--green))}
-.social-card strong{font-family:var(--pixel);font-size:14px;color:var(--accent,var(--green))}
-.social-card span{display:block;color:var(--muted);margin:8px 0 12px;font-size:19px}
-.social-arrow{color:var(--orange);font-size:18px}
-.support-wrap{max-width:900px}
-.support-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:20px}
-.support-card{border:1px solid var(--line);padding:17px;background:rgba(17,23,25,.56)}
-.support-card strong{color:var(--orange);font-family:var(--pixel);font-size:13px}
-.support-card p{margin:8px 0 12px;color:var(--muted);font-size:18px}
+@keyframes themeBurst{
+  0%,100%{
+    opacity:0;
+  }
+  20%{
+    opacity:.65;
+    background:
+      repeating-linear-gradient(
+        0deg,
+        transparent 0 8px,
+        rgba(255,255,255,.08) 8px 10px
+      );
+  }
+  43%{
+    opacity:.2;
+    transform:translateX(2px);
+  }
+  62%{
+    opacity:.5;
+  }
+}
 
 
-/* ===== FAST CSS v3: animations are back, but ONLY on transform/opacity (GPU compositor, zero repaint) ===== */
-.crt{contain:strict}
-.scanline{will-change:transform}
-.page{transition:opacity .16s ease-out,transform .16s ease-out,visibility .16s!important;will-change:opacity,transform}
-.page:not(.active){will-change:auto}
-.list-item,.social-card,.btn,nav button{transition:transform .12s ease-out,background-color .12s,border-color .12s,color .12s,opacity .12s!important}
-.bio-block.revealed{animation:reveal .28s ease-out forwards}
-.profile-status-dot,.level-badge,.xp-track::after,.xp-fill::after,.sleep-mark,.arrow-blink{will-change:transform,opacity}
-/* thunder v3: no SVG filter. Three layers jitter on the compositor at different rates + flash + running dash */
-.profile-electric-fx{filter:none}
-.profile-electric-main{animation:bolt .8s steps(1) infinite;will-change:transform}
-.profile-electric-glow{animation:bolt 1.1s steps(1) -.35s infinite;will-change:transform}
-.profile-electric-glow-strong{animation:flash 1.7s steps(1) infinite;will-change:opacity}
-@keyframes bolt{
-0%{transform:translate(-2px,-2px) scale(1)}
-12%{transform:translate(0,-3px) scale(1.004)}
-25%{transform:translate(-3px,-1px) scale(.998)}
-37%{transform:translate(-1px,-3px) scale(1.003)}
-50%{transform:translate(-3px,-3px) scale(1)}
-62%{transform:translate(0,-1px) scale(1.005)}
-75%{transform:translate(-2px,0) scale(.997)}
-88%{transform:translate(-1px,-2px) scale(1.002)}}
-@keyframes flash{0%{opacity:.22}8%{opacity:.6}12%{opacity:.18}40%{opacity:.3}44%{opacity:.7}48%{opacity:.2}81%{opacity:.4}85%{opacity:.15}}
-.profile-electric-runner rect{animation:electricRunner 2.2s linear infinite}
+/* =========================================================
+   POWER / TV FAILURE
+   ========================================================= */
 
-/* LEVEL-UP POPUP (shows once per level change; opacity/transform only) */
-#levelPopup{position:fixed;inset:0;z-index:110;display:grid;place-items:center;padding:24px;background:rgba(8,10,11,.78);opacity:0;visibility:hidden;transition:opacity .2s,visibility .2s}
-#levelPopup.show{opacity:1;visibility:visible}
-.lp-card{width:min(460px,100%);border:1px solid var(--lp-to,var(--green));background:var(--bg-panel);padding:24px;text-align:center;transform:translateY(10px) scale(.96);transition:transform .22s cubic-bezier(.2,.8,.2,1);box-shadow:0 0 28px var(--lp-glow,rgba(140,207,126,.25))}
-#levelPopup.show .lp-card{transform:none}
-.lp-title{font-family:var(--pixel);font-size:clamp(16px,3vw,22px);color:var(--lp-to,var(--green));margin:0 0 14px}
-.lp-names{font-size:24px;margin-bottom:12px}
-.lp-names s{color:var(--dim)}
-.lp-colours{display:flex;align-items:center;justify-content:center;gap:12px;color:var(--muted);font-size:18px;margin-bottom:14px}
-.lp-swatch{width:26px;height:26px;border:1px solid var(--line)}
-.lp-copy{color:var(--muted);font-size:19px;margin-bottom:18px}
+#failureScreen{
+  position:fixed;
+  inset:0;
 
-/* RESPONSIVE */
-@media(max-width:1100px){.persona-head{grid-template-columns:minmax(0,1.5fr) minmax(280px,.75fr);gap:38px}.profile-box{width:min(100%,340px)}.page[data-page="2"] .index-layout{grid-template-columns:minmax(180px,.7fr) minmax(250px,.95fr) minmax(0,1.8fr);gap:14px}}
-@media(max-width:920px){.persona-head{grid-template-columns:1fr;gap:34px}.bio-stream{max-width:100%}.profile-box{position:relative;top:auto;justify-self:start;width:min(100%,360px)}.social-grid,.support-grid{grid-template-columns:1fr}.page[data-page="2"] .index-layout{grid-template-columns:minmax(165px,.7fr) minmax(230px,.95fr) minmax(0,1.45fr);gap:12px;min-height:calc(100vh - 245px)}.page[data-page="2"] .paper-index,.page[data-page="2"] .paper-info,.page[data-page="2"] .paper-pdf{height:calc(100vh - 245px)}.page[data-page="2"] .paper-info .detail{padding:16px}.page[data-page="2"] #paperViewer{padding:7px}}
-@media(max-width:760px){.page[data-page="2"] .index-layout{grid-template-columns:1fr;gap:12px;min-height:0}.page[data-page="2"] .paper-index{height:175px;max-height:175px}.page[data-page="2"] .paper-index .scroll-list{height:calc(100% - 40px);max-height:none}.page[data-page="2"] .paper-info{height:250px}.page[data-page="2"] .paper-pdf{height:72vh;min-height:520px}.page[data-page="2"] #paperViewer{padding:7px}}
-@media(max-width:680px){header{margin:8px 8px 0;padding:7px 8px}.clock{display:none}.page{padding:20px 14px}.welcome-wrap{min-height:78vh}.welcome-copy{font-size:21px}.welcome-title{font-size:clamp(30px,12vw,58px)}nav button{min-width:30px}.route{font-size:17px}}
-@media(max-width:600px){.theme-switch-row{align-items:flex-start}.theme-hint{padding-top:10px}.theme-toggle-label{font-size:12px}.theme-toggle{min-height:36px}}
-@media(max-width:600px){.persona-head{gap:28px}.persona-name{margin-bottom:28px;font-size:clamp(22px,8vw,34px)}.bio-block{padding-left:14px;padding-bottom:20px;margin-bottom:22px}.bio-text{font-size:19px;line-height:1.55}.profile-box{width:100%;max-width:360px;padding:13px}.profile-caption{font-size:13px}.level-badge{min-width:70px;font-size:10px}.level-name{font-size:14px}.profile-status{font-size:15px}.progress-facts{font-size:13px}}
-/* mobile: thunder is the costliest effect, keep it but drop the extra blur layer */
-@media(max-width:600px){.profile-electric-glow-strong{display:none}.hell-aura{top:-48px;height:76px}}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}.cursor{animation:none}.welcome-next{transition:none}}
+  z-index:130;
+
+  display:grid;
+  place-items:center;
+
+  overflow:hidden;
+
+  background:#080909;
+
+  color:#a6aaab;
+
+  opacity:0;
+  visibility:hidden;
+
+  pointer-events:none;
+
+  transition:
+    opacity .3s ease,
+    visibility .3s ease;
+}
+
+#failureScreen.active{
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
+}
+
+#failureCanvas{
+  position:absolute;
+
+  inset:0;
+
+  width:100%;
+  height:100%;
+}
+
+.failure-vignette{
+  position:absolute;
+
+  inset:0;
+
+  pointer-events:none;
+
+  background:
+    radial-gradient(
+      ellipse at center,
+      transparent 36%,
+      rgba(0,0,0,.48) 82%,
+      rgba(0,0,0,.82)
+    ),
+    repeating-linear-gradient(
+      0deg,
+      rgba(255,255,255,.018) 0 1px,
+      transparent 1px 3px
+    );
+}
+
+.failure-ui{
+  position:relative;
+
+  z-index:2;
+
+  width:min(760px,92vw);
+
+  text-align:center;
+}
+
+.failure-symbol{
+  width:86px;
+  height:86px;
+
+  margin:
+    0
+    auto
+    22px;
+
+  border:1px solid #646a6c;
+  border-radius:50%;
+
+  display:grid;
+  place-items:center;
+
+  color:#b9bdbe;
+
+  font-size:30px;
+
+  box-shadow:
+    0 0 35px
+    rgba(180,185,187,.045);
+
+  animation:
+    failurePulse
+    1.7s
+    steps(4,end)
+    infinite;
+}
+
+@keyframes failurePulse{
+  0%,100%{
+    opacity:.92;
+    transform:scale(1);
+  }
+  48%{
+    opacity:.5;
+    transform:scale(.96);
+  }
+  53%{
+    opacity:.92;
+    transform:scale(1.01);
+  }
+}
+
+.failure-title{
+  margin:0;
+
+  font-family:var(--pixel);
+
+  font-size:
+    clamp(20px,4vw,34px);
+
+  color:#c7c9ca;
+
+  letter-spacing:.04em;
+}
+
+.failure-copy{
+  margin:
+    13px
+    auto
+    0;
+
+  max-width:670px;
+
+  color:#858b8d;
+
+  font-size:18px;
+}
+
+.failure-readout{
+  display:flex;
+
+  justify-content:center;
+
+  flex-wrap:wrap;
+
+  gap:
+    8px
+    18px;
+
+  margin-top:17px;
+
+  color:#62696b;
+
+  font-size:11px;
+
+  letter-spacing:.1em;
+}
+
+.failure-readout strong{
+  color:#9ea4a5;
+  font-weight:400;
+}
+
+.failure-buttons{
+  display:flex;
+
+  justify-content:center;
+
+  flex-wrap:wrap;
+
+  gap:9px;
+
+  margin-top:25px;
+}
+
+.failure-tip{
+  margin-top:13px;
+
+  color:#52585a;
+
+  font-size:11px;
+
+  letter-spacing:.09em;
+}
+
+.failure-static{
+  position:absolute;
+
+  left:0;
+  right:0;
+  bottom:0;
+
+  height:28%;
+
+  opacity:.12;
+
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0 3px,
+      rgba(255,255,255,.055) 3px 4px
+    );
+
+  animation:
+    staticShift
+    .18s
+    steps(2,end)
+    infinite;
+}
+
+@keyframes staticShift{
+  50%{
+    transform:translateY(3px);
+  }
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media(max-width:850px){
+
+  .persona-head{
+    grid-template-columns:1fr;
+  }
+
+  .profile-box{
+    justify-self:start;
+    position:relative;
+    top:auto;
+  }
+
+  .index-layout{
+    grid-template-columns:1fr;
+  }
+
+  .page[data-page="2"] .index-layout{
+    grid-template-columns:1fr;
+  }
+
+  .page[data-page="2"] .paper-index,
+  .page[data-page="2"] .paper-info,
+  .page[data-page="2"] .paper-pdf{
+    height:420px;
+  }
+}
+
+@media(max-width:700px){
+
+  #welcome{
+    padding:17px;
+  }
+
+  .boot-meta{
+    font-size:9px;
+  }
+
+  .welcome-core{
+    margin-top:48px;
+  }
+
+  .welcome-title{
+    font-size:
+      clamp(43px,16vw,76px);
+  }
+
+  .welcome-search{
+    width:
+      calc(100vw - 24px);
+  }
+
+  .search-form{
+    min-height:58px;
+
+    padding:0 12px;
+
+    border-radius:15px;
+  }
+
+  .search-form input{
+    font-size:18px;
+  }
+
+  .search-hint{
+    font-size:0;
+    margin-left:7px;
+  }
+
+  .search-hint kbd{
+    font-size:11px;
+  }
+
+  .search-meta{
+    font-size:8px;
+  }
+
+  .boot-log{
+    display:none;
+  }
+}
+
+@media(max-width:620px){
+
+  header{
+    margin:
+      7px
+      7px
+      0;
+  }
+
+  .route{
+    font-size:16px;
+  }
+
+  .clock{
+    display:none;
+  }
+
+  .page{
+    padding:
+      22px
+      13px;
+  }
+
+  .social-grid,
+  .support-grid{
+    grid-template-columns:1fr;
+  }
+
+  .failure-copy{
+    font-size:16px;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+
+  *,
+  *::before,
+  *::after{
+    animation-duration:.001ms!important;
+    animation-iteration-count:1!important;
+    transition-duration:.001ms!important;
+    scroll-behavior:auto!important;
+  }
+}
 </style>
 </head>
 
-<body>
+<body class="booting">
+
 <div class="crt" aria-hidden="true"></div>
 <div class="scanline" id="scanline" aria-hidden="true"></div>
-<div class="redline-fx" id="redlineFx" aria-hidden="true"></div>
+
+
+<!-- =========================================================
+     WELCOME
+     ========================================================= -->
 
 <section id="welcome" aria-label="Welcome screen">
-  <div class="welcome-wrap">
-    <div class="terminal-label">WAGWAN://BOOT · SIGNAL LOCKED</div>
-    <h1 class="welcome-title">PERSONA<span>//</span>ONLINE</h1>
-    <div class="welcome-copy" id="welcomeCopy" aria-live="polite"></div>
-    <button class="welcome-next" id="welcomeNext" type="button" aria-label="Enter persona">
-      <span class="arrow-blink">↳</span>
-      <span>ENTER PERSONA / OPEN SIGNAL</span>
-    </button>
-    <div class="version">v1.4 · persona interface · live signal</div>
+
+  <div class="welcome-shell">
+
+    <div class="boot-meta">
+
+      <div class="boot-meta-left">
+        <span class="boot-led" aria-hidden="true"></span>
+        <span>WAGWAN://WELCOME · BOOT</span>
+      </div>
+
+      <span id="welcomeClock">--:--:--</span>
+
+    </div>
+
+
+    <div class="welcome-core">
+
+      <div
+        class="welcome-kicker"
+        id="welcomeKicker"
+      >
+        INITIALISING INTERFACE
+      </div>
+
+
+      <h1 class="welcome-title">
+        WELCOME
+      </h1>
+
+
+      <div
+        class="welcome-subtitle"
+        id="welcomeSubtitle"
+      >
+        preparing your session…
+      </div>
+
+
+      <div
+        class="boot-track"
+        aria-label="Boot progress"
+      >
+
+        <div class="boot-line">
+
+          <div
+            class="boot-line-fill"
+            id="welcomeProgress"
+          ></div>
+
+        </div>
+
+        <div class="boot-stats">
+
+          <span id="welcomeStatus">
+            STARTING
+          </span>
+
+          <span id="welcomePercent">
+            0%
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <!-- =====================================================
+           DUCKDUCKGO
+           ===================================================== -->
+
+      <div class="welcome-search">
+
+        <div
+          class="search-bubble"
+          aria-hidden="true"
+        >
+          <span class="search-bubble-dot"></span>
+          DUCKDUCKGO · WEB SEARCH
+        </div>
+
+
+        <form
+          class="search-form"
+          id="duckSearchForm"
+          role="search"
+          autocomplete="off"
+        >
+
+          <span
+            class="search-pulse"
+            aria-hidden="true"
+          ></span>
+
+
+          <button
+            class="search-icon"
+            type="submit"
+            aria-label="Search DuckDuckGo"
+            title="Search DuckDuckGo"
+          >
+
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+
+              <circle
+                cx="10.8"
+                cy="10.8"
+                r="5.8"
+              ></circle>
+
+              <path
+                d="M15.2 15.2 20 20"
+              ></path>
+
+              <path
+                d="M8.4 10.8h4.8"
+              ></path>
+
+            </svg>
+
+          </button>
+
+
+          <input
+            id="duckSearchInput"
+            type="search"
+            inputmode="search"
+            enterkeyhint="search"
+            spellcheck="false"
+            placeholder="Search the web with DuckDuckGo…"
+            aria-label="Search the web with DuckDuckGo"
+          >
+
+
+          <span class="search-hint">
+            <kbd>ENTER</kbd>
+          </span>
+
+        </form>
+
+
+        <div class="search-meta">
+
+          <span>
+            <strong>DUCKDUCKGO</strong>
+            · SEARCH ENGINE
+          </span>
+
+          <span>
+            QUERY → ENTER
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <!-- ENTER -->
+
+      <div class="enter-zone">
+
+        <button
+          class="enter-button"
+          id="enterPersonaButton"
+          type="button"
+        >
+
+          <span class="enter-arrow">
+            ↳
+          </span>
+
+          <span>
+            ENTER
+          </span>
+
+        </button>
+
+
+        <div class="version">
+          v1.5 · welcome interface · signal ready
+        </div>
+
+      </div>
+
+    </div>
+
   </div>
+
+
+  <div
+    class="boot-log"
+    id="bootLog"
+    aria-hidden="true"
+  ></div>
+
 </section>
 
-<div id="app" aria-hidden="true">
+
+<!-- =========================================================
+     MAIN APP
+     ========================================================= -->
+
+<div
+  id="app"
+  aria-hidden="true"
+>
+
   <header>
-    <div class="route"><strong>WAGWAN://PERSONAL</strong><span class="path"> / <span id="routeCommand">persona</span></span></div>
-    <div class="clock" id="clock">--:--:--</div>
+
+    <div class="route">
+
+      <strong>
+        WAGWAN://PERSONAL
+      </strong>
+
+      <span class="path">
+        /
+        <span id="routeCommand">
+          persona
+        </span>
+      </span>
+
+    </div>
+
+
+    <div
+      class="clock"
+      id="clock"
+    >
+      --:--:--
+    </div>
+
+
     <nav aria-label="Pages">
-      <button id="prevPage" type="button" aria-label="Previous page">‹</button>
-      <span id="pageNav"></span>
-      <button id="nextPage" type="button" aria-label="Next page">›</button>
-      <button id="sleepButton" type="button" aria-label="Put site to sleep" title="Sleep">⏻</button>
+
+      <button
+        id="prevPage"
+        type="button"
+        aria-label="Previous page"
+      >
+        ‹
+      </button>
+
+      <div id="pageNav"></div>
+
+      <button
+        id="nextPage"
+        type="button"
+        aria-label="Next page"
+      >
+        ›
+      </button>
+
+      <button
+        id="powerButton"
+        type="button"
+        aria-label="Power screen"
+        title="Power"
+      >
+        ⏻
+      </button>
+
     </nav>
+
   </header>
 
+
   <main id="main">
-    <section class="page active" data-page="0" aria-label="Persona">
+
+
+    <!-- =====================================================
+         PERSONA
+         ===================================================== -->
+
+    <section
+      class="page active"
+      data-page="0"
+      aria-label="Persona"
+    >
+
       <div class="page-inner">
-        <div class="prompt"><strong>visitor@personal</strong>:~$ cat ./persona.md</div>
-        <div class="eyebrow">/persona</div>
+
+        <div class="prompt">
+          <strong>
+            visitor@personal
+          </strong>:~$ cat ./persona.md
+        </div>
+
+        <div class="eyebrow">
+          /persona
+        </div>
+
+
         <div class="persona-head">
+
           <div>
-            <h4 class="persona-name">lOOK AT ME !</h4>
-            <div class="bio-stream" id="bioStream"></div>
+
+            <h2 class="persona-name">
+              lOOK AT ME !
+            </h2>
+
+            <div
+              class="bio-stream"
+              id="bioStream"
+            ></div>
+
           </div>
-          <aside class="profile-box" aria-label="Profile">
-            <div class="hell-aura" aria-hidden="true"><span class="hell-flame hell-flame-a"></span><span class="hell-flame hell-flame-b"></span><span class="hell-flame hell-flame-c"></span></div>
-            <div class="profile-electric-wrap" aria-hidden="true">
-              <div class="profile-electric-fx">
-                <div class="profile-electric-glow-strong"></div>
-                <div class="profile-electric-glow"></div>
-                <div class="profile-electric-main"></div>
-              </div>
-              <svg class="profile-electric-runner" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect x="1.5" y="1.5" width="97" height="97" rx="8" pathLength="392"></rect></svg>
+
+
+          <aside
+            class="profile-box"
+            aria-label="Profile"
+          >
+
+            <div class="profile-frame">
+
+              <img
+                id="profileImage"
+                src="assets/l.gif"
+                alt="Profile portrait of Muhamad Arpan Kurnia"
+                decoding="async"
+              >
+
             </div>
-            <div class="profile-frame"><img id="profileImage" src="assets/l.gif" alt="Profile portrait of Muhamad Arpan Kurnia" decoding="async" fetchpriority="high"></div>
-            <div class="profile-caption">MUHAMAD ARPAN KURNIA</div>
+
+
+            <div class="profile-caption">
+              MUHAMAD ARPAN KURNIA
+            </div>
+
+
             <div class="theme-switch-row">
-              <button class="theme-toggle" id="themeToggle" type="button" aria-pressed="false" aria-label="Toggle red and black CRT theme" title="Toggle CRT theme">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true">
-                  <rect x="3" y="4" width="18" height="14" rx="1"></rect>
-                  <path d="M8 21h8M10 18v3M14 18v3"></path>
-                  <path d="m13 7-3 4h3l-1 3 4-5h-3l1-2z"></path>
+
+              <button
+                class="theme-toggle"
+                id="themeToggle"
+                type="button"
+                aria-pressed="false"
+              >
+
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                  aria-hidden="true"
+                >
+
+                  <rect
+                    x="3"
+                    y="4"
+                    width="18"
+                    height="14"
+                    rx="1"
+                  ></rect>
+
+                  <path
+                    d="M8 21h8M10 18v3M14 18v3"
+                  ></path>
+
+                  <path
+                    d="m13 7-3 4h3l-1 3 4-5h-3l1-2z"
+                  ></path>
+
                 </svg>
-                <span class="theme-toggle-label" id="themeToggleLabel">REDLINE</span>
-                <span class="theme-toggle-state" aria-hidden="true"></span>
+
+                <span id="themeToggleLabel">
+                  REDLINE
+                </span>
+
+                <span
+                  class="theme-toggle-state"
+                  aria-hidden="true"
+                ></span>
+
               </button>
-              <span class="theme-hint" id="themeHint">EVERBLUSH CRT</span>
+
+
+              <span
+                class="theme-hint"
+                id="themeHint"
+              >
+                EVERBLUSH CRT
+              </span>
+
             </div>
-            <div class="profile-status" id="profileProgression" aria-label="Level, status and experience progression">
-              <div class="status-card"><div class="status-line"><div class="status-main"><span class="profile-status-dot" aria-hidden="true"></span><span class="status-label">STATUS</span><strong class="status-value" id="profileStatus">HUMAN</strong></div><span class="status-signal">● ONLINE</span></div></div>
-              <div class="level-card"><div class="level-row"><span class="level-badge" id="profileLevel">LVL 01</span><span class="level-name" id="profileLevelName">HUMAN</span></div><div class="level-description" id="profileLevelDescription">Starting the technical path.</div></div>
+
+
+            <div
+              class="profile-status"
+              aria-label="Progression"
+            >
+
+              <div class="status-card">
+
+                <div class="status-line">
+
+                  <div class="status-main">
+
+                    <span
+                      class="profile-status-dot"
+                      aria-hidden="true"
+                    ></span>
+
+                    <span class="status-label">
+                      STATUS
+                    </span>
+
+                    <strong
+                      class="status-value"
+                      id="profileStatus"
+                    >
+                      HUMAN
+                    </strong>
+
+                  </div>
+
+                  <span class="status-signal">
+                    ● ONLINE
+                  </span>
+
+                </div>
+
+              </div>
+
+
+              <div class="level-card">
+
+                <div class="level-row">
+
+                  <span
+                    class="level-badge"
+                    id="profileLevel"
+                  >
+                    LVL 01
+                  </span>
+
+                  <span
+                    class="level-name"
+                    id="profileLevelName"
+                  >
+                    HUMAN
+                  </span>
+
+                </div>
+
+                <div
+                  class="level-description"
+                  id="profileLevelDescription"
+                >
+                  Starting the technical path.
+                </div>
+
+              </div>
+
+
               <div class="xp-card">
-                <div class="xp-head"><span class="xp-title">EXPERIENCE</span><span class="xp-meta" id="profileXp">0 / 150 XP</span></div>
-                <div class="xp-track" role="progressbar" aria-label="Experience progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="xp-fill" id="profileXpFill"></div></div>
-                <div class="xp-scale"><span>LVL START</span><span id="profileXpNext">NEXT LEVEL</span></div>
+
+                <div class="xp-head">
+
+                  <span class="xp-title">
+                    EXPERIENCE
+                  </span>
+
+                  <span
+                    class="xp-meta"
+                    id="profileXp"
+                  >
+                    0 / 150 XP
+                  </span>
+
+                </div>
+
+
+                <div
+                  class="xp-track"
+                  role="progressbar"
+                  aria-label="Experience progress"
+                  aria-valuemin="0"
+                  aria-valuemax="100"
+                  aria-valuenow="0"
+                >
+
+                  <div
+                    class="xp-fill"
+                    id="profileXpFill"
+                  ></div>
+
+                </div>
+
+
+                <div class="xp-scale">
+
+                  <span>
+                    LVL START
+                  </span>
+
+                  <span id="profileXpNext">
+                    NEXT LEVEL
+                  </span>
+
+                </div>
+
               </div>
+
+
               <div class="stats-card">
-                <div class="stat-item"><span class="stat-label">PROJECTS</span><span class="stat-value"><strong id="profileProjectCount">00</strong> REPO</span></div>
-                <div class="stat-item"><span class="stat-label">RESEARCH</span><span class="stat-value"><strong id="profilePaperCount">00</strong> PAPER</span></div>
+
+                <div class="stat-item">
+
+                  <span class="stat-label">
+                    PROJECTS
+                  </span>
+
+                  <span class="stat-value">
+
+                    <strong id="profileProjectCount">
+                      00
+                    </strong>
+
+                    REPO
+
+                  </span>
+
+                </div>
+
+
+                <div class="stat-item">
+
+                  <span class="stat-label">
+                    RESEARCH
+                  </span>
+
+                  <span class="stat-value">
+
+                    <strong id="profilePaperCount">
+                      00
+                    </strong>
+
+                    PAPER
+
+                  </span>
+
+                </div>
+
               </div>
-              <div class="level-up-banner" id="levelUpBanner" aria-live="polite">LEVEL UP</div>
+
             </div>
+
           </aside>
+
         </div>
+
       </div>
+
     </section>
 
-    <section class="page" data-page="1" aria-label="Lab projects">
+
+    <!-- =====================================================
+         LAB
+         ===================================================== -->
+
+    <section
+      class="page"
+      data-page="1"
+      aria-label="Lab projects"
+    >
+
       <div class="page-inner">
-        <div class="prompt"><strong>visitor@personal</strong>:~$ ls ./lab</div>
-        <div class="eyebrow">/lab</div>
-        <h1>PROJECTS</h1>
-        <p class="section-lead">Projects, experiments and software work. The index scrolls independently so the page stays usable when the archive grows.</p>
+
+        <div class="prompt">
+          <strong>
+            visitor@personal
+          </strong>:~$ ls ./lab
+        </div>
+
+        <div class="eyebrow">
+          /lab
+        </div>
+
+        <h1>
+          PROJECTS
+        </h1>
+
+        <p class="section-lead">
+          Projects, experiments and software work.
+        </p>
+
+
         <div class="index-layout">
-          <section class="panel"><div class="panel-title"><span>PROJECT INDEX</span><span id="projectCount">00</span></div><div class="scroll-list" id="projectList"></div></section>
-          <section class="panel"><div class="panel-title">PROJECT DETAIL</div><div class="detail" id="projectDetail"></div></section>
+
+          <section class="panel">
+
+            <div class="panel-title">
+
+              <span>
+                PROJECT INDEX
+              </span>
+
+              <span id="projectCount">
+                00
+              </span>
+
+            </div>
+
+            <div
+              class="scroll-list"
+              id="projectList"
+            ></div>
+
+          </section>
+
+
+          <section class="panel">
+
+            <div class="panel-title">
+              PROJECT DETAIL
+            </div>
+
+            <div
+              class="detail"
+              id="projectDetail"
+            ></div>
+
+          </section>
+
         </div>
+
       </div>
+
     </section>
 
-    <section class="page" data-page="2" aria-label="Research papers">
+
+    <!-- =====================================================
+         RESEARCH
+         ===================================================== -->
+
+    <section
+      class="page"
+      data-page="2"
+      aria-label="Research papers"
+    >
+
       <div class="page-inner">
-        <div class="prompt"><strong>visitor@personal</strong>:~$ ls ./research</div>
-        <div class="eyebrow">/research</div>
-        <h1>RESEARCH ARCHIVE</h1>
-        <p class="section-lead">Papers are listed separately from projects. Select a record to view its information and local PDF.</p>
+
+        <div class="prompt">
+          <strong>
+            visitor@personal
+          </strong>:~$ ls ./research
+        </div>
+
+        <div class="eyebrow">
+          /research
+        </div>
+
+        <h1>
+          RESEARCH ARCHIVE
+        </h1>
+
+        <p class="section-lead">
+          Select a record to view its information and local PDF.
+        </p>
+
+
         <div class="index-layout">
-          <section class="panel paper-index"><div class="panel-title"><span>PAPER INDEX</span><span id="paperCount">00</span></div><div class="scroll-list" id="paperList"></div></section>
-          <section class="panel paper-info"><div class="panel-title"><span>PAPER INFORMATION</span><span id="paperState">READY</span></div><div class="detail" id="paperInfo"><div class="detail-empty"><div>Select a paper from the archive.</div></div></div></section>
-          <section class="panel paper-pdf"><div class="panel-title"><span>PDF PREVIEW</span></div><div id="paperViewer"><div class="pdf-placeholder">Select a paper from the archive.</div></div></section>
+
+          <section class="panel paper-index">
+
+            <div class="panel-title">
+
+              <span>
+                PAPER INDEX
+              </span>
+
+              <span id="paperCount">
+                00
+              </span>
+
+            </div>
+
+            <div
+              class="scroll-list"
+              id="paperList"
+            ></div>
+
+          </section>
+
+
+          <section class="panel paper-info">
+
+            <div class="panel-title">
+
+              <span>
+                PAPER INFORMATION
+              </span>
+
+              <span id="paperState">
+                READY
+              </span>
+
+            </div>
+
+            <div
+              class="detail"
+              id="paperInfo"
+            ></div>
+
+          </section>
+
+
+          <section class="panel paper-pdf">
+
+            <div class="panel-title">
+              PDF PREVIEW
+            </div>
+
+            <div id="paperViewer">
+
+              <div class="pdf-placeholder">
+                Select a paper from the archive.
+              </div>
+
+            </div>
+
+          </section>
+
         </div>
+
       </div>
+
     </section>
 
-    <section class="page" data-page="3" aria-label="Social media">
+
+    <!-- =====================================================
+         SOCIAL
+         ===================================================== -->
+
+    <section
+      class="page"
+      data-page="3"
+      aria-label="Social media"
+    >
+
       <div class="page-inner">
-        <div class="prompt"><strong>visitor@personal</strong>:~$ ls ./social</div>
-        <div class="eyebrow">/social</div>
-        <h1>SOCIAL</h1>
-        <p class="section-lead">Public profiles !</p>
-        <div class="social-grid" id="socialGrid"></div>
+
+        <div class="prompt">
+          <strong>
+            visitor@personal
+          </strong>:~$ ls ./social
+        </div>
+
+        <div class="eyebrow">
+          /social
+        </div>
+
+        <h1>
+          SOCIAL
+        </h1>
+
+        <p class="section-lead">
+          Public profiles !
+        </p>
+
+        <div
+          class="social-grid"
+          id="socialGrid"
+        ></div>
+
       </div>
+
     </section>
 
-    <section class="page" data-page="4" aria-label="Support">
+
+    <!-- =====================================================
+         SUPPORT
+         ===================================================== -->
+
+    <section
+      class="page"
+      data-page="4"
+      aria-label="Support"
+    >
+
       <div class="page-inner support-wrap">
-        <div class="prompt"><strong>visitor@personal</strong>:~$ ./support</div>
-        <div class="eyebrow">/support</div>
-        <h1>SUPPORT</h1>
-        <p class="section-lead">If something here helped you, support is appreciated. Nothing is required.</p>
-        <div class="support-grid" id="supportGrid"></div>
+
+        <div class="prompt">
+          <strong>
+            visitor@personal
+          </strong>:~$ ./support
+        </div>
+
+        <div class="eyebrow">
+          /support
+        </div>
+
+        <h1>
+          SUPPORT
+        </h1>
+
+        <p class="section-lead">
+          If something here helped you, support is appreciated. Nothing is required.
+        </p>
+
+        <div
+          class="support-grid"
+          id="supportGrid"
+        ></div>
+
       </div>
+
     </section>
+
   </main>
 
 </div>
 
-<div id="levelPopup" role="dialog" aria-modal="true" aria-labelledby="lpTitle" aria-hidden="true">
+
+<!-- LEVEL POPUP -->
+
+<div
+  id="levelPopup"
+  role="dialog"
+  aria-modal="true"
+  aria-hidden="true"
+>
+
   <div class="lp-card">
-    <h2 class="lp-title" id="lpTitle">LEVEL UP</h2>
-    <div class="lp-names" id="lpNames"></div>
-    <div class="lp-colours" id="lpColours"></div>
-    <div class="lp-copy" id="lpCopy"></div>
-    <button class="btn" id="lpClose" type="button">[ OK ]</button>
+
+    <h2 class="lp-title">
+      LEVEL UP
+    </h2>
+
+    <div
+      class="lp-names"
+      id="lpNames"
+    ></div>
+
+    <div
+      class="lp-colours"
+      id="lpColours"
+    ></div>
+
+    <div
+      class="lp-copy"
+      id="lpCopy"
+    ></div>
+
+    <button
+      class="btn"
+      id="lpClose"
+      type="button"
+    >
+      [ OK ]
+    </button>
+
   </div>
+
 </div>
 
-<div class="theme-fx" id="themeFx" aria-hidden="true"></div>
 
-<section id="sleep" aria-hidden="true">
-  <div class="sleep-inner">
-    <div class="sleep-mark" aria-hidden="true">⏻</div>
-    <h2 class="sleep-title">SESSION SLEEPING</h2>
-    <div class="sleep-copy">The page is resting. Your position is preserved.</div>
-    <div class="sleep-hint">press <span class="accent-yellow">ENTER</span> to wake <span class="dim">·</span> or use the button</div>
-    <div class="sleep-actions"><button class="btn orange" id="wakeButton" type="button">[ WAKE ]</button></div>
+<div
+  class="theme-fx"
+  aria-hidden="true"
+></div>
+
+
+<!-- =========================================================
+     POWER / TV FAILURE SCREEN
+     ========================================================= -->
+
+<section
+  id="failureScreen"
+  aria-hidden="true"
+  aria-label="Signal failure"
+>
+
+  <canvas
+    id="failureCanvas"
+  ></canvas>
+
+  <div class="failure-vignette"></div>
+
+  <div class="failure-static"></div>
+
+
+  <div class="failure-ui">
+
+    <div
+      class="failure-symbol"
+      aria-hidden="true"
+    >
+      ⏻
+    </div>
+
+
+    <h2
+      class="failure-title"
+      id="failureTitle"
+    >
+      SIGNAL FAILURE
+    </h2>
+
+
+    <p
+      class="failure-copy"
+      id="failureCopy"
+    >
+      The display signal has dropped. A damaged radar trace is being reconstructed.
+    </p>
+
+
+    <div class="failure-readout">
+
+      <span>
+        VIDEO
+        <strong id="failureVideo">
+          UNSTABLE
+        </strong>
+      </span>
+
+      <span>
+        RADAR
+        <strong id="failureRadar">
+          FAULT
+        </strong>
+      </span>
+
+      <span>
+        FRAME
+        <strong id="failureFrame">
+          00
+        </strong>
+      </span>
+
+    </div>
+
+
+    <div class="failure-buttons">
+
+      <button
+        class="btn gray"
+        id="failureFix"
+        type="button"
+      >
+        [ FIX SIGNAL ]
+      </button>
+
+      <button
+        class="btn gray"
+        id="failureWelcome"
+        type="button"
+      >
+        [ BACK TO WELCOME ]
+      </button>
+
+    </div>
+
+
+    <div class="failure-tip">
+      ENTER = FIX SIGNAL · ESC = BACK TO WELCOME
+    </div>
+
   </div>
+
 </section>
-<style>
-#sleep{position:fixed;inset:0;z-index:120;display:grid;place-items:center;padding:24px;background:#080a0b;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .35s ease,visibility .35s ease}
-#sleep.active{opacity:1;visibility:visible;pointer-events:auto}
-.sleep-inner{width:min(620px,100%);text-align:center}
-.sleep-mark{width:76px;height:76px;margin:0 auto 26px;border:1px solid var(--orange);border-radius:50%;display:grid;place-items:center;color:var(--orange);box-shadow:0 0 30px rgba(252,177,99,.12);animation:sleepPulse 2.6s ease-in-out infinite}
-@keyframes sleepPulse{50%{transform:scale(1.04)}}
-.sleep-title{margin:0 0 12px;font-family:var(--pixel);font-size:clamp(18px,3vw,28px)}
-.sleep-copy{color:var(--muted);font-size:21px;margin-bottom:22px}
-.sleep-hint{color:var(--orange);font-size:18px}
-.sleep-actions{display:flex;justify-content:center;gap:8px;margin-top:18px}
-</style>
+
 
 <script>
-/* CONFIGURATION */
+/* =========================================================
+   CONFIG
+   ========================================================= */
+
 const CONFIG = {
-  profileImage: "assets/l.gif",
-  socials: {
-    github: "https://github.com/Zzzzzzzpeng/Zzzzzzzpeng",
-    youtube: "",
-    wakatime: "https://wakatime.com/@8226be62-ae10-4dac-acae-8041f87e3751"
+
+  profileImage:
+    "assets/l.gif",
+
+  socials:{
+    github:
+      "https://github.com/Zzzzzzzpeng/Zzzzzzzpeng",
+
+    youtube:
+      "",
+
+    wakatime:
+      "https://wakatime.com/@8226be62-ae10-4dac-acae-8041f87e3751"
   },
-  payments: { paypal:"", kofi:"", bank:{bankName:"",accountName:"",accountNumber:""}, bitcoin:"" },
-  theme: {
-    storageKey: "maweb.theme",
-    default: "everblush"
+
+  payments:{
+    paypal:"",
+    kofi:"",
+    bank:{
+      bankName:"",
+      accountName:"",
+      accountNumber:""
+    },
+    bitcoin:""
+  },
+
+  theme:{
+    storageKey:
+      "maweb.theme",
+
+    default:
+      "everblush"
   }
 };
 
-/* GAME PROGRESSION */
+
+/* =========================================================
+   PROGRESSION
+   ========================================================= */
+
 const PROGRESSION = {
-  projectBaseXP: 45,
-  paperBaseXP: 90,
-  levels: [
-    {level:1,name:"HUMAN",minXP:0,color:"#c47fd5",description:"Starting the technical path."},
-    {level:2,name:"ADEPT",minXP:100,color:"#6f7ff2",description:"Learning the tools and building the habit."},
-    {level:3,name:"ASCENDANT",minXP:250,color:"#67b0e8",description:"Turning experiments into working systems."},
-    {level:4,name:"ABYSS",minXP:400,color:"#8ccf7e",description:"Going deeper into research, systems and experimentation."},
-    {level:5,name:"TRANSCENDENT",minXP:600,color:"#e5c76b",description:"Connecting software, research and systems thinking."},
-    {level:6,name:"SOVEREIGN",minXP:850,color:"#fcb163",description:"Owning the whole stack, from idea to deployment."},
-    {level:7,name:"GOD",minXP:1200,color:"#e57474",description:"The highest progression tier. Reserved for a long technical track."}
+
+  projectBaseXP:45,
+
+  paperBaseXP:90,
+
+  levels:[
+
+    {
+      level:1,
+      name:"HUMAN",
+      minXP:0,
+      color:"#c47fd5",
+      description:
+        "Starting the technical path."
+    },
+
+    {
+      level:2,
+      name:"ADEPT",
+      minXP:100,
+      color:"#6f7ff2",
+      description:
+        "Learning the tools and building the habit."
+    },
+
+    {
+      level:3,
+      name:"ASCENDANT",
+      minXP:250,
+      color:"#67b0e8",
+      description:
+        "Turning experiments into working systems."
+    },
+
+    {
+      level:4,
+      name:"ABYSS",
+      minXP:400,
+      color:"#8ccf7e",
+      description:
+        "Going deeper into research, systems and experimentation."
+    },
+
+    {
+      level:5,
+      name:"TRANSCENDENT",
+      minXP:600,
+      color:"#e5c76b",
+      description:
+        "Connecting software, research and systems thinking."
+    },
+
+    {
+      level:6,
+      name:"SOVEREIGN",
+      minXP:850,
+      color:"#fcb163",
+      description:
+        "Owning the whole stack, from idea to deployment."
+    },
+
+    {
+      level:7,
+      name:"GOD",
+      minXP:1200,
+      color:"#e57474",
+      description:
+        "The highest progression tier. Reserved for a long technical track."
+    }
+
   ]
-};
-const xpForProject = project => {
-  const category = String(project?.category || "").toLowerCase();
-  const status = String(project?.status || "").toLowerCase();
-  let xp = PROGRESSION.projectBaseXP;
-  if(category.includes("capstone")) xp += 35;
-  if(category.includes("computer")) xp += 15;
-  if(status.includes("final")) xp += 20;
-  if(status.includes("active")) xp += 10;
-  if(status.includes("live")) xp += 10;
-  return xp;
-};
-const xpForPaper = paper => {
-  const topic = String(paper?.topic || "").toLowerCase();
-  const status = String(paper?.status || "").toLowerCase();
-  let xp = PROGRESSION.paperBaseXP;
-  if(status.includes("capstone")) xp += 30;
-  if(topic.includes("research")) xp += 20;
-  if(topic.includes("information systems")) xp += 10;
-  return xp;
+
 };
 
-/* PERSONA */
+
+/* =========================================================
+   PERSONA
+   ========================================================= */
+
 const PERSONA = [
-  ["ABOUT","I am an Information Systems student building my way through software engineering, Linux, automation, computer vision, local AI, and the systems around them. I prefer learning by actually building things, because reading documentation without eventually breaking something is apparently considered suspicious in engineering."],
-  ["HOW I WORK","Most of my work starts as an experiment. I build a small thing, observe what happens, trace the failure, change the implementation, and repeat. I care about understanding the layer underneath the interface, whether that means following a process through a codebase, inspecting a database, working from the terminal, or figuring out why a perfectly reasonable piece of code decided to become unreasonable."],
-  ["CURRENT FOCUS","My current interests sit around computer vision, local AI, computer-use agents, automation, system control, and practical software engineering. I am particularly interested in how models interact with real software and operating-system environments, rather than treating AI as something that only exists inside a chat box."],
-  ["ENGINEERING STACK","Linux is a major part of my workflow, especially the terminal, developer tooling, Git, scripting, databases, and system-level configuration. I work primarily around Python and web technologies while continuing to explore C, C++, Rust, computer vision, and the lower-level concepts that make higher-level software possible."],
-  ["RESEARCH & PROJECTS","My projects range from personal web experiments and computer-vision studies to Information Systems development through my university capstone. I keep research and implementation close together because a prototype is often the fastest way to discover whether an idea actually survives contact with reality."],
-  ["NEXT DIRECTION","The longer-term direction is moving closer to systems and hardware: C and C++, Rust, embedded systems, robotics, ROS, Arduino, Raspberry Pi, computer architecture, RTL and HDL, FPGA development, and eventually RISC-V. The goal is to understand more of the stack, from software behaviour down towards the hardware executing it."],
-  ["WHY THIS SITE EXISTS","This site is a personal index of what I am learning, building, researching, and experimenting with. It is not meant to pretend that everything here is finished. Some things are projects, some are experiments, and some are simply evidence that I went down another technical rabbit hole."]
+
+  [
+    "ABOUT",
+    "I am an Information Systems student building my way through software engineering, Linux, automation, computer vision, local AI, and the systems around them. I prefer learning by actually building things, because reading documentation without eventually breaking something is apparently considered suspicious in engineering."
+  ],
+
+  [
+    "HOW I WORK",
+    "Most of my work starts as an experiment. I build a small thing, observe what happens, trace the failure, change the implementation, and repeat. I care about understanding the layer underneath the interface, whether that means following a process through a codebase, inspecting a database, working from the terminal, or figuring out why a perfectly reasonable piece of code decided to become unreasonable."
+  ],
+
+  [
+    "CURRENT FOCUS",
+    "My current interests sit around computer vision, local AI, computer-use agents, automation, system control, and practical software engineering. I am particularly interested in how models interact with real software and operating-system environments, rather than treating AI as something that only exists inside a chat box."
+  ],
+
+  [
+    "ENGINEERING STACK",
+    "Linux is a major part of my workflow, especially the terminal, developer tooling, Git, scripting, databases, and system-level configuration. I work primarily around Python and web technologies while continuing to explore C, C++, Rust, computer vision, and the lower-level concepts that make higher-level software possible."
+  ],
+
+  [
+    "RESEARCH & PROJECTS",
+    "My projects range from personal web experiments and computer-vision studies to Information Systems development through my university capstone. I keep research and implementation close together because a prototype is often the fastest way to discover whether an idea actually survives contact with reality."
+  ],
+
+  [
+    "NEXT DIRECTION",
+    "The longer-term direction is moving closer to systems and hardware: C and C++, Rust, embedded systems, robotics, ROS, Arduino, Raspberry Pi, computer architecture, RTL and HDL, FPGA development, and eventually RISC-V. The goal is to understand more of the stack, from software behaviour down towards the hardware executing it."
+  ],
+
+  [
+    "WHY THIS SITE EXISTS",
+    "This site is a personal index of what I am learning, building, researching, and experimenting with. It is not meant to pretend that everything here is finished. Some things are projects, some are experiments, and some are simply evidence that I went down another technical rabbit hole."
+  ]
+
 ];
 
-/* PROJECTS */
+
+/* =========================================================
+   PROJECTS
+   ========================================================= */
+
 const PROJECTS = [
-  {title:"Computer Vision Learning",category:"COMPUTER VISION",status:"learning",description:"Learning notes and experiments in computer vision.",technologies:["Python","OpenCV"],url:"https://github.com/Zzzzzzzpeng/computer-vision-learning"},
-  {title:"Dotrice",category:"PYTHON",status:"active",description:"A Python project and continuing experiment.",technologies:["Python"],url:"https://github.com/Zzzzzzzpeng/Dotrice"},
-  {title:"Capstone Project, Kelompok B",category:"CAPSTONE",status:"final project",description:"Final project for the Bachelor of Information Systems programme.",technologies:["HTML","CSS","JavaScript"],url:"https://github.com/Zzzzzzzpeng/CAPSTONE_PROJECT_KELOMPOK_B"},
-  {title:"maweb",category:"WEB",status:"live",description:"The retro personal website currently being refined.",technologies:["HTML","CSS","JavaScript"],url:"https://github.com/Zzzzzzzpeng/maweb"}
+
+  {
+    title:"Computer Vision Learning",
+    category:"COMPUTER VISION",
+    status:"learning",
+    description:
+      "Learning notes and experiments in computer vision.",
+    technologies:[
+      "Python",
+      "OpenCV"
+    ],
+    url:
+      "https://github.com/Zzzzzzzpeng/computer-vision-learning"
+  },
+
+  {
+    title:"Dotrice",
+    category:"PYTHON",
+    status:"active",
+    description:
+      "A Python project and continuing experiment.",
+    technologies:[
+      "Python"
+    ],
+    url:
+      "https://github.com/Zzzzzzzpeng/Dotrice"
+  },
+
+  {
+    title:"Capstone Project, Kelompok B",
+    category:"CAPSTONE",
+    status:"final project",
+    description:
+      "Final project for the Bachelor of Information Systems programme.",
+    technologies:[
+      "HTML",
+      "CSS",
+      "JavaScript"
+    ],
+    url:
+      "https://github.com/Zzzzzzzpeng/CAPSTONE_PROJECT_KELOMPOK_B"
+  },
+
+  {
+    title:"maweb",
+    category:"WEB",
+    status:"live",
+    description:
+      "The retro personal website currently being refined.",
+    technologies:[
+      "HTML",
+      "CSS",
+      "JavaScript"
+    ],
+    url:
+      "https://github.com/Zzzzzzzpeng/maweb"
+  }
+
 ];
 
-/* PAPERS */
+
+/* =========================================================
+   PAPERS
+   ========================================================= */
+
 const PAPERS = [
-  // KARIL
+
   {
-    year: "2026",
-    title: "Sumber Aquarium PGK",
-    topic: "Information Systems",
-    status: "research",
+    year:"2026",
+
+    title:
+      "Sumber Aquarium PGK",
+
+    topic:
+      "Information Systems",
+
+    status:
+      "research",
+
     description:
       "An Information Systems research project related to inventory management, sales, fish mortality records, and operational history at Sumber Aquarium PGK.",
+
     abstract:
       "Sumber Aquarium PGK is an Information Systems research project focused on the management and monitoring of ornamental fish inventory, sales transactions, fish mortality records, and operational history.",
-    pdf: "paper/capstone_project/KARILcp.pdf",
-    href: "paper/capstone_project/KARILcp.pdf"
+
+    pdf:
+      "paper/capstone_project/KARILcp.pdf",
+
+    href:
+      "paper/capstone_project/KARILcp.pdf"
   },
 
-  // CAPSTONE PROJECT PROPOSAL
+
   {
-    year: "2026",
+    year:"2026",
+
     title:
       "Perancangan dan Implementasi Sistem Informasi Monitoring Stok Ikan Berbasis Web pada Toko Sumber Aquarium PGK",
-    topic: "Information Systems",
-    status: "capstone",
+
+    topic:
+      "Information Systems",
+
+    status:
+      "capstone",
+
     description:
       "A Capstone Project proposal for designing and implementing a web-based information system to monitor ornamental fish inventory at Sumber Aquarium PGK.",
+
     abstract:
       "This Capstone Project proposes a web-based Information System for monitoring ornamental fish inventory at Sumber Aquarium PGK. The system is designed to manage fish data, sales transactions, fish mortality, stock changes, operational history, dashboard monitoring, and user authentication.",
-    pdf: "paper/capstone_project/PROPOSALcp.pdf",
-    href: "paper/capstone_project/PROPOSALcp.pdf"
+
+    pdf:
+      "paper/capstone_project/PROPOSALcp.pdf",
+
+    href:
+      "paper/capstone_project/PROPOSALcp.pdf"
   }
+
 ];
 
-/* SOCIALS */
+
+/* =========================================================
+   SOCIALS
+   ========================================================= */
+
 const SOCIALS = [
-  ["github","GITHUB","code / repositories","#8ccf7e"],
-  ["youtube","YOUTUBE","videos / demonstrations","#e57474"],
-  ["wakatime","WAKATIME","coding activity","#6cbfbf"]
+
+  [
+    "github",
+    "GITHUB",
+    "code / repositories",
+    "#8ccf7e"
+  ],
+
+  [
+    "youtube",
+    "YOUTUBE",
+    "videos / demonstrations",
+    "#e57474"
+  ],
+
+  [
+    "wakatime",
+    "WAKATIME",
+    "coding activity",
+    "#6cbfbf"
+  ]
+
 ];
 
-/* SUPPORT */
+
+/* =========================================================
+   SUPPORT
+   ========================================================= */
+
 const SUPPORT = [
-  ["paypal","PAYPAL","direct support","#6cbfbf"],
-  ["kofi","KO-FI","tips / support","#e57474"],
-  ["bank","BANK TRANSFER","account details","#8ccf7e"],
-  ["bitcoin","BITCOIN","public address","#fcb163"]
+
+  [
+    "paypal",
+    "PAYPAL",
+    "direct support"
+  ],
+
+  [
+    "kofi",
+    "KO-FI",
+    "tips / support"
+  ],
+
+  [
+    "bank",
+    "BANK TRANSFER",
+    "account details"
+  ],
+
+  [
+    "bitcoin",
+    "BITCOIN",
+    "public address"
+  ]
+
 ];
 
-/* HELPERS */
-const $ = s => document.querySelector(s);
-const $$ = s => [...document.querySelectorAll(s)];
-const sleep = ms => new Promise(r => setTimeout(r,ms));
+
+/* =========================================================
+   HELPERS
+   ========================================================= */
+
+const $ =
+  selector =>
+    document.querySelector(selector);
+
+const $$ =
+  selector =>
+    [...document.querySelectorAll(selector)];
+
+const sleep =
+  ms =>
+    new Promise(
+      resolve =>
+        setTimeout(resolve,ms)
+    );
+
+const esc =
+  value =>
+    String(value ?? "")
+      .replace(
+        /[&<>"']/g,
+        char => ({
+          "&":"&amp;",
+          "<":"&lt;",
+          ">":"&gt;",
+          "\"":"&quot;",
+          "'":"&#39;"
+        }[char])
+      );
+
 const safeUrl = value => {
-  if(!value || typeof value !== "string") return "";
-  try{ const url = new URL(value,window.location.href); return ["http:","https:","file:"].includes(url.protocol) ? url.href : ""; }
-  catch{ return ""; }
-};
-const esc = value => String(value ?? "").replace(/[&<>"']/g,c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
 
-function renderProgression(){
-  const totalXP = PROJECTS.reduce((s,p) => s + xpForProject(p),0) + PAPERS.reduce((s,p) => s + xpForPaper(p),0);
-  let current = PROGRESSION.levels[0];
-  for(const level of PROGRESSION.levels){ if(totalXP >= level.minXP) current = level; }
-  const next = PROGRESSION.levels.find(l => l.minXP > totalXP);
-  const rangeStart = current.minXP, rangeEnd = next ? next.minXP : current.minXP + 1;
-  const progress = next ? Math.max(0,Math.min(100,((totalXP - rangeStart) / (rangeEnd - rangeStart)) * 100)) : 100;
-  const box = $(".profile-box"), badge = $("#profileLevel"), status = $("#profileStatus"), levelName = $("#profileLevelName"),
-        xpText = $("#profileXp"), fill = $("#profileXpFill"), bar = $(".xp-track"), description = $("#profileLevelDescription"),
-        nextText = $("#profileXpNext"), levelUpBanner = $("#levelUpBanner");
-  if(!box || !badge || !status || !levelName || !xpText || !fill || !bar || !description || !nextText) return;
-  let storedLevel = 0, hadOldXP = false;
-  try{
-    storedLevel = Number(localStorage.getItem("maweb.progress.level") || 0);
-    hadOldXP = localStorage.getItem("maweb.progress.xp") !== null;
-  }catch{}
-  box.dataset.level = String(current.level);
-  box.style.setProperty("--level-color",current.color);
-  /* popup is queued only when the level actually changed, then remembered so it never repeats */
-  if(storedLevel && current.level > storedLevel){
-    pendingLevelUp = {from:PROGRESSION.levels.find(l => l.level === storedLevel) || null,to:current};
-  }else if(!storedLevel && hadOldXP){
-    pendingLevelUp = {from:null,to:current};
+  if(
+    !value ||
+    typeof value !== "string"
+  ){
+    return "";
   }
+
   try{
-    localStorage.setItem("maweb.progress.level",String(current.level));
-    localStorage.setItem("maweb.progress.xp",String(totalXP));
-  }catch{}
-  badge.textContent = `LVL ${String(current.level).padStart(2,"0")}`;
-  status.textContent = current.name;
-  levelName.textContent = current.name;
-  xpText.textContent = next ? `${totalXP} / ${next.minXP} XP` : `${totalXP} / MAX XP`;
-  nextText.textContent = next ? `LVL ${String(next.level).padStart(2,"0")} · ${next.name}` : "MAX LEVEL";
-  fill.style.width = `${progress}%`;
-  bar.setAttribute("aria-valuenow",String(Math.round(progress)));
-  bar.setAttribute("aria-valuetext",`${totalXP} experience points, level ${current.level} of ${PROGRESSION.levels.length}`);
-  description.textContent = current.description;
-  $("#profileProjectCount").textContent = String(PROJECTS.length).padStart(2,"0");
-  $("#profilePaperCount").textContent = String(PAPERS.length).padStart(2,"0");
-}
 
-let pendingLevelUp = null;
-function showLevelUp(){
-  if(!pendingLevelUp) return;
-  const {from,to} = pendingLevelUp;
-  pendingLevelUp = null;
-  const pop = $("#levelPopup");
-  const glow = to.color + "40";
-  pop.style.setProperty("--lp-to",to.color);
-  pop.style.setProperty("--lp-glow",glow);
-  $("#lpNames").innerHTML = from
-    ? `<s>${esc(from.name)}</s> → <strong style="color:${esc(to.color)}">${esc(to.name)}</strong>`
-    : `<strong style="color:${esc(to.color)}">${esc(to.name)}</strong>`;
-  $("#lpColours").innerHTML = from && from.color !== to.color
-    ? `<span class="lp-swatch" style="background:${esc(from.color)}"></span><span>→</span><span class="lp-swatch" style="background:${esc(to.color)}"></span>`
-    : `<span class="lp-swatch" style="background:${esc(to.color)}"></span>`;
-  $("#lpCopy").textContent = from && from.color !== to.color
-    ? `Level ${to.level}. Your profile colour is changing now.`
-    : `Level ${to.level}. Your status has been updated.`;
-  pop.classList.add("show");
-  pop.setAttribute("aria-hidden","false");
-  $("#lpClose").focus({preventScroll:true});
-}
-function closeLevelUp(){
-  const pop = $("#levelPopup");
-  pop.classList.remove("show");
-  pop.setAttribute("aria-hidden","true");
-}
-const levelPopupOpen = () => $("#levelPopup").classList.contains("show");
+    const url =
+      new URL(
+        value,
+        window.location.href
+      );
 
-/* WELCOME */
-const WELCOME_TEXT = "A live personal interface for things I build, study, research, and break while learning how the stack actually works. Enter the signal when you are ready.";
-let welcomeFinished = false, currentPage = 0, previousPage = 0, sleeping = false;
+    return [
+      "http:",
+      "https:",
+      "file:"
+    ].includes(
+      url.protocol
+    )
+      ? url.href
+      : "";
 
-const thunder = {sync(){}};
-
-/* THEME SWITCH
-   Persisted locally. The switch only changes presentation; project/research data stay untouched. */
-function themeKey(){
-  return CONFIG.theme?.storageKey || "maweb.theme";
-}
-function currentTheme(){
-  try{
-    const saved = localStorage.getItem(themeKey());
-    return saved === "redline" ? "redline" : "everblush";
   }catch{
-    return CONFIG.theme?.default === "redline" ? "redline" : "everblush";
+
+    return "";
+
   }
-}
-function applyTheme(theme, animate=true){
-  const next = theme === "redline" ? "redline" : "everblush";
-  document.body.classList.toggle("redline",next === "redline");
-  const toggle = $("#themeToggle");
-  const label = $("#themeToggleLabel");
-  const hint = $("#themeHint");
-  if(toggle){
-    toggle.setAttribute("aria-pressed",String(next === "redline"));
-    toggle.title = next === "redline" ? "Switch back to Everblush" : "Switch to Redline";
+
+};
+
+
+/* =========================================================
+   XP
+   ========================================================= */
+
+const xpForProject =
+  project => {
+
+    let xp =
+      PROGRESSION.projectBaseXP;
+
+    const category =
+      String(
+        project?.category || ""
+      ).toLowerCase();
+
+    const status =
+      String(
+        project?.status || ""
+      ).toLowerCase();
+
+    if(
+      category.includes(
+        "capstone"
+      )
+    ){
+      xp += 35;
+    }
+
+    if(
+      category.includes(
+        "computer"
+      )
+    ){
+      xp += 15;
+    }
+
+    if(
+      status.includes(
+        "final"
+      )
+    ){
+      xp += 20;
+    }
+
+    if(
+      status.includes(
+        "active"
+      )
+    ){
+      xp += 10;
+    }
+
+    if(
+      status.includes(
+        "live"
+      )
+    ){
+      xp += 10;
+    }
+
+    return xp;
+  };
+
+const xpForPaper =
+  paper => {
+
+    let xp =
+      PROGRESSION.paperBaseXP;
+
+    const topic =
+      String(
+        paper?.topic || ""
+      ).toLowerCase();
+
+    const status =
+      String(
+        paper?.status || ""
+      ).toLowerCase();
+
+    if(
+      status.includes(
+        "capstone"
+      )
+    ){
+      xp += 30;
+    }
+
+    if(
+      topic.includes(
+        "research"
+      )
+    ){
+      xp += 20;
+    }
+
+    if(
+      topic.includes(
+        "information systems"
+      )
+    ){
+      xp += 10;
+    }
+
+    return xp;
+  };
+
+
+/* =========================================================
+   WELCOME
+   ========================================================= */
+
+const WELCOME_TEXT =
+  "Interface ready. Search the web or enter when you are ready.";
+
+const BOOT_STEPS = [
+
+  [
+    "DISPLAY",
+    "Starting welcome surface"
+  ],
+
+  [
+    "SIGNAL",
+    "Checking interface signal"
+  ],
+
+  [
+    "SEARCH",
+    "Mounting DuckDuckGo search"
+  ],
+
+  [
+    "READY",
+    "Welcome screen ready"
+  ]
+
+];
+
+let welcomeFinished = false;
+
+
+async function typeText(
+  target,
+  text,
+  speed=18
+){
+
+  target.textContent = "";
+
+  const node =
+    document.createTextNode("");
+
+  const cursor =
+    document.createElement("span");
+
+  cursor.className =
+    "cursor";
+
+  cursor.setAttribute(
+    "aria-hidden",
+    "true"
+  );
+
+  target.append(
+    node,
+    cursor
+  );
+
+  const start =
+    performance.now();
+
+  let shown = 0;
+
+  while(
+    shown <
+    text.length
+  ){
+
+    await new Promise(
+      resolve =>
+        requestAnimationFrame(
+          resolve
+        )
+    );
+
+    const wanted =
+      Math.min(
+        text.length,
+        Math.floor(
+          (performance.now() - start) /
+          speed
+        ) + 1
+      );
+
+    if(
+      wanted >
+      shown
+    ){
+
+      node.data =
+        text.slice(
+          0,
+          wanted
+        );
+
+      shown =
+        wanted;
+    }
+
   }
-  if(label) label.textContent = next === "redline" ? "EVERBLUSH" : "REDLINE";
-  if(hint) hint.textContent = next === "redline" ? "RED / BLACK CRT" : "EVERBLUSH CRT";
-  try{ localStorage.setItem(themeKey(),next); }catch{}
-  if(animate) triggerThemeBurst();
-  syncRedlineGlitchLoop();
-}
-function triggerThemeBurst(){
-  document.body.classList.remove("theme-switching");
-  void document.body.offsetWidth;
-  document.body.classList.add("theme-switching");
-  window.clearTimeout(window.__themeTimer);
-  window.__themeTimer = window.setTimeout(() => document.body.classList.remove("theme-switching"),760);
-}
-function initTheme(){
-  applyTheme(currentTheme(),false);
-  const toggle = $("#themeToggle");
-  toggle?.addEventListener("click",() => {
-    const next = document.body.classList.contains("redline") ? "everblush" : "redline";
-    applyTheme(next,true);
-  });
+
 }
 
-/* Typing: one text node updated in place (was one new node per character). Same speed. */
-async function typeText(target,text,speed=18){
-  target.textContent = "";
-  const node = document.createTextNode("");
-  const cursor = document.createElement("span");
-  cursor.className = "cursor";
-  cursor.setAttribute("aria-hidden","true");
-  target.append(node,cursor);
-  /* time-based: at most one layout per frame, same overall typing speed */
-  const start = performance.now();
-  let shown = 0;
-  while(shown < text.length){
-    await new Promise(r => requestAnimationFrame(r));
-    const want = Math.min(text.length,Math.floor((performance.now() - start) / speed) + 1);
-    if(want > shown){ node.data = text.slice(0,want); shown = want; }
-  }
+
+function updateWelcomeClock(){
+
+  $("#welcomeClock")
+    .textContent =
+      new Date()
+        .toLocaleTimeString(
+          "en-GB",
+          {
+            hour12:false
+          }
+        );
 }
+
+
+async function runWelcomeBoot(){
+
+  const fill =
+    $("#welcomeProgress");
+
+  const percent =
+    $("#welcomePercent");
+
+  const status =
+    $("#welcomeStatus");
+
+  const subtitle =
+    $("#welcomeSubtitle");
+
+  const kicker =
+    $("#welcomeKicker");
+
+  const log =
+    $("#bootLog");
+
+  if(
+    !fill ||
+    !percent ||
+    !status ||
+    !subtitle ||
+    !kicker
+  ){
+    return;
+  }
+
+  log.innerHTML = "";
+
+  for(
+    let i=0;
+    i<BOOT_STEPS.length;
+    i++
+  ){
+
+    const [
+      label,
+      detail
+    ] =
+      BOOT_STEPS[i];
+
+    const value =
+      Math.round(
+        ((i+1) /
+        BOOT_STEPS.length) *
+        100
+      );
+
+    status.textContent =
+      label;
+
+    kicker.textContent =
+      "WELCOME / " +
+      label;
+
+    subtitle.textContent =
+      detail;
+
+
+    const line =
+      document.createElement(
+        "div"
+      );
+
+    line.className =
+      "boot-log-line";
+
+    line.innerHTML =
+      `› ${esc(detail)}
+       <span class="ok">[OK]</span>`;
+
+    log.appendChild(line);
+
+    requestAnimationFrame(
+      () =>
+        line.classList.add(
+          "show"
+        )
+    );
+
+
+    await sleep(
+      i === 0
+        ? 360
+        : 480
+    );
+
+
+    fill.style.width =
+      value + "%";
+
+    percent.textContent =
+      value + "%";
+
+
+    await sleep(190);
+  }
+
+
+  status.textContent =
+    "READY";
+
+  kicker.textContent =
+    "WELCOME";
+
+
+  await typeText(
+    subtitle,
+    WELCOME_TEXT,
+    16
+  );
+
+
+  subtitle
+    .querySelector(".cursor")
+    ?.remove();
+
+
+  welcomeFinished =
+    true;
+
+
+  $("#enterPersonaButton")
+    .classList
+    .add("ready");
+
+
+  const input =
+    $("#duckSearchInput");
+
+
+  if(input){
+
+    setTimeout(
+      () =>
+        input.focus({
+          preventScroll:true
+        }),
+      260
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   DUCKDUCKGO
+   ========================================================= */
+
+function initDuckSearch(){
+
+  const form =
+    $("#duckSearchForm");
+
+  const input =
+    $("#duckSearchInput");
+
+  if(
+    !form ||
+    !input
+  ){
+    return;
+  }
+
+
+  form.addEventListener(
+    "submit",
+    event => {
+
+      event.preventDefault();
+
+
+      const query =
+        input.value.trim();
+
+
+      if(!query){
+
+        form.animate(
+
+          [
+            {
+              transform:
+                "translateX(0)"
+            },
+
+            {
+              transform:
+                "translateX(-4px)"
+            },
+
+            {
+              transform:
+                "translateX(4px)"
+            },
+
+            {
+              transform:
+                "translateX(0)"
+            }
+          ],
+
+          {
+            duration:180,
+            easing:"ease-out"
+          }
+
+        );
+
+        input.focus();
+
+        return;
+      }
+
+
+      const url =
+        "https://duckduckgo.com/?q=" +
+        encodeURIComponent(
+          query
+        );
+
+
+      window.location.assign(
+        url
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   THEME
+   ========================================================= */
+
+function currentTheme(){
+
+  try{
+
+    return (
+      localStorage.getItem(
+        CONFIG.theme.storageKey
+      ) === "redline"
+    )
+      ? "redline"
+      : "everblush";
+
+  }catch{
+
+    return CONFIG.theme.default;
+
+  }
+
+}
+
+
+function applyTheme(
+  theme,
+  animate=true
+){
+
+  const redline =
+    theme === "redline";
+
+
+  document.body
+    .classList
+    .toggle(
+      "redline",
+      redline
+    );
+
+
+  const label =
+    $("#themeToggleLabel");
+
+  const hint =
+    $("#themeHint");
+
+  const button =
+    $("#themeToggle");
+
+
+  if(label){
+
+    label.textContent =
+      redline
+        ? "EVERBLUSH"
+        : "REDLINE";
+
+  }
+
+
+  if(hint){
+
+    hint.textContent =
+      redline
+        ? "RED / BLACK CRT"
+        : "EVERBLUSH CRT";
+
+  }
+
+
+  if(button){
+
+    button.setAttribute(
+      "aria-pressed",
+      String(redline)
+    );
+
+  }
+
+
+  try{
+
+    localStorage.setItem(
+      CONFIG.theme.storageKey,
+      redline
+        ? "redline"
+        : "everblush"
+    );
+
+  }catch{}
+
+
+  if(animate){
+
+    document.body
+      .classList
+      .remove(
+        "theme-switching"
+      );
+
+    void document.body.offsetWidth;
+
+    document.body
+      .classList
+      .add(
+        "theme-switching"
+      );
+
+    setTimeout(
+      () =>
+        document.body
+          .classList
+          .remove(
+            "theme-switching"
+          ),
+      700
+    );
+
+  }
+
+}
+
+
+function initTheme(){
+
+  applyTheme(
+    currentTheme(),
+    false
+  );
+
+
+  $("#themeToggle")
+    ?.addEventListener(
+      "click",
+      () => {
+
+        const next =
+          document.body
+            .classList
+            .contains(
+              "redline"
+            )
+            ? "everblush"
+            : "redline";
+
+
+        applyTheme(
+          next,
+          true
+        );
+
+      }
+    );
+
+}
+
+
+/* =========================================================
+   PERSONA
+   ========================================================= */
 
 async function revealPersona(){
-  const root = $("#bioStream");
+
+  const root =
+    $("#bioStream");
+
   root.innerHTML = "";
-  for(const [label,text] of PERSONA){
-    const block = document.createElement("article");
-    block.className = "bio-block";
-    block.innerHTML = `<span class="bio-key">// ${esc(label)}</span><div class="bio-text"></div>`;
-    root.appendChild(block);
-    requestAnimationFrame(() => block.classList.add("revealed"));
-    const target = block.querySelector(".bio-text");
-    await typeText(target,text,10);
-    target.querySelector(".cursor")?.remove();
+
+
+  for(
+    const [
+      label,
+      text
+    ]
+    of PERSONA
+  ){
+
+    const block =
+      document.createElement(
+        "article"
+      );
+
+    block.className =
+      "bio-block";
+
+
+    block.innerHTML = `
+
+      <span class="bio-key">
+        // ${esc(label)}
+      </span>
+
+      <div class="bio-text"></div>
+
+    `;
+
+
+    root.appendChild(
+      block
+    );
+
+
+    requestAnimationFrame(
+      () =>
+        block.classList.add(
+          "revealed"
+        )
+    );
+
+
+    const target =
+      block.querySelector(
+        ".bio-text"
+      );
+
+
+    await typeText(
+      target,
+      text,
+      9
+    );
+
+
+    target
+      .querySelector(
+        ".cursor"
+      )
+      ?.remove();
+
+
     await sleep(90);
+
   }
-  const last = root.lastElementChild?.querySelector(".bio-text");
-  if(last){
-    last.appendChild(document.createTextNode(" "));
-    const cursor = document.createElement("span");
-    cursor.className = "cursor";
-    cursor.setAttribute("aria-hidden","true");
-    last.appendChild(cursor);
-  }
+
 }
+
+
+/* =========================================================
+   PROGRESSION
+   ========================================================= */
+
+let pendingLevelUp =
+  null;
+
+
+function renderProgression(){
+
+  const totalXP =
+
+    PROJECTS.reduce(
+      (
+        sum,
+        project
+      ) =>
+        sum +
+        xpForProject(project),
+      0
+    )
+
+    +
+
+    PAPERS.reduce(
+      (
+        sum,
+        paper
+      ) =>
+        sum +
+        xpForPaper(paper),
+      0
+    );
+
+
+  let current =
+    PROGRESSION
+      .levels[0];
+
+
+  for(
+    const level
+    of PROGRESSION.levels
+  ){
+
+    if(
+      totalXP >=
+      level.minXP
+    ){
+
+      current =
+        level;
+
+    }
+
+  }
+
+
+  const next =
+    PROGRESSION
+      .levels
+      .find(
+        level =>
+          level.minXP >
+          totalXP
+      );
+
+
+  const start =
+    current.minXP;
+
+  const end =
+    next
+      ? next.minXP
+      : current.minXP + 1;
+
+
+  const progress =
+    next
+
+      ?
+
+        Math.max(
+          0,
+          Math.min(
+            100,
+            (
+              (totalXP - start) /
+              (end - start)
+            ) *
+            100
+          )
+        )
+
+      :
+
+        100;
+
+
+  let previousLevel =
+    0;
+
+
+  try{
+
+    previousLevel =
+      Number(
+        localStorage.getItem(
+          "maweb.progress.level"
+        ) || 0
+      );
+
+  }catch{}
+
+
+  if(
+    previousLevel &&
+    current.level >
+    previousLevel
+  ){
+
+    pendingLevelUp = {
+
+      from:
+        PROGRESSION
+          .levels
+          .find(
+            level =>
+              level.level ===
+              previousLevel
+          ) || null,
+
+      to:
+        current
+    };
+
+  }
+
+
+  try{
+
+    localStorage.setItem(
+      "maweb.progress.level",
+      String(
+        current.level
+      )
+    );
+
+    localStorage.setItem(
+      "maweb.progress.xp",
+      String(totalXP)
+    );
+
+  }catch{}
+
+
+  $("#profileStatus")
+    .textContent =
+      current.name;
+
+
+  $("#profileLevel")
+    .textContent =
+      `LVL ${
+        String(
+          current.level
+        ).padStart(2,"0")
+      }`;
+
+
+  $("#profileLevelName")
+    .textContent =
+      current.name;
+
+
+  $("#profileLevelDescription")
+    .textContent =
+      current.description;
+
+
+  $("#profileXp")
+    .textContent =
+
+      next
+
+        ?
+
+          `${totalXP} / ${next.minXP} XP`
+
+        :
+
+          `${totalXP} / MAX XP`;
+
+
+  $("#profileXpNext")
+    .textContent =
+
+      next
+
+        ?
+
+          `LVL ${
+            String(
+              next.level
+            ).padStart(2,"0")
+          } · ${
+            next.name
+          }`
+
+        :
+
+          "MAX LEVEL";
+
+
+  $("#profileXpFill")
+    .style
+    .width =
+      `${progress}%`;
+
+
+  $(".xp-track")
+    .setAttribute(
+      "aria-valuenow",
+      String(
+        Math.round(
+          progress
+        )
+      )
+    );
+
+
+  $("#profileProjectCount")
+    .textContent =
+      String(
+        PROJECTS.length
+      ).padStart(2,"0");
+
+
+  $("#profilePaperCount")
+    .textContent =
+      String(
+        PAPERS.length
+      ).padStart(2,"0");
+
+}
+
+
+function showLevelUp(){
+
+  if(
+    !pendingLevelUp
+  ){
+    return;
+  }
+
+
+  const {
+    from,
+    to
+  } =
+    pendingLevelUp;
+
+
+  pendingLevelUp =
+    null;
+
+
+  $("#lpNames")
+    .innerHTML =
+
+      from
+
+        ?
+
+          `<s>
+             ${esc(from.name)}
+           </s>
+           →
+           <strong
+             style="color:${esc(to.color)}"
+           >
+             ${esc(to.name)}
+           </strong>`
+
+        :
+
+          `<strong
+             style="color:${esc(to.color)}"
+           >
+             ${esc(to.name)}
+           </strong>`;
+
+
+  $("#lpColours")
+    .innerHTML =
+
+      from &&
+      from.color !==
+      to.color
+
+        ?
+
+          `<span
+             class="lp-swatch"
+             style="background:${esc(from.color)}"
+           ></span>
+
+           <span>→</span>
+
+           <span
+             class="lp-swatch"
+             style="background:${esc(to.color)}"
+           ></span>`
+
+        :
+
+          `<span
+             class="lp-swatch"
+             style="background:${esc(to.color)}"
+           ></span>`;
+
+
+  $("#lpCopy")
+    .textContent =
+
+      from
+
+        ?
+
+          `Level ${to.level}. Your profile status has changed.`
+
+        :
+
+          `Level ${to.level}. Your profile status is ready.`;
+
+
+  $("#levelPopup")
+    .classList
+    .add("show");
+
+
+  $("#levelPopup")
+    .setAttribute(
+      "aria-hidden",
+      "false"
+    );
+
+
+  $("#lpClose")
+    .focus({
+      preventScroll:true
+    });
+
+}
+
+
+function closeLevelUp(){
+
+  $("#levelPopup")
+    .classList
+    .remove("show");
+
+
+  $("#levelPopup")
+    .setAttribute(
+      "aria-hidden",
+      "true"
+    );
+
+}
+
+
+/* =========================================================
+   PROJECTS
+   ========================================================= */
 
 function renderProjects(){
-  $("#projectCount").textContent = String(PROJECTS.length).padStart(2,"0");
-  $("#projectList").innerHTML = PROJECTS.map((p,i) => `
-    <button class="list-item" type="button" data-project="${i}">
-      <span class="item-index">${String(i+1).padStart(2,"0")}</span>
-      <span class="item-main"><span class="item-title">${esc(p.title)}</span><span class="item-meta">${esc(p.category)} · ${esc(p.status)}</span></span>
-    </button>`).join("");
-  $$("#projectList [data-project]").forEach(b => b.addEventListener("click",() => selectProject(Number(b.dataset.project))));
+
+  $("#projectCount")
+    .textContent =
+      String(
+        PROJECTS.length
+      ).padStart(2,"0");
+
+
+  $("#projectList")
+    .innerHTML =
+      PROJECTS
+        .map(
+          (
+            project,
+            index
+          ) => `
+
+            <button
+              class="list-item"
+              type="button"
+              data-project="${index}"
+            >
+
+              <span class="item-index">
+                ${String(
+                  index + 1
+                ).padStart(2,"0")}
+              </span>
+
+
+              <span class="item-main">
+
+                <span class="item-title">
+                  ${esc(project.title)}
+                </span>
+
+                <span class="item-meta">
+                  ${esc(project.category)}
+                  ·
+                  ${esc(project.status)}
+                </span>
+
+              </span>
+
+            </button>
+
+          `
+        )
+        .join("");
+
+
+  $$("#projectList [data-project]")
+    .forEach(
+      button =>
+
+        button.addEventListener(
+          "click",
+
+          () =>
+            selectProject(
+              Number(
+                button.dataset
+                  .project
+              )
+            )
+        )
+    );
+
+
   selectProject(0);
+
 }
-function selectProject(index){
-  const project = PROJECTS[index];
-  if(!project) return;
-  $$("#projectList .list-item").forEach((b,i) => b.classList.toggle("active",i===index));
-  $("#projectDetail").innerHTML = `
-    <div class="detail">
-      <h2>${esc(project.title)}</h2>
-      <div class="detail-label">DESCRIPTION</div><p>${esc(project.description)}</p>
-      <div class="detail-label">STATUS</div><p class="accent-green">${esc(project.status)}</p>
-      <div class="detail-label">TECHNOLOGIES</div>
-      <div class="tag-row">${(project.technologies||[]).map(t => `<span class="tag">[${esc(t)}]</span>`).join("")}</div>
-      <div class="actions">${safeUrl(project.url)
-        ? `<a class="btn" href="${esc(safeUrl(project.url))}" target="_blank" rel="noopener noreferrer">OPEN PROJECT ↗</a>`
-        : `<span class="btn disabled">NO LINK</span>`}</div>
-    </div>`;
+
+
+function selectProject(
+  index
+){
+
+  const project =
+    PROJECTS[index];
+
+  if(!project){
+    return;
+  }
+
+
+  $$("#projectList .list-item")
+    .forEach(
+      (
+        button,
+        i
+      ) =>
+        button.classList.toggle(
+          "active",
+          i === index
+        )
+    );
+
+
+  const url =
+    safeUrl(
+      project.url
+    );
+
+
+  $("#projectDetail")
+    .innerHTML = `
+
+      <h2>
+        ${esc(project.title)}
+      </h2>
+
+
+      <div class="detail-label">
+        DESCRIPTION
+      </div>
+
+
+      <p>
+        ${esc(
+          project.description
+        )}
+      </p>
+
+
+      <div class="detail-label">
+        STATUS
+      </div>
+
+
+      <p class="accent-green">
+        ${esc(
+          project.status
+        )}
+      </p>
+
+
+      <div class="detail-label">
+        TECHNOLOGIES
+      </div>
+
+
+      <div class="tag-row">
+
+        ${
+          (
+            project
+              .technologies
+              || []
+          )
+          .map(
+            tech =>
+              `<span class="tag">
+                 [${esc(tech)}]
+               </span>`
+          )
+          .join("")
+        }
+
+      </div>
+
+
+      <div class="actions">
+
+        ${
+          url
+
+            ?
+
+              `<a
+                 class="btn"
+                 href="${esc(url)}"
+                 target="_blank"
+                 rel="noopener noreferrer"
+               >
+                 OPEN PROJECT ↗
+               </a>`
+
+            :
+
+              `<span class="btn gray">
+                 NO LINK
+               </span>`
+        }
+
+      </div>
+
+    `;
+
 }
+
+
+/* =========================================================
+   PAPERS
+   ========================================================= */
 
 function renderPapers(){
-  $("#paperCount").textContent = String(PAPERS.length).padStart(2,"0");
-  $("#paperList").innerHTML = PAPERS.map((p,i) => `
-    <button class="list-item" type="button" data-paper="${i}">
-      <span class="item-index">${String(i+1).padStart(2,"0")}</span>
-      <span class="item-main"><span class="item-title">${esc(p.title)}</span><span class="item-meta">${esc(p.year)} · ${esc(p.topic)}</span></span>
-    </button>`).join("");
-  $$("#paperList [data-paper]").forEach(b => b.addEventListener("click",() => selectPaper(Number(b.dataset.paper))));
+
+  $("#paperCount")
+    .textContent =
+      String(
+        PAPERS.length
+      ).padStart(2,"0");
+
+
+  $("#paperList")
+    .innerHTML =
+      PAPERS
+        .map(
+          (
+            paper,
+            index
+          ) => `
+
+            <button
+              class="list-item"
+              type="button"
+              data-paper="${index}"
+            >
+
+              <span class="item-index">
+                ${String(
+                  index + 1
+                ).padStart(2,"0")}
+              </span>
+
+
+              <span class="item-main">
+
+                <span class="item-title">
+                  ${esc(
+                    paper.title
+                  )}
+                </span>
+
+                <span class="item-meta">
+                  ${esc(
+                    paper.year
+                  )}
+                  ·
+                  ${esc(
+                    paper.topic
+                  )}
+                </span>
+
+              </span>
+
+            </button>
+
+          `
+        )
+        .join("");
+
+
+  $$("#paperList [data-paper]")
+    .forEach(
+      button =>
+
+        button.addEventListener(
+          "click",
+
+          () =>
+            selectPaper(
+              Number(
+                button.dataset
+                  .paper
+              )
+            )
+        )
+    );
+
+
   selectPaper(0);
+
 }
-function selectPaper(index){
-  const paper = PAPERS[index];
-  if(!paper) return;
-  $$("#paperList .list-item").forEach((b,i) => b.classList.toggle("active",i===index));
-  $("#paperState").textContent = "LOADING";
-  const pdf = safeUrl(paper.pdf), direct = safeUrl(paper.href || paper.pdf);
-  $("#paperInfo").innerHTML = `
-    <h2>${esc(paper.title)}</h2>
-    <div class="detail-label">METADATA</div><p>${esc(paper.year)} · ${esc(paper.topic)} · <span class="accent-green">${esc(paper.status)}</span></p>
-    <div class="detail-label">DESCRIPTION</div><p>${esc(paper.description)}</p>
-    <div class="detail-label">ABSTRACT</div><p>${esc(paper.abstract)}</p>
-    <div class="actions">${direct
-      ? `<a class="btn orange" href="${esc(direct)}" target="_blank" rel="noopener noreferrer">OPEN PDF ↗</a>`
-      : `<span class="btn disabled">NO PDF LINK</span>`}</div>`;
-  $("#paperViewer").innerHTML = pdf
-    ? `<iframe title="PDF preview of ${esc(paper.title)}" src="${esc(pdf)}" loading="lazy"></iframe>`
-    : `<div class="pdf-placeholder">No local PDF is configured for this record.</div>`;
-  $("#paperState").textContent = pdf ? "READY" : "NO FILE";
+
+
+function selectPaper(
+  index
+){
+
+  const paper =
+    PAPERS[index];
+
+  if(!paper){
+    return;
+  }
+
+
+  $$("#paperList .list-item")
+    .forEach(
+      (
+        button,
+        i
+      ) =>
+
+        button.classList.toggle(
+          "active",
+          i === index
+        )
+    );
+
+
+  const pdf =
+    safeUrl(
+      paper.pdf
+    );
+
+  const direct =
+    safeUrl(
+      paper.href ||
+      paper.pdf
+    );
+
+
+  $("#paperState")
+    .textContent =
+      pdf
+        ? "READY"
+        : "NO FILE";
+
+
+  $("#paperInfo")
+    .innerHTML = `
+
+      <h2>
+        ${esc(
+          paper.title
+        )}
+      </h2>
+
+
+      <div class="detail-label">
+        METADATA
+      </div>
+
+
+      <p>
+
+        ${esc(
+          paper.year
+        )}
+
+        ·
+
+        ${esc(
+          paper.topic
+        )}
+
+        ·
+
+        <span class="accent-green">
+          ${esc(
+            paper.status
+          )}
+        </span>
+
+      </p>
+
+
+      <div class="detail-label">
+        DESCRIPTION
+      </div>
+
+
+      <p>
+        ${esc(
+          paper.description
+        )}
+      </p>
+
+
+      <div class="detail-label">
+        ABSTRACT
+      </div>
+
+
+      <p>
+        ${esc(
+          paper.abstract
+        )}
+      </p>
+
+
+      <div class="actions">
+
+        ${
+          direct
+
+            ?
+
+              `<a
+                 class="btn orange"
+                 href="${esc(direct)}"
+                 target="_blank"
+                 rel="noopener noreferrer"
+               >
+                 OPEN PDF ↗
+               </a>`
+
+            :
+
+              `<span class="btn gray">
+                 NO PDF LINK
+               </span>`
+        }
+
+      </div>
+
+    `;
+
+
+  $("#paperViewer")
+    .innerHTML =
+
+      pdf
+
+        ?
+
+          `<iframe
+             title="PDF preview of ${esc(paper.title)}"
+             src="${esc(pdf)}"
+             loading="lazy"
+           ></iframe>`
+
+        :
+
+          `<div class="pdf-placeholder">
+             No local PDF is configured for this record.
+           </div>`;
+
 }
+
+
+/* =========================================================
+   SOCIALS
+   ========================================================= */
 
 function renderSocials(){
-  $("#socialGrid").innerHTML = SOCIALS.map(([key,label,description,accent]) => {
-    const url = safeUrl(CONFIG.socials[key]);
-    if(!url) return `<div class="social-card" style="--accent:${accent};opacity:.55"><strong>${esc(label)}</strong><span>${esc(description)}</span><div class="dim small">not configured</div></div>`;
-    return `<a class="social-card" style="--accent:${accent}" href="${esc(url)}" target="_blank" rel="noopener noreferrer"><strong>${esc(label)}</strong><span>${esc(description)}</span><div class="social-arrow">open profile ↗</div></a>`;
-  }).join("");
+
+  $("#socialGrid")
+    .innerHTML =
+
+      SOCIALS
+        .map(
+          (
+            [
+              key,
+              label,
+              description,
+              accent
+            ]
+          ) => {
+
+            const url =
+              safeUrl(
+                CONFIG
+                  .socials[key]
+              );
+
+
+            if(!url){
+
+              return `
+
+                <div
+                  class="social-card"
+                  style="
+                    --accent:${accent};
+                    opacity:.55
+                  "
+                >
+
+                  <strong>
+                    ${esc(label)}
+                  </strong>
+
+                  <span>
+                    ${esc(
+                      description
+                    )}
+                  </span>
+
+                  <div class="dim">
+                    not configured
+                  </div>
+
+                </div>
+
+              `;
+
+            }
+
+
+            return `
+
+              <a
+                class="social-card"
+                style="
+                  --accent:${accent}
+                "
+                href="${esc(url)}"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+
+                <strong>
+                  ${esc(label)}
+                </strong>
+
+                <span>
+                  ${esc(
+                    description
+                  )}
+                </span>
+
+                <div class="social-arrow">
+                  open profile ↗
+                </div>
+
+              </a>
+
+            `;
+
+          }
+        )
+        .join("");
+
 }
+
+
+/* =========================================================
+   SUPPORT
+   ========================================================= */
 
 function renderSupport(){
-  const payments = CONFIG.payments || {};
-  $("#supportGrid").innerHTML = SUPPORT.map(([key,label,description]) => {
-    let action = "";
-    if(key === "paypal" || key === "kofi"){
-      const url = safeUrl(payments[key]);
-      action = url ? `<a class="btn" href="${esc(url)}" target="_blank" rel="noopener noreferrer">OPEN ${esc(label)} ↗</a>` : `<span class="btn disabled">NOT CONFIGURED</span>`;
-    }
-    if(key === "bank") action = payments.bank?.accountNumber ? `<button class="btn" type="button" data-bank>VIEW DETAILS</button>` : `<span class="btn disabled">NOT CONFIGURED</span>`;
-    if(key === "bitcoin") action = payments.bitcoin ? `<button class="btn orange" type="button" data-bitcoin>VIEW ADDRESS</button>` : `<span class="btn disabled">NOT CONFIGURED</span>`;
-    return `<article class="support-card"><strong>${esc(label)}</strong><p>${esc(description)}</p>${action}</article>`;
-  }).join("");
-  $("[data-bank]")?.addEventListener("click",() => window.prompt("Bank account number",(payments.bank||{}).accountNumber || ""));
-  $("[data-bitcoin]")?.addEventListener("click",() => window.prompt("Bitcoin address",payments.bitcoin || ""));
+
+  const payments =
+    CONFIG.payments ||
+    {};
+
+
+  $("#supportGrid")
+    .innerHTML =
+
+      SUPPORT
+        .map(
+          (
+            [
+              key,
+              label,
+              description
+            ]
+          ) => {
+
+            let action =
+              "";
+
+
+            if(
+              key === "paypal" ||
+              key === "kofi"
+            ){
+
+              const url =
+                safeUrl(
+                  payments[key]
+                );
+
+
+              action =
+                url
+
+                  ?
+
+                    `<a
+                       class="btn"
+                       href="${esc(url)}"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                     >
+                       OPEN
+                       ${esc(label)}
+                       ↗
+                     </a>`
+
+                  :
+
+                    `<span class="btn gray">
+                       NOT CONFIGURED
+                     </span>`;
+
+            }
+
+
+            if(key === "bank"){
+
+              action =
+                payments
+                  .bank
+                  ?.accountNumber
+
+                  ?
+
+                    `<button
+                       class="btn"
+                       type="button"
+                       data-bank
+                     >
+                       VIEW DETAILS
+                     </button>`
+
+                  :
+
+                    `<span class="btn gray">
+                       NOT CONFIGURED
+                     </span>`;
+
+            }
+
+
+            if(key === "bitcoin"){
+
+              action =
+                payments.bitcoin
+
+                  ?
+
+                    `<button
+                       class="btn orange"
+                       type="button"
+                       data-bitcoin
+                     >
+                       VIEW ADDRESS
+                     </button>`
+
+                  :
+
+                    `<span class="btn gray">
+                       NOT CONFIGURED
+                     </span>`;
+
+            }
+
+
+            return `
+
+              <article class="support-card">
+
+                <strong>
+                  ${esc(label)}
+                </strong>
+
+                <p>
+                  ${esc(description)}
+                </p>
+
+                ${action}
+
+              </article>
+
+            `;
+
+          }
+        )
+        .join("");
+
+
+  $("[data-bank]")
+    ?.addEventListener(
+      "click",
+      () =>
+        window.prompt(
+          "Bank account number",
+          payments
+            .bank
+            ?.accountNumber ||
+          ""
+        )
+    );
+
+
+  $("[data-bitcoin]")
+    ?.addEventListener(
+      "click",
+      () =>
+        window.prompt(
+          "Bitcoin address",
+          payments.bitcoin ||
+          ""
+        )
+    );
+
 }
 
-/* NAVIGATION */
-function goToPage(index){
-  const pages = $$(".page");
-  const next = Math.max(0,Math.min(pages.length-1,index));
-  if(next === currentPage) return;
-  const old = pages[currentPage];
-  previousPage = currentPage;
-  currentPage = next;
-  old.classList.remove("active");
-  old.classList.add("exit");
-  setTimeout(() => old.classList.remove("exit"),220);
-  pages[currentPage].classList.add("active");
-  pages[currentPage].scrollTop = 0;
-  $("#routeCommand").textContent = ["persona","lab","research","social","support"][currentPage];
-  $$("#pageNav button").forEach((b,i) => i===currentPage ? b.setAttribute("aria-current","page") : b.removeAttribute("aria-current"));
-  $("#prevPage").disabled = currentPage === 0;
-  $("#nextPage").disabled = currentPage === pages.length-1;
-  const scanline = $("#scanline");
-  scanline.classList.remove("active"); void scanline.offsetWidth; scanline.classList.add("active");
-  thunder.sync();
+
+/* =========================================================
+   NAVIGATION
+   ========================================================= */
+
+let currentPage = 0;
+
+
+function goToPage(
+  index
+){
+
+  const pages =
+    $$(".page");
+
+
+  const next =
+    Math.max(
+      0,
+      Math.min(
+        pages.length - 1,
+        index
+      )
+    );
+
+
+  if(
+    next ===
+    currentPage
+  ){
+    return;
+  }
+
+
+  const previous =
+    pages[currentPage];
+
+
+  currentPage =
+    next;
+
+
+  previous
+    .classList
+    .remove(
+      "active"
+    );
+
+  previous
+    .classList
+    .add(
+      "exit"
+    );
+
+
+  setTimeout(
+    () =>
+      previous
+        .classList
+        .remove(
+          "exit"
+        ),
+    220
+  );
+
+
+  pages[currentPage]
+    .classList
+    .add(
+      "active"
+    );
+
+
+  pages[currentPage]
+    .scrollTop =
+      0;
+
+
+  $("#routeCommand")
+    .textContent =
+
+      [
+        "persona",
+        "lab",
+        "research",
+        "social",
+        "support"
+      ][
+        currentPage
+      ];
+
+
+  $$("#pageNav button")
+    .forEach(
+      (
+        button,
+        i
+      ) => {
+
+        if(
+          i ===
+          currentPage
+        ){
+
+          button.setAttribute(
+            "aria-current",
+            "page"
+          );
+
+        }else{
+
+          button.removeAttribute(
+            "aria-current"
+          );
+
+        }
+
+      }
+    );
+
+
+  $("#prevPage")
+    .disabled =
+      currentPage === 0;
+
+
+  $("#nextPage")
+    .disabled =
+      currentPage ===
+      pages.length - 1;
+
+
+  const scanline =
+    $("#scanline");
+
+
+  scanline
+    .classList
+    .remove(
+      "active"
+    );
+
+
+  void scanline.offsetWidth;
+
+
+  scanline
+    .classList
+    .add(
+      "active"
+    );
+
 }
+
+
 function renderNavigation(){
-  $("#pageNav").innerHTML = [["01","PERSONA"],["02","LAB"],["03","RESEARCH"],["04","SOCIAL"],["05","SUPPORT"]].map(([n,label],i) => `<button type="button" aria-label="${label}" title="${label}" data-page="${i}">${n}</button>`).join("");
-  $$("#pageNav button").forEach(b => b.addEventListener("click",() => goToPage(Number(b.dataset.page))));
-  $("#prevPage").addEventListener("click",() => goToPage(currentPage-1));
-  $("#nextPage").addEventListener("click",() => goToPage(currentPage+1));
-  $$("#pageNav button").forEach((b,i) => { if(i===currentPage) b.setAttribute("aria-current","page"); });
-  $("#prevPage").disabled = true;
+
+  $("#pageNav")
+    .innerHTML =
+
+      [
+        ["01","PERSONA"],
+        ["02","LAB"],
+        ["03","RESEARCH"],
+        ["04","SOCIAL"],
+        ["05","SUPPORT"]
+      ]
+
+      .map(
+        (
+          [
+            number,
+            label
+          ],
+          index
+        ) =>
+          `<button
+             type="button"
+             aria-label="${label}"
+             title="${label}"
+             data-page="${index}"
+           >
+             ${number}
+           </button>`
+      )
+
+      .join("");
+
+
+  $$("#pageNav button")
+    .forEach(
+      button =>
+
+        button.addEventListener(
+          "click",
+          () =>
+            goToPage(
+              Number(
+                button
+                  .dataset
+                  .page
+              )
+            )
+        )
+    );
+
+
+  $("#prevPage")
+    .addEventListener(
+      "click",
+      () =>
+        goToPage(
+          currentPage - 1
+        )
+    );
+
+
+  $("#nextPage")
+    .addEventListener(
+      "click",
+      () =>
+        goToPage(
+          currentPage + 1
+        )
+    );
+
+
+  $$("#pageNav button")
+    .forEach(
+      (
+        button,
+        index
+      ) => {
+
+        if(
+          index ===
+          currentPage
+        ){
+
+          button.setAttribute(
+            "aria-current",
+            "page"
+          );
+
+        }
+
+      }
+    );
+
+
+  $("#prevPage")
+    .disabled =
+      true;
 }
 
-/* SLEEP */
-function sleepScreen(){
-  if(sleeping) return;
-  sleeping = true;
-  document.body.classList.add("paused");
-  $("#sleep").classList.add("active");
-  $("#sleep").setAttribute("aria-hidden","false");
-  $("#app").setAttribute("aria-hidden","true");
-  $("#wakeButton").focus({preventScroll:true});
-  thunder.sync();
-  syncRedlineGlitchLoop();
-}
-function wakeScreen(){
-  sleeping = false;
-  document.body.classList.remove("paused");
-  $("#sleep").classList.remove("active");
-  $("#sleep").setAttribute("aria-hidden","true");
-  $("#app").setAttribute("aria-hidden","false");
-  $("#sleepButton").focus({preventScroll:true});
-  thunder.sync();
-  syncRedlineGlitchLoop();
+
+/* =========================================================
+   FAILURE SCREEN
+   ========================================================= */
+
+let failureAnimation = 0;
+let failureFrame = 0;
+let failureSecondStamp = 0;
+
+
+function openFailureScreen(){
+
+  $("#failureScreen")
+    .classList
+    .add(
+      "active"
+    );
+
+
+  $("#failureScreen")
+    .setAttribute(
+      "aria-hidden",
+      "false"
+    );
+
+
+  startFailureCanvas();
+
 }
 
-/* WELCOME -> SITE */
-async function startWelcome(){
-  const copy = $("#welcomeCopy");
-  await typeText(copy,WELCOME_TEXT,17);
-  copy.querySelector(".cursor")?.remove();
-  welcomeFinished = true;
-  $("#welcomeNext").classList.add("show");
-  $("#welcomeNext").addEventListener("click",enterSite,{once:true});
+
+function closeFailureScreen(){
+
+  if(
+    failureAnimation
+  ){
+
+    cancelAnimationFrame(
+      failureAnimation
+    );
+
+    failureAnimation =
+      0;
+  }
+
+
+  $("#failureScreen")
+    .classList
+    .remove(
+      "active"
+    );
+
+
+  $("#failureScreen")
+    .setAttribute(
+      "aria-hidden",
+      "true"
+    );
+
 }
+
+
+function backToWelcome(){
+
+  closeFailureScreen();
+
+
+  $("#app")
+    .classList
+    .remove(
+      "active"
+    );
+
+
+  $("#app")
+    .setAttribute(
+      "aria-hidden",
+      "true"
+    );
+
+
+  $("#welcome")
+    .classList
+    .remove(
+      "hidden"
+    );
+
+
+  document.body
+    .classList
+    .add(
+      "booting"
+    );
+
+
+  welcomeFinished =
+    false;
+
+
+  $("#enterPersonaButton")
+    .classList
+    .remove(
+      "ready"
+    );
+
+
+  $("#welcomeProgress")
+    .style
+    .width =
+      "0%";
+
+
+  $("#welcomePercent")
+    .textContent =
+      "0%";
+
+
+  $("#welcomeStatus")
+    .textContent =
+      "STARTING";
+
+
+  $("#welcomeKicker")
+    .textContent =
+      "INITIALISING INTERFACE";
+
+
+  $("#welcomeSubtitle")
+    .textContent =
+      "preparing your session…";
+
+
+  $("#bootLog")
+    .innerHTML =
+      "";
+
+
+  runWelcomeBoot();
+
+}
+
+
+function startFailureCanvas(){
+
+  if(
+    failureAnimation
+  ){
+
+    cancelAnimationFrame(
+      failureAnimation
+    );
+
+  }
+
+
+  const canvas =
+    $("#failureCanvas");
+
+  const context =
+    canvas.getContext(
+      "2d"
+    );
+
+
+  if(!context){
+    return;
+  }
+
+
+  function resizeCanvas(){
+
+    const ratio =
+      Math.min(
+        window.devicePixelRatio || 1,
+        2
+      );
+
+
+    canvas.width =
+      Math.floor(
+        window.innerWidth *
+        ratio
+      );
+
+    canvas.height =
+      Math.floor(
+        window.innerHeight *
+        ratio
+      );
+
+    canvas.style.width =
+      window.innerWidth +
+      "px";
+
+    canvas.style.height =
+      window.innerHeight +
+      "px";
+
+    context.setTransform(
+      ratio,
+      0,
+      0,
+      ratio,
+      0,
+      0
+    );
+
+  }
+
+
+  resizeCanvas();
+
+
+  window.addEventListener(
+    "resize",
+    resizeCanvas
+  );
+
+
+  canvas.__resize =
+    resizeCanvas;
+
+
+  function drawStatic(){
+
+    const width =
+      window.innerWidth;
+
+    const height =
+      window.innerHeight;
+
+
+    context.save();
+
+    context.globalAlpha =
+      .12;
+
+
+    const block =
+      5;
+
+
+    for(
+      let y=0;
+      y<height;
+      y+=block
+    ){
+
+      for(
+        let x=0;
+        x<width;
+        x+=block
+      ){
+
+        if(
+          Math.random() >
+          .78
+        ){
+
+          const value =
+            40 +
+            Math.random() *
+            80;
+
+          context.fillStyle =
+            `rgba(
+              ${value},
+              ${value},
+              ${value},
+              .28
+            )`;
+
+          context.fillRect(
+            x,
+            y,
+            block,
+            block
+          );
+
+        }
+
+      }
+
+    }
+
+
+    context.restore();
+
+  }
+
+
+  function drawRadar(
+    time
+  ){
+
+    const width =
+      window.innerWidth;
+
+    const height =
+      window.innerHeight;
+
+
+    const cx =
+      width * .5;
+
+    const cy =
+      height * .55;
+
+
+    const radius =
+      Math.min(
+        width,
+        height
+      ) * .24;
+
+
+    context.save();
+
+
+    context.strokeStyle =
+      "#5f6668";
+
+    context.lineWidth =
+      1;
+
+
+    context.globalAlpha =
+      .42;
+
+
+    for(
+      let ring=1;
+      ring<=4;
+      ring++
+    ){
+
+      context.beginPath();
+
+      context.arc(
+        cx,
+        cy,
+        radius *
+          ring /
+          4,
+        0,
+        Math.PI * 2
+      );
+
+      context.stroke();
+
+    }
+
+
+    context.globalAlpha =
+      .18;
+
+
+    for(
+      let ray=0;
+      ray<12;
+      ray++
+    ){
+
+      const angle =
+        (
+          Math.PI * 2 * ray
+        ) / 12;
+
+
+      context.beginPath();
+
+      context.moveTo(
+        cx,
+        cy
+      );
+
+      context.lineTo(
+        cx +
+          Math.cos(angle) *
+          radius,
+
+        cy +
+          Math.sin(angle) *
+          radius
+      );
+
+      context.stroke();
+
+    }
+
+
+    const sweep =
+      (
+        time / 1250
+      ) %
+      (
+        Math.PI * 2
+      );
+
+
+    context.globalAlpha =
+      .62;
+
+    context.strokeStyle =
+      "#8d9293";
+
+
+    context.beginPath();
+
+    context.moveTo(
+      cx,
+      cy
+    );
+
+    context.lineTo(
+      cx +
+        Math.cos(sweep) *
+        radius,
+
+      cy +
+        Math.sin(sweep) *
+        radius
+    );
+
+    context.stroke();
+
+
+    if(
+      Math.random() >
+      .66
+    ){
+
+      const echoAngle =
+        sweep +
+        (.2 +
+          Math.random() * .8);
+
+
+      const echoRadius =
+        radius *
+        (
+          .35 +
+          Math.random() * .65
+        );
+
+
+      context.globalAlpha =
+        .4;
+
+
+      context.beginPath();
+
+      context.arc(
+        cx +
+          Math.cos(
+            echoAngle
+          ) *
+          echoRadius,
+
+        cy +
+          Math.sin(
+            echoAngle
+          ) *
+          echoRadius,
+
+        2 +
+          Math.random() *
+          6,
+
+        0,
+        Math.PI * 2
+      );
+
+      context.stroke();
+
+    }
+
+
+    context.restore();
+
+  }
+
+
+  function drawFailureBars(){
+
+    if(
+      Math.random() <=
+      .74
+    ){
+      return;
+    }
+
+
+    const width =
+      window.innerWidth;
+
+    const height =
+      window.innerHeight;
+
+
+    const y =
+      Math.random() *
+      height;
+
+
+    const h =
+      2 +
+      Math.random() *
+      10;
+
+
+    context.fillStyle =
+      `rgba(
+        175,
+        180,
+        182,
+        ${.04 + Math.random() * .11}
+      )`;
+
+
+    context.fillRect(
+      0,
+      y,
+      width,
+      h
+    );
+
+  }
+
+
+  function frame(time){
+
+    const width =
+      window.innerWidth;
+
+    const height =
+      window.innerHeight;
+
+
+    context.fillStyle =
+      "#080909";
+
+    context.fillRect(
+      0,
+      0,
+      width,
+      height
+    );
+
+
+    /*
+     * Black/grey TV grain.
+     */
+
+    drawStatic();
+
+
+    /*
+     * Broken radar trace.
+     * It disappears during certain phases.
+     */
+
+    if(
+      Math.sin(
+        time / 430
+      ) > -.22
+    ){
+
+      drawRadar(
+        time
+      );
+
+    }
+
+
+    drawFailureBars();
+
+
+    /*
+     * Changing diagnostic readout.
+     */
+
+    if(
+      performance.now() -
+      failureSecondStamp >
+      1000
+    ){
+
+      failureSecondStamp =
+        performance.now();
+
+
+      failureFrame =
+        (
+          failureFrame + 1
+        ) % 100;
+
+
+      $("#failureFrame")
+        .textContent =
+          String(
+            failureFrame
+          ).padStart(
+            2,
+            "0"
+          );
+
+
+      const states = [
+
+        [
+          "UNSTABLE",
+          "FAULT"
+        ],
+
+        [
+          "NO SIGNAL",
+          "DEGRADED"
+        ],
+
+        [
+          "DRIFT",
+          "FAULT"
+        ],
+
+        [
+          "RECOVERING",
+          "UNKNOWN"
+        ]
+
+      ];
+
+
+      const [
+        video,
+        radar
+      ] =
+        states[
+          Math.floor(
+            Math.random() *
+            states.length
+          )
+        ];
+
+
+      $("#failureVideo")
+        .textContent =
+          video;
+
+
+      $("#failureRadar")
+        .textContent =
+          radar;
+
+    }
+
+
+    failureAnimation =
+      requestAnimationFrame(
+        frame
+      );
+
+  }
+
+
+  failureAnimation =
+    requestAnimationFrame(
+      frame
+    );
+
+}
+
+
+/* =========================================================
+   ENTER SITE
+   ========================================================= */
+
 function enterSite(){
-  if(!welcomeFinished) return;
-  $("#welcome").classList.add("hidden");
-  $("#app").classList.add("active");
-  $("#app").setAttribute("aria-hidden","false");
-  $("#bioStream").innerHTML = "";
-  thunder.sync();
+
+  if(
+    !welcomeFinished
+  ){
+    return;
+  }
+
+
+  document.body
+    .classList
+    .remove(
+      "booting"
+    );
+
+
+  $("#welcome")
+    .classList
+    .add(
+      "hidden"
+    );
+
+
+  $("#app")
+    .classList
+    .add(
+      "active"
+    );
+
+
+  $("#app")
+    .setAttribute(
+      "aria-hidden",
+      "false"
+    );
+
+
+  $("#bioStream")
+    .innerHTML =
+      "";
+
+
   revealPersona();
-  setTimeout(showLevelUp,700);
+
+
+  setTimeout(
+    showLevelUp,
+    700
+  );
+
 }
 
-/* KEYBOARD */
-function initKeyboard(){
-  window.addEventListener("keydown",event => {
-    if(levelPopupOpen()){
-      if(event.key === "Enter" || event.key === "Escape" || event.key === " "){ event.preventDefault(); closeLevelUp(); }
-      return;
-    }
-    if(sleeping){
-      if(event.key === "Enter" || event.key === "Escape"){ event.preventDefault(); wakeScreen(); }
-      return;
-    }
-    if(!$("#app").classList.contains("active")) return;
-    if(["INPUT","TEXTAREA","SELECT"].includes(document.activeElement?.tagName)) return;
-    if(event.ctrlKey || event.metaKey || event.altKey) return;
-    if(event.key === "ArrowRight"){ event.preventDefault(); goToPage(currentPage+1); }
-    else if(event.key === "ArrowLeft"){ event.preventDefault(); goToPage(currentPage-1); }
-    else if(/^[1-5]$/.test(event.key)){ event.preventDefault(); goToPage(Number(event.key)-1); }
-    else if(event.key === "Escape"){ event.preventDefault(); sleepScreen(); }
-  });
-}
 
-/* CLOCK: paused while tab is hidden */
+/* =========================================================
+   CLOCK
+   ========================================================= */
+
 function initClock(){
-  const update = () => { $("#clock").textContent = new Date().toLocaleTimeString("en-GB",{hour12:false}); };
+
+  function update(){
+
+    $("#clock")
+      .textContent =
+        new Date()
+          .toLocaleTimeString(
+            "en-GB",
+            {
+              hour12:false
+            }
+          );
+
+  }
+
+
   update();
-  let timer = setInterval(update,1000);
-  document.addEventListener("visibilitychange",() => {
-    document.body.classList.toggle("paused",document.hidden || sleeping);
-    thunder.sync();
-    clearInterval(timer);
-    if(!document.hidden){ update(); timer = setInterval(update,1000); }
-    syncRedlineGlitchLoop();
-  });
+
+
+  setInterval(
+    update,
+    1000
+  );
+
 }
 
-/* RARE REDLINE MICRO-GLITCH */
-let redlineGlitchTimer = 0;
-let redlineGlitchTimeout = 0;
-function redlineGlitchBurst(){
-  if(!document.body.classList.contains("redline") || document.hidden || sleeping) return scheduleRedlineGlitch();
-  document.body.classList.remove("redline-glitch");
-  void document.body.offsetWidth;
-  document.body.classList.add("redline-glitch");
-  window.clearTimeout(redlineGlitchTimeout);
-  redlineGlitchTimeout = window.setTimeout(() => document.body.classList.remove("redline-glitch"),240);
-  scheduleRedlineGlitch();
-}
-function scheduleRedlineGlitch(){
-  window.clearTimeout(redlineGlitchTimer);
-  const delay = 5200 + Math.random() * 3600;
-  redlineGlitchTimer = window.setTimeout(redlineGlitchBurst,delay);
-}
-function syncRedlineGlitchLoop(){
-  window.clearTimeout(redlineGlitchTimer);
-  if(document.body.classList.contains("redline") && !document.hidden && !sleeping) scheduleRedlineGlitch();
+
+/* =========================================================
+   KEYBOARD
+   ========================================================= */
+
+function initKeyboard(){
+
+  window.addEventListener(
+    "keydown",
+    event => {
+
+
+      if(
+        $("#levelPopup")
+          .classList
+          .contains("show")
+      ){
+
+        if(
+          event.key ===
+            "Escape" ||
+
+          event.key ===
+            "Enter" ||
+
+          event.key ===
+            " "
+        ){
+
+          event.preventDefault();
+
+          closeLevelUp();
+
+        }
+
+        return;
+
+      }
+
+
+      if(
+        $("#failureScreen")
+          .classList
+          .contains("active")
+      ){
+
+        if(
+          event.key ===
+          "Enter"
+        ){
+
+          event.preventDefault();
+
+          closeFailureScreen();
+
+        }
+
+
+        if(
+          event.key ===
+          "Escape"
+        ){
+
+          event.preventDefault();
+
+          backToWelcome();
+
+        }
+
+        return;
+
+      }
+
+
+      if(
+        [
+          "INPUT",
+          "TEXTAREA",
+          "SELECT"
+        ].includes(
+          document
+            .activeElement
+            ?.tagName
+        )
+      ){
+
+        return;
+
+      }
+
+
+      if(
+        event.ctrlKey ||
+        event.metaKey ||
+        event.altKey
+      ){
+
+        return;
+
+      }
+
+
+      if(
+        !$("#app")
+          .classList
+          .contains(
+            "active"
+          )
+      ){
+
+        return;
+
+      }
+
+
+      if(
+        event.key ===
+        "ArrowRight"
+      ){
+
+        event.preventDefault();
+
+        goToPage(
+          currentPage + 1
+        );
+
+      }
+
+
+      else if(
+        event.key ===
+        "ArrowLeft"
+      ){
+
+        event.preventDefault();
+
+        goToPage(
+          currentPage - 1
+        );
+
+      }
+
+
+      else if(
+        /^[1-5]$/.test(
+          event.key
+        )
+      ){
+
+        event.preventDefault();
+
+        goToPage(
+          Number(
+            event.key
+          ) - 1
+        );
+
+      }
+
+
+      else if(
+        event.key ===
+        "Escape"
+      ){
+
+        event.preventDefault();
+
+        openFailureScreen();
+
+      }
+
+    }
+  );
+
 }
 
-/* INIT */
+
+/* =========================================================
+   INIT
+   ========================================================= */
+
 function init(){
-  $("#profileImage").src = CONFIG.profileImage || "assets/l.gif";
+
+  $("#profileImage")
+    .src =
+      CONFIG.profileImage;
+
+
   initTheme();
+
   renderNavigation();
+
   renderProjects();
+
   renderPapers();
+
   renderProgression();
+
   renderSocials();
+
   renderSupport();
-  initKeyboard();
+
   initClock();
-  $("#lpClose").addEventListener("click",closeLevelUp);
-  $("#sleepButton").addEventListener("click",sleepScreen);
-  $("#wakeButton").addEventListener("click",wakeScreen);
-  startWelcome();
+
+  initKeyboard();
+
+  initDuckSearch();
+
+
+  $("#enterPersonaButton")
+    .addEventListener(
+      "click",
+      enterSite
+    );
+
+
+  $("#powerButton")
+    .addEventListener(
+      "click",
+      openFailureScreen
+    );
+
+
+  $("#failureFix")
+    .addEventListener(
+      "click",
+      closeFailureScreen
+    );
+
+
+  $("#failureWelcome")
+    .addEventListener(
+      "click",
+      backToWelcome
+    );
+
+
+  $("#lpClose")
+    .addEventListener(
+      "click",
+      closeLevelUp
+    );
+
+
+  updateWelcomeClock();
+
+
+  setInterval(
+    updateWelcomeClock,
+    1000
+  );
+
+
+  runWelcomeBoot();
+
 }
+
+
 init();
 </script>
+
 </body>
 </html>
