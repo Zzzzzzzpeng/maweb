@@ -9,12 +9,12 @@
 <link rel="icon" type="image/svg+xml" href="assets/wagwan.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Bebas+Neue&family=Black+Ops+One&display=swap" rel="stylesheet">
 <style>
-/* PERF NOTES (v1.2): no backdrop-filter, no mix-blend-mode, no animated box-shadow,
+/* PERF NOTES (v1.4): no backdrop-filter, no mix-blend-mode, no animated box-shadow,
    hidden pages/tabs pause animations, thunder filter runs ONCE per frame (was 3x). */
 @property --spin{syntax:"<angle>";inherits:false;initial-value:0deg}
-:root{--bg:#141b1e;--bg-soft:#1a2226;--bg-panel:#111719;--line:#2f3a3d;--text:#dadada;--muted:#9aa3a5;--dim:#687174;--green:#8ccf7e;--cyan:#6cbfbf;--blue:#67b0e8;--orange:#fcb163;--yellow:#e5c76b;--red:#e57474;--purple:#c47fd5;--pixel:'Press Start 2P',monospace;--mono:'VT323',ui-monospace,Menlo,monospace}
+:root{--bg:#141b1e;--bg-soft:#1a2226;--bg-panel:#111719;--line:#2f3a3d;--text:#dadada;--muted:#9aa3a5;--dim:#687174;--green:#8ccf7e;--cyan:#6cbfbf;--blue:#67b0e8;--orange:#fcb163;--yellow:#e5c76b;--red:#e57474;--purple:#c47fd5;--redline:#ff3048;--redline-deep:#8c0d20;--redline-soft:#1c0a0f;--redline-text:#f5e6e8;--pixel:'Press Start 2P',monospace;--mono:'VT323',ui-monospace,Menlo,monospace;--display:'Bebas Neue',sans-serif;--hell:'Black Ops One',sans-serif}
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
 html{scroll-behavior:smooth}
@@ -36,6 +36,340 @@ h1,h2,.persona-name{text-wrap:balance}
 .accent-green{color:var(--green)}.accent-cyan{color:var(--cyan)}.accent-blue{color:var(--blue)}.accent-orange{color:var(--orange)}.accent-yellow{color:var(--yellow)}.accent-red{color:var(--red)}.accent-purple{color:var(--purple)}
 .muted{color:var(--muted)}.dim{color:var(--dim)}.small{font-size:17px}
 
+/* ===== REDLINE THEME / CRT GLITCH =====
+   Everblush remains the default. Redline is a persistent black/red CRT mode
+   with a short TV-failure transition when the theme changes. */
+body.redline{
+  --pixel:var(--hell);
+  --display:var(--hell);
+  --bg:#070709;
+  --bg-soft:#0f090b;
+  --bg-panel:#0b080a;
+  --line:#3a151c;
+  --text:#f5e6e8;
+  --muted:#c9a8ad;
+  --dim:#81545d;
+  --green:#ff3048;
+  --cyan:#ff6070;
+  --blue:#ff4558;
+  --orange:#ff596b;
+  --yellow:#ff8d99;
+  --red:#ff203d;
+  --purple:#e51f39;
+  background:
+    radial-gradient(circle at 18% 16%,rgba(255,48,72,.075),transparent 30%),
+    radial-gradient(circle at 82% 22%,rgba(140,13,32,.09),transparent 28%),
+    linear-gradient(180deg,#10080a,var(--bg) 58%,#050506);
+}
+body.redline #welcome{
+  background:
+    radial-gradient(circle at 50% 45%,rgba(255,48,72,.09),transparent 38%),
+    #070709;
+}
+body.redline .profile-box{
+  --level-color:var(--redline)!important;
+  --level-glow:rgba(255,48,72,.30)!important;
+}
+body.redline #levelPopup{
+  --lp-to:var(--redline)!important;
+  --lp-glow:rgba(255,48,72,.32)!important;
+}
+body.redline .profile-frame{
+  border-color:var(--redline);
+  box-shadow:0 0 22px rgba(255,48,72,.20),0 0 46px rgba(255,48,72,.06);
+}
+body.redline .profile-frame img{
+  filter:grayscale(.18) sepia(.28) saturate(1.55) hue-rotate(318deg) contrast(1.10);
+}
+body.redline .profile-frame::after{
+  background:
+    linear-gradient(rgba(255,30,55,.10),rgba(255,30,55,.10)) top/100% 1px no-repeat,
+    repeating-linear-gradient(0deg,rgba(255,70,85,.065) 0 1px,transparent 1px 3px);
+}
+body.redline .crt{
+  background:
+    repeating-linear-gradient(0deg,rgba(255,38,62,.055) 0 1px,transparent 1px 3px),
+    repeating-linear-gradient(90deg,rgba(255,38,62,.018) 0 1px,transparent 1px 5px),
+    radial-gradient(ellipse at center,transparent 54%,rgba(0,0,0,.56));
+}
+body.redline .scanline{
+  background:linear-gradient(transparent,rgba(255,48,72,.18),transparent);
+}
+body.redline .theme-toggle{
+  border-color:var(--redline);
+  color:var(--redline);
+  box-shadow:0 0 16px rgba(255,48,72,.16),inset 0 0 14px rgba(255,48,72,.04);
+}
+body.redline .theme-toggle:hover{
+  background:var(--redline);
+  color:#070709;
+}
+body.redline .persona-name{
+  text-shadow:2px 0 0 rgba(255,30,55,.38),-2px 0 0 rgba(120,0,24,.35);
+}
+body.redline .bio-block{
+  border-left-color:#5b1b25;
+}
+body.redline .bio-key{color:var(--redline)}
+body.redline .panel,
+body.redline .social-card,
+body.redline .support-card,
+body.redline .status-card,
+body.redline .level-card,
+body.redline .xp-card,
+body.redline .stats-card{
+  background:rgba(12,7,9,.78);
+}
+body.redline .panel-title{
+  background:rgba(12,7,9,.97);
+}
+body.redline .btn{
+  border-color:var(--redline);
+  color:var(--redline);
+}
+body.redline .btn:hover{
+  background:var(--redline);
+  color:#070709;
+}
+body.redline .item-meta,
+body.redline .tag{
+  color:#ff6978;
+}
+body.redline nav button{
+  border-color:#4b1821;
+}
+body.redline nav button:hover:not(:disabled){
+  border-color:var(--redline);
+  color:var(--redline);
+}
+body.redline nav button[aria-current="page"]{
+  border-color:var(--redline);
+  background:var(--redline);
+  color:#070709;
+}
+body.redline .route strong,
+body.redline .welcome-title span{
+  color:var(--redline);
+}
+body.redline .welcome-title{
+  text-shadow:0 0 26px rgba(255,48,72,.20),2px 0 0 rgba(255,48,72,.15);
+}
+body.redline ::selection{
+  background:var(--redline);
+  color:#070709;
+}
+
+
+/* ===== HELL PROFILE / RARE TV FAILURE ===== */
+body.redline .persona-name,
+body.redline h1,
+body.redline h2{
+  font-family:var(--hell);
+  letter-spacing:.025em;
+  text-transform:uppercase;
+}
+body.redline .profile-box{
+  border-color:var(--redline)!important;
+  background:
+    linear-gradient(180deg,rgba(34,6,10,.92),rgba(8,5,7,.94) 56%,rgba(4,4,5,.98)),
+    #070709;
+  box-shadow:
+    0 0 0 1px rgba(255,48,72,.18) inset,
+    0 0 28px rgba(255,25,48,.18),
+    0 0 70px rgba(255,12,30,.08);
+  border-radius:3px;
+}
+.hell-aura{
+  position:absolute;
+  left:9%;
+  top:-62px;
+  width:82%;
+  height:92px;
+  z-index:1;
+  pointer-events:none;
+  opacity:0;
+  transform-origin:50% 100%;
+}
+.hell-flame{position:absolute;bottom:0;border-radius:48% 52% 18% 18%;transform-origin:50% 100%;filter:blur(5px)}
+.hell-flame-a{left:7%;width:26%;height:76%;background:radial-gradient(ellipse at 50% 92%,rgba(255,36,54,.72),transparent 72%);transform:rotate(-12deg)}
+.hell-flame-b{left:29%;width:40%;height:100%;background:radial-gradient(ellipse at 50% 95%,rgba(255,70,77,.94),rgba(170,10,28,.42) 48%,transparent 76%)}
+.hell-flame-c{right:6%;width:28%;height:79%;background:radial-gradient(ellipse at 50% 92%,rgba(255,28,47,.68),transparent 72%);transform:rotate(11deg)}
+body.redline .hell-aura{opacity:1;animation:hellAura 2.8s steps(7,end) infinite}
+body.redline .hell-aura::after{content:"";position:absolute;inset:6px 9% -2px;background:linear-gradient(90deg,transparent,rgba(255,35,52,.34),transparent);filter:blur(9px);animation:hellCore 1.8s ease-in-out infinite}
+.profile-frame,.profile-caption,.theme-switch-row,.profile-status{position:relative;z-index:4}
+@keyframes hellAura{0%,100%{transform:scaleY(.88) translateY(2px);filter:blur(5px)}22%{transform:scaleY(1.06) translateY(-4px);filter:blur(6px)}46%{transform:scaleY(.96) translateY(0)}71%{transform:scaleY(1.13) translateY(-6px);filter:blur(7px)}83%{transform:scaleY(.90) translateY(1px)}}
+@keyframes hellCore{50%{opacity:.28;transform:scaleX(.72) translateY(-3px)}}
+body.redline .profile-caption{font-family:var(--display);font-size:21px;letter-spacing:.12em;color:#fff1f2;text-shadow:2px 0 0 rgba(255,28,47,.45)}
+body.redline .profile-caption::after{content:" // HELL MODE";color:var(--redline);font-family:var(--mono);font-size:13px;letter-spacing:.08em}
+body.redline .status-card,
+body.redline .level-card,
+body.redline .xp-card,
+body.redline .stats-card{
+  border-color:#561923;
+  background:
+    linear-gradient(180deg,rgba(45,7,12,.72),rgba(10,6,8,.84)),
+    repeating-linear-gradient(0deg,rgba(255,42,62,.04) 0 1px,transparent 1px 4px);
+  box-shadow:inset 0 0 18px rgba(255,24,44,.035);
+}
+body.redline .status-value,
+body.redline .level-badge,
+body.redline .xp-meta,
+body.redline .stat-value strong{font-family:var(--display);letter-spacing:.08em}
+body.redline .level-badge{font-size:15px;padding:7px 10px}
+body.redline .xp-track{border-color:var(--redline);background:#100609;box-shadow:inset 0 0 14px rgba(255,48,72,.12),0 0 16px rgba(255,48,72,.14)}
+body.redline .xp-fill{background:linear-gradient(90deg,#720819,#ff203d 78%,#ff7180)}
+body.redline .profile-box .theme-toggle{font-family:var(--display);font-size:18px;letter-spacing:.08em}
+body.redline .profile-box .theme-hint{font-family:var(--mono);color:#9d5561}
+body.redline .profile-electric-main,
+body.redline .profile-electric-glow,
+body.redline .profile-electric-glow-strong{border-color:#ff2b43}
+body.redline .profile-electric-main::after{box-shadow:0 0 9px rgba(255,38,58,.76),0 0 24px rgba(255,18,38,.40)}
+
+/* Rare micro-glitch: deliberately subtle, then a stronger burst at random intervals. */
+.redline-fx{position:fixed;inset:0;z-index:95;pointer-events:none;overflow:hidden;opacity:0}
+.redline-fx::before,
+.redline-fx::after{content:"";position:absolute;inset:0;pointer-events:none}
+.redline-fx::before{
+  background:
+    repeating-linear-gradient(0deg,transparent 0 9px,rgba(255,40,58,.055) 9px 10px),
+    linear-gradient(90deg,transparent 0 14%,rgba(255,0,28,.09) 14% 15%,transparent 15% 76%,rgba(255,55,70,.06) 76% 77%,transparent 77%);
+}
+.redline-fx::after{
+  background:linear-gradient(90deg,transparent 0 22%,rgba(255,32,52,.18) 22% 35%,transparent 35% 62%,rgba(255,88,96,.12) 62% 68%,transparent 68%);
+  mix-blend-mode:screen;
+}
+body.redline.redline-glitch .redline-fx{animation:microTV .22s steps(7,end) both}
+body.redline.redline-glitch #app,
+body.redline.redline-glitch #welcome,
+body.redline.redline-glitch #sleep{animation:microScreen .22s steps(7,end) both}
+body.redline.redline-glitch .profile-box{animation:hellHit .22s steps(7,end) both}
+@keyframes microTV{0%,100%{opacity:0}18%{opacity:.25}34%{opacity:.07}52%{opacity:.32}72%{opacity:.12}88%{opacity:.26}}
+@keyframes microScreen{0%,100%{filter:none;transform:none}20%{filter:blur(.6px) contrast(1.14);transform:translateX(-1px)}42%{filter:none;transform:translateX(2px)}64%{filter:blur(.35px) contrast(1.20);transform:translateX(-1px) skewX(.08deg)}82%{filter:none;transform:none}}
+@keyframes hellHit{0%,100%{transform:none}18%{transform:translateX(-2px) skewX(.18deg)}38%{transform:translateX(2px)}55%{transform:translateX(-1px)}73%{transform:scale(1.003) translateX(1px)}90%{transform:none}}
+body.redline .route strong{font-family:var(--display);font-size:20px;letter-spacing:.08em}
+body.redline .route .path{color:#ff7a86}
+body.redline .clock{font-family:var(--display);font-size:17px;letter-spacing:.1em;color:#b8646f}
+body.redline header{background:linear-gradient(180deg,rgba(34,7,11,.90),rgba(10,6,8,.92));border-color:#4b141d;box-shadow:0 0 26px rgba(255,27,48,.07),inset 0 -1px 0 rgba(255,60,78,.12)}
+body.redline header::after{background:linear-gradient(90deg,transparent,#ff3048,transparent)!important}
+body.redline nav button{font-family:var(--display);font-size:17px;letter-spacing:.1em}
+
+/* Modern welcome surface */
+#welcome .welcome-wrap{position:relative;padding:clamp(26px,5vw,58px);border:1px solid var(--line);background:linear-gradient(145deg,rgba(255,255,255,.025),rgba(255,255,255,0) 34%),rgba(10,14,16,.52);box-shadow:0 24px 70px rgba(0,0,0,.22),inset 0 0 0 1px rgba(255,255,255,.018);clip-path:polygon(0 12px,12px 0,calc(100% - 12px) 0,100% 12px,100% calc(100% - 12px),calc(100% - 12px) 100%,12px 100%,0 calc(100% - 12px))}
+#welcome .welcome-wrap::before{content:"SIGNAL / PERSONA / SYSTEMS";position:absolute;right:24px;top:14px;color:var(--dim);font-size:11px;letter-spacing:.18em}
+body.redline #welcome .welcome-wrap{background:linear-gradient(145deg,rgba(255,38,56,.055),rgba(255,38,56,0) 32%),rgba(8,5,7,.72);border-color:#551720;box-shadow:0 24px 90px rgba(0,0,0,.40),0 0 34px rgba(255,26,45,.08),inset 0 0 0 1px rgba(255,48,72,.05)}
+body.redline #welcome .welcome-wrap::before{color:#96414e}
+body.redline .welcome-title{font-family:var(--hell);letter-spacing:.02em}
+body.redline .welcome-next{font-family:var(--display);font-size:23px;letter-spacing:.12em;color:var(--redline)}
+
+/* Theme button: deliberately icon-first so it reads as a small hardware switch. */
+.theme-switch-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-top:12px;
+}
+.theme-toggle{
+  display:inline-flex;
+  align-items:center;
+  gap:9px;
+  min-height:38px;
+  padding:7px 10px;
+  border:1px solid var(--line);
+  background:rgba(8,12,14,.62);
+  color:var(--muted);
+  transition:transform .12s ease,border-color .12s,color .12s,background-color .12s;
+}
+.theme-toggle:hover{
+  transform:translateY(-1px);
+  border-color:var(--green);
+  color:var(--green);
+}
+.theme-toggle:active{transform:translateY(1px)}
+.theme-toggle svg{width:18px;height:18px;flex:none}
+.theme-toggle-label{
+  font-size:14px;
+  letter-spacing:.10em;
+}
+.theme-toggle-state{
+  width:8px;
+  height:8px;
+  border:1px solid currentColor;
+  border-radius:50%;
+  opacity:.75;
+}
+body.redline .theme-toggle-state{
+  background:var(--redline);
+  box-shadow:0 0 9px var(--redline);
+  opacity:1;
+}
+.theme-hint{
+  color:var(--dim);
+  font-size:12px;
+  letter-spacing:.08em;
+  text-align:right;
+}
+
+/* TV failure transition: brief blur, horizontal tearing, RGB separation and red flash. */
+.theme-fx{
+  position:fixed;
+  inset:0;
+  z-index:1000;
+  pointer-events:none;
+  opacity:0;
+  overflow:hidden;
+  background:
+    repeating-linear-gradient(0deg,transparent 0 8px,rgba(255,35,58,.08) 8px 10px),
+    repeating-linear-gradient(90deg,rgba(255,255,255,.018) 0 1px,transparent 1px 5px);
+}
+.theme-fx::before,
+.theme-fx::after{
+  content:"";
+  position:absolute;
+  inset:-12%;
+  pointer-events:none;
+}
+.theme-fx::before{
+  background:
+    linear-gradient(90deg,transparent 0 37%,rgba(255,0,35,.20) 37% 41%,transparent 41% 62%,rgba(255,255,255,.08) 62% 64%,transparent 64%),
+    repeating-linear-gradient(0deg,transparent 0 13px,rgba(255,0,35,.11) 13px 17px);
+  mix-blend-mode:screen;
+}
+.theme-fx::after{
+  background:
+    radial-gradient(circle at 32% 46%,rgba(255,25,48,.24),transparent 32%),
+    radial-gradient(circle at 72% 54%,rgba(112,0,22,.22),transparent 36%);
+  filter:blur(11px);
+}
+body.theme-switching #app,
+body.theme-switching #welcome,
+body.theme-switching #sleep{
+  animation:tvBreak .72s steps(10,end) both;
+}
+body.theme-switching .theme-fx{
+  animation:tvOverlay .72s steps(10,end) both;
+}
+@keyframes tvBreak{
+  0%{filter:none;transform:none}
+  10%{filter:blur(1px) contrast(1.05);transform:translateX(-2px) skewX(.3deg)}
+  18%{filter:blur(2.5px) contrast(1.35);transform:translateX(3px) skewX(-.5deg)}
+  25%{filter:blur(.6px) contrast(1.18);transform:translateX(-5px)}
+  42%{filter:blur(1.8px) contrast(1.4);transform:translateX(4px) scaleX(1.008)}
+  58%{filter:blur(0) contrast(1.65);transform:translateX(-2px)}
+  72%{filter:blur(.8px) contrast(1.25);transform:translateX(2px)}
+  100%{filter:none;transform:none}
+}
+@keyframes tvOverlay{
+  0%,100%{opacity:0}
+  12%{opacity:.42}
+  20%{opacity:.86}
+  30%{opacity:.30}
+  44%{opacity:.74}
+  58%{opacity:.24}
+  72%{opacity:.56}
+  84%{opacity:.12}
+}
+
 /* WELCOME */
 #welcome{position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:24px;background:radial-gradient(circle at 50% 45%,rgba(140,207,126,.07),transparent 38%),var(--bg);transition:opacity .45s ease,visibility .45s ease}
 #welcome.hidden{opacity:0;visibility:hidden;pointer-events:none}
@@ -53,12 +387,14 @@ h1,h2,.persona-name{text-wrap:balance}
 /* SHELL */
 #app{position:fixed;inset:0;display:grid;grid-template-rows:auto 1fr auto;opacity:0;pointer-events:none;transform:translateY(6px);transition:opacity .3s ease,transform .3s ease}
 #app.active{opacity:1;pointer-events:auto;transform:none}
-header,footer{display:flex;align-items:center;justify-content:space-between;gap:16px;border-bottom:1px solid var(--line);padding:8px 14px;background:rgba(20,27,30,.97)}
-footer{border-top:1px solid var(--line);border-bottom:0;color:var(--dim);font-size:16px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:10px clamp(10px,2vw,20px) 0;padding:8px 10px;border:1px solid var(--line);border-radius:12px;background:linear-gradient(180deg,rgba(25,33,36,.94),rgba(14,19,21,.92));position:relative;overflow:hidden;box-shadow:0 10px 28px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.025)}
+header::after{content:"";position:absolute;left:8%;right:8%;bottom:0;height:1px;background:linear-gradient(90deg,transparent,var(--green),transparent);opacity:.65}
+nav{display:flex;align-items:center;gap:5px;position:relative;z-index:1}
+nav button{min-width:34px;height:30px;border:1px solid var(--line);color:var(--muted);transition:border-color .15s,color .15s,background .15s,transform .15s}
+
 .route{min-width:0}.route strong{color:var(--green)}.route .path{color:var(--cyan)}
 .clock{color:var(--dim);font-size:16px;white-space:nowrap}
-nav{display:flex;align-items:center;gap:4px}
-nav button{min-width:34px;height:30px;border:1px solid var(--line);color:var(--muted);transition:border-color .15s,color .15s,background .15s}
+
 nav button:hover:not(:disabled){border-color:var(--green);color:var(--green)}
 nav button[aria-current="page"]{border-color:var(--green);background:var(--green);color:var(--bg)}
 main{min-height:0;position:relative;overflow:hidden}
@@ -88,7 +424,7 @@ h1{margin:8px 0 22px;font-family:var(--pixel);font-size:clamp(21px,4vw,38px);lin
 .profile-box::before{content:"PROFILE";position:absolute;top:-9px;left:14px;padding:0 8px;background:var(--bg);color:var(--orange);font-size:13px;letter-spacing:.08em;z-index:9}
 
 /* THUNDER: same look + same 6s motion. Now ONE filter pass on the wrapper. */
-.profile-electric-wrap{position:absolute;inset:-8px;z-index:0;pointer-events:none;overflow:visible}
+.profile-electric-wrap{position:absolute;inset:-8px;z-index:3;pointer-events:none;overflow:visible}
 .profile-electric-fx{position:absolute;inset:0;}
 .profile-box{contain:layout style;will-change:transform}
 .bio-stream{contain:layout style}
@@ -247,10 +583,11 @@ h1{margin:8px 0 22px;font-family:var(--pixel);font-size:clamp(21px,4vw,38px);lin
 @media(max-width:1100px){.persona-head{grid-template-columns:minmax(0,1.5fr) minmax(280px,.75fr);gap:38px}.profile-box{width:min(100%,340px)}.page[data-page="2"] .index-layout{grid-template-columns:minmax(180px,.7fr) minmax(250px,.95fr) minmax(0,1.8fr);gap:14px}}
 @media(max-width:920px){.persona-head{grid-template-columns:1fr;gap:34px}.bio-stream{max-width:100%}.profile-box{position:relative;top:auto;justify-self:start;width:min(100%,360px)}.social-grid,.support-grid{grid-template-columns:1fr}.page[data-page="2"] .index-layout{grid-template-columns:minmax(165px,.7fr) minmax(230px,.95fr) minmax(0,1.45fr);gap:12px;min-height:calc(100vh - 245px)}.page[data-page="2"] .paper-index,.page[data-page="2"] .paper-info,.page[data-page="2"] .paper-pdf{height:calc(100vh - 245px)}.page[data-page="2"] .paper-info .detail{padding:16px}.page[data-page="2"] #paperViewer{padding:7px}}
 @media(max-width:760px){.page[data-page="2"] .index-layout{grid-template-columns:1fr;gap:12px;min-height:0}.page[data-page="2"] .paper-index{height:175px;max-height:175px}.page[data-page="2"] .paper-index .scroll-list{height:calc(100% - 40px);max-height:none}.page[data-page="2"] .paper-info{height:250px}.page[data-page="2"] .paper-pdf{height:72vh;min-height:520px}.page[data-page="2"] #paperViewer{padding:7px}}
-@media(max-width:680px){header{padding:7px 9px}.clock{display:none}.page{padding:20px 14px}.welcome-wrap{min-height:78vh}.welcome-copy{font-size:21px}.welcome-title{font-size:clamp(30px,12vw,58px)}nav button{min-width:30px}footer{font-size:14px}}
+@media(max-width:680px){header{margin:8px 8px 0;padding:7px 8px}.clock{display:none}.page{padding:20px 14px}.welcome-wrap{min-height:78vh}.welcome-copy{font-size:21px}.welcome-title{font-size:clamp(30px,12vw,58px)}nav button{min-width:30px}.route{font-size:17px}}
+@media(max-width:600px){.theme-switch-row{align-items:flex-start}.theme-hint{padding-top:10px}.theme-toggle-label{font-size:12px}.theme-toggle{min-height:36px}}
 @media(max-width:600px){.persona-head{gap:28px}.persona-name{margin-bottom:28px;font-size:clamp(22px,8vw,34px)}.bio-block{padding-left:14px;padding-bottom:20px;margin-bottom:22px}.bio-text{font-size:19px;line-height:1.55}.profile-box{width:100%;max-width:360px;padding:13px}.profile-caption{font-size:13px}.level-badge{min-width:70px;font-size:10px}.level-name{font-size:14px}.profile-status{font-size:15px}.progress-facts{font-size:13px}}
 /* mobile: thunder is the costliest effect, keep it but drop the extra blur layer */
-@media(max-width:600px){.profile-electric-glow-strong{display:none}}
+@media(max-width:600px){.profile-electric-glow-strong{display:none}.hell-aura{top:-48px;height:76px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}.cursor{animation:none}.welcome-next{transition:none}}
 </style>
 </head>
@@ -258,28 +595,29 @@ h1{margin:8px 0 22px;font-family:var(--pixel);font-size:clamp(21px,4vw,38px);lin
 <body>
 <div class="crt" aria-hidden="true"></div>
 <div class="scanline" id="scanline" aria-hidden="true"></div>
+<div class="redline-fx" id="redlineFx" aria-hidden="true"></div>
 
 <section id="welcome" aria-label="Welcome screen">
   <div class="welcome-wrap">
-    <div class="terminal-label">visitor@personal:~$ ./welcome</div>
-    <h1 class="welcome-title">WELCOME<span>.</span></h1>
+    <div class="terminal-label">WAGWAN://BOOT · SIGNAL LOCKED</div>
+    <h1 class="welcome-title">PERSONA<span>//</span>ONLINE</h1>
     <div class="welcome-copy" id="welcomeCopy" aria-live="polite"></div>
-    <button class="welcome-next" id="welcomeNext" type="button" aria-label="Continue to persona">
-      <span class="arrow-blink">→</span>
-      <span>Start inference pipeline</span>
+    <button class="welcome-next" id="welcomeNext" type="button" aria-label="Enter persona">
+      <span class="arrow-blink">↳</span>
+      <span>ENTER PERSONA / OPEN SIGNAL</span>
     </button>
-    <div class="version">version 1.3 · personal website</div>
+    <div class="version">v1.4 · persona interface · live signal</div>
   </div>
 </section>
 
 <div id="app" aria-hidden="true">
   <header>
-    <div class="route"><strong>visitor@personal</strong>:<span class="path">~</span>$ <span id="routeCommand">./persona</span></div>
+    <div class="route"><strong>WAGWAN://PERSONAL</strong><span class="path"> / <span id="routeCommand">persona</span></span></div>
     <div class="clock" id="clock">--:--:--</div>
     <nav aria-label="Pages">
-      <button id="prevPage" type="button" aria-label="Previous page">←</button>
+      <button id="prevPage" type="button" aria-label="Previous page">‹</button>
       <span id="pageNav"></span>
-      <button id="nextPage" type="button" aria-label="Next page">→</button>
+      <button id="nextPage" type="button" aria-label="Next page">›</button>
       <button id="sleepButton" type="button" aria-label="Put site to sleep" title="Sleep">⏻</button>
     </nav>
   </header>
@@ -295,6 +633,7 @@ h1{margin:8px 0 22px;font-family:var(--pixel);font-size:clamp(21px,4vw,38px);lin
             <div class="bio-stream" id="bioStream"></div>
           </div>
           <aside class="profile-box" aria-label="Profile">
+            <div class="hell-aura" aria-hidden="true"><span class="hell-flame hell-flame-a"></span><span class="hell-flame hell-flame-b"></span><span class="hell-flame hell-flame-c"></span></div>
             <div class="profile-electric-wrap" aria-hidden="true">
               <div class="profile-electric-fx">
                 <div class="profile-electric-glow-strong"></div>
@@ -303,8 +642,20 @@ h1{margin:8px 0 22px;font-family:var(--pixel);font-size:clamp(21px,4vw,38px);lin
               </div>
               <svg class="profile-electric-runner" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect x="1.5" y="1.5" width="97" height="97" rx="8" pathLength="392"></rect></svg>
             </div>
-            <div class="profile-frame"><img id="profileImage" src="assets/kaguya3.gif" alt="Profile portrait of Muhamad Arpan Kurnia" decoding="async" fetchpriority="high"></div>
+            <div class="profile-frame"><img id="profileImage" src="assets/l.gif" alt="Profile portrait of Muhamad Arpan Kurnia" decoding="async" fetchpriority="high"></div>
             <div class="profile-caption">MUHAMAD ARPAN KURNIA</div>
+            <div class="theme-switch-row">
+              <button class="theme-toggle" id="themeToggle" type="button" aria-pressed="false" aria-label="Toggle red and black CRT theme" title="Toggle CRT theme">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true">
+                  <rect x="3" y="4" width="18" height="14" rx="1"></rect>
+                  <path d="M8 21h8M10 18v3M14 18v3"></path>
+                  <path d="m13 7-3 4h3l-1 3 4-5h-3l1-2z"></path>
+                </svg>
+                <span class="theme-toggle-label" id="themeToggleLabel">REDLINE</span>
+                <span class="theme-toggle-state" aria-hidden="true"></span>
+              </button>
+              <span class="theme-hint" id="themeHint">EVERBLUSH CRT</span>
+            </div>
             <div class="profile-status" id="profileProgression" aria-label="Level, status and experience progression">
               <div class="status-card"><div class="status-line"><div class="status-main"><span class="profile-status-dot" aria-hidden="true"></span><span class="status-label">STATUS</span><strong class="status-value" id="profileStatus">HUMAN</strong></div><span class="status-signal">● ONLINE</span></div></div>
               <div class="level-card"><div class="level-row"><span class="level-badge" id="profileLevel">LVL 01</span><span class="level-name" id="profileLevelName">HUMAN</span></div><div class="level-description" id="profileLevelDescription">Starting the technical path.</div></div>
@@ -372,10 +723,6 @@ h1{margin:8px 0 22px;font-family:var(--pixel);font-size:clamp(21px,4vw,38px);lin
     </section>
   </main>
 
-  <footer>
-    <span>← → navigate · 1–5 jump · Esc sleep</span>
-    <span id="pageIndicator" class="accent-green">PERSONA</span>
-  </footer>
 </div>
 
 <div id="levelPopup" role="dialog" aria-modal="true" aria-labelledby="lpTitle" aria-hidden="true">
@@ -387,6 +734,8 @@ h1{margin:8px 0 22px;font-family:var(--pixel);font-size:clamp(21px,4vw,38px);lin
     <button class="btn" id="lpClose" type="button">[ OK ]</button>
   </div>
 </div>
+
+<div class="theme-fx" id="themeFx" aria-hidden="true"></div>
 
 <section id="sleep" aria-hidden="true">
   <div class="sleep-inner">
@@ -412,13 +761,17 @@ h1{margin:8px 0 22px;font-family:var(--pixel);font-size:clamp(21px,4vw,38px);lin
 <script>
 /* CONFIGURATION */
 const CONFIG = {
-  profileImage: "assets/kaguya3.gif",
+  profileImage: "assets/l.gif",
   socials: {
     github: "https://github.com/Zzzzzzzpeng/Zzzzzzzpeng",
     youtube: "",
     wakatime: "https://wakatime.com/@8226be62-ae10-4dac-acae-8041f87e3751"
   },
-  payments: { paypal:"", kofi:"", bank:{bankName:"",accountName:"",accountNumber:""}, bitcoin:"" }
+  payments: { paypal:"", kofi:"", bank:{bankName:"",accountName:"",accountNumber:""}, bitcoin:"" },
+  theme: {
+    storageKey: "maweb.theme",
+    default: "everblush"
+  }
 };
 
 /* GAME PROGRESSION */
@@ -604,10 +957,55 @@ function closeLevelUp(){
 const levelPopupOpen = () => $("#levelPopup").classList.contains("show");
 
 /* WELCOME */
-const WELCOME_TEXT = "A personal space for things I build, study, experiment with, and break along the way. No polished story, just the work, the experiments, and the trail behind them.";
+const WELCOME_TEXT = "A live personal interface for things I build, study, research, and break while learning how the stack actually works. Enter the signal when you are ready.";
 let welcomeFinished = false, currentPage = 0, previousPage = 0, sleeping = false;
 
 const thunder = {sync(){}};
+
+/* THEME SWITCH
+   Persisted locally. The switch only changes presentation; project/research data stay untouched. */
+function themeKey(){
+  return CONFIG.theme?.storageKey || "maweb.theme";
+}
+function currentTheme(){
+  try{
+    const saved = localStorage.getItem(themeKey());
+    return saved === "redline" ? "redline" : "everblush";
+  }catch{
+    return CONFIG.theme?.default === "redline" ? "redline" : "everblush";
+  }
+}
+function applyTheme(theme, animate=true){
+  const next = theme === "redline" ? "redline" : "everblush";
+  document.body.classList.toggle("redline",next === "redline");
+  const toggle = $("#themeToggle");
+  const label = $("#themeToggleLabel");
+  const hint = $("#themeHint");
+  if(toggle){
+    toggle.setAttribute("aria-pressed",String(next === "redline"));
+    toggle.title = next === "redline" ? "Switch back to Everblush" : "Switch to Redline";
+  }
+  if(label) label.textContent = next === "redline" ? "EVERBLUSH" : "REDLINE";
+  if(hint) hint.textContent = next === "redline" ? "RED / BLACK CRT" : "EVERBLUSH CRT";
+  try{ localStorage.setItem(themeKey(),next); }catch{}
+  if(animate) triggerThemeBurst();
+  syncRedlineGlitchLoop();
+}
+function triggerThemeBurst(){
+  document.body.classList.remove("theme-switching");
+  void document.body.offsetWidth;
+  document.body.classList.add("theme-switching");
+  window.clearTimeout(window.__themeTimer);
+  window.__themeTimer = window.setTimeout(() => document.body.classList.remove("theme-switching"),760);
+}
+function initTheme(){
+  applyTheme(currentTheme(),false);
+  const toggle = $("#themeToggle");
+  toggle?.addEventListener("click",() => {
+    const next = document.body.classList.contains("redline") ? "everblush" : "redline";
+    applyTheme(next,true);
+  });
+}
 
 /* Typing: one text node updated in place (was one new node per character). Same speed. */
 async function typeText(target,text,speed=18){
@@ -745,8 +1143,7 @@ function goToPage(index){
   setTimeout(() => old.classList.remove("exit"),220);
   pages[currentPage].classList.add("active");
   pages[currentPage].scrollTop = 0;
-  $("#routeCommand").textContent = ["./persona","ls ./lab","ls ./research","ls ./social","./support"][currentPage];
-  $("#pageIndicator").textContent = ["PERSONA","LAB","RESEARCH","SOCIAL","SUPPORT"][currentPage];
+  $("#routeCommand").textContent = ["persona","lab","research","social","support"][currentPage];
   $$("#pageNav button").forEach((b,i) => i===currentPage ? b.setAttribute("aria-current","page") : b.removeAttribute("aria-current"));
   $("#prevPage").disabled = currentPage === 0;
   $("#nextPage").disabled = currentPage === pages.length-1;
@@ -755,7 +1152,7 @@ function goToPage(index){
   thunder.sync();
 }
 function renderNavigation(){
-  $("#pageNav").innerHTML = [1,2,3,4,5].map(p => `<button type="button" aria-label="Page ${p}" data-page="${p-1}">${String(p).padStart(2,"0")}</button>`).join("");
+  $("#pageNav").innerHTML = [["01","PERSONA"],["02","LAB"],["03","RESEARCH"],["04","SOCIAL"],["05","SUPPORT"]].map(([n,label],i) => `<button type="button" aria-label="${label}" title="${label}" data-page="${i}">${n}</button>`).join("");
   $$("#pageNav button").forEach(b => b.addEventListener("click",() => goToPage(Number(b.dataset.page))));
   $("#prevPage").addEventListener("click",() => goToPage(currentPage-1));
   $("#nextPage").addEventListener("click",() => goToPage(currentPage+1));
@@ -773,6 +1170,7 @@ function sleepScreen(){
   $("#app").setAttribute("aria-hidden","true");
   $("#wakeButton").focus({preventScroll:true});
   thunder.sync();
+  syncRedlineGlitchLoop();
 }
 function wakeScreen(){
   sleeping = false;
@@ -782,6 +1180,7 @@ function wakeScreen(){
   $("#app").setAttribute("aria-hidden","false");
   $("#sleepButton").focus({preventScroll:true});
   thunder.sync();
+  syncRedlineGlitchLoop();
 }
 
 /* WELCOME -> SITE */
@@ -835,12 +1234,36 @@ function initClock(){
     thunder.sync();
     clearInterval(timer);
     if(!document.hidden){ update(); timer = setInterval(update,1000); }
+    syncRedlineGlitchLoop();
   });
+}
+
+/* RARE REDLINE MICRO-GLITCH */
+let redlineGlitchTimer = 0;
+let redlineGlitchTimeout = 0;
+function redlineGlitchBurst(){
+  if(!document.body.classList.contains("redline") || document.hidden || sleeping) return scheduleRedlineGlitch();
+  document.body.classList.remove("redline-glitch");
+  void document.body.offsetWidth;
+  document.body.classList.add("redline-glitch");
+  window.clearTimeout(redlineGlitchTimeout);
+  redlineGlitchTimeout = window.setTimeout(() => document.body.classList.remove("redline-glitch"),240);
+  scheduleRedlineGlitch();
+}
+function scheduleRedlineGlitch(){
+  window.clearTimeout(redlineGlitchTimer);
+  const delay = 5200 + Math.random() * 3600;
+  redlineGlitchTimer = window.setTimeout(redlineGlitchBurst,delay);
+}
+function syncRedlineGlitchLoop(){
+  window.clearTimeout(redlineGlitchTimer);
+  if(document.body.classList.contains("redline") && !document.hidden && !sleeping) scheduleRedlineGlitch();
 }
 
 /* INIT */
 function init(){
-  $("#profileImage").src = CONFIG.profileImage || "assets/kaguya3.gif";
+  $("#profileImage").src = CONFIG.profileImage || "assets/l.gif";
+  initTheme();
   renderNavigation();
   renderProjects();
   renderPapers();
